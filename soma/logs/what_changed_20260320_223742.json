@@ -1,0 +1,13 @@
+{
+  "has_material_change": false,
+  "changes": [],
+  "timestamp": "2026-03-20T22:37:42.692460+00:00",
+  "regime_summary": {
+    "current_regime": "RISK_ON",
+    "previous_regime": "RISK_ON",
+    "gli_value": 48.5,
+    "gli_delta": -3.5
+  },
+  "valuation_summary": {},
+  "outlook_summary": null
+}

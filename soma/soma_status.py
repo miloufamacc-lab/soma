@@ -1,0 +1,186 @@
+#!/usr/bin/env python3
+"""
+SOMA Status Dashboard — one-screen terminal view of the entire system.
+
+Usage:
+    python3 ~/Desktop/DABEIBA/shared/soma/soma_status.py
+"""
+
+import os
+import sys
+
+# Make shared package importable when run as a standalone script
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+
+from shared.soma.soma_bridge import SomaBridge
+
+# ── ANSI codes ────────────────────────────────────────────────────────
+BOLD = "\033[1m"
+DIM = "\033[2m"
+RED = "\033[91m"
+GREEN = "\033[92m"
+YELLOW = "\033[93m"
+CYAN = "\033[96m"
+WHITE = "\033[97m"
+RESET = "\033[0m"
+
+W = 62  # dashboard width
+
+
+def _bar(title):
+    pad = W - len(title) - 4
+    return f"{BOLD}{CYAN}── {title} {'─' * pad}{RESET}"
+
+
+def _fresh_label(is_fresh, age_hours):
+    if age_hours == float("inf"):
+        return f"{RED}NO DATA{RESET}"
+    age_str = f"{age_hours:.1f}h ago"
+    if is_fresh:
+        return f"{GREEN}FRESH{RESET} ({age_str})"
+    return f"{RED}STALE{RESET} ({age_str})"
+
+
+def print_status(db_path=None):
+    db_path = db_path or os.path.join(
+        os.path.dirname(__file__), "data", "soma.db"
+    )
+
+    if not os.path.exists(db_path):
+        print(f"\n{RED}SOMA database not found at: {db_path}{RESET}")
+        print("Run ORACLE first to populate SOMA.\n")
+        return
+
+    with SomaBridge(db_path) as db:
+        regime = db.get_latest_regime()
+        valuations = db.get_latest_valuations()
+        portfolio = db.get_latest_portfolio_state()
+        outlook = db.get_latest_outlook()
+        history = db.get_regime_history(limit=2)
+        regime_fresh, regime_age = db.is_fresh("regime_history")
+        schema_v = db.get_schema_version()
+
+        # Record counts
+        tables = ["regime_history", "valuations", "trade_log",
+                   "outlook_snapshots", "portfolio_state"]
+        counts = {}
+        for t in tables:
+            try:
+                row = db.conn.execute(f"SELECT COUNT(*) AS c FROM [{t}]").fetchone()
+                counts[t] = row["c"]
+            except Exception:
+                counts[t] = 0
+
+    # DB file size
+    db_size = os.path.getsize(db_path)
+    if db_size < 1024:
+        size_str = f"{db_size} B"
+    elif db_size < 1024 * 1024:
+        size_str = f"{db_size / 1024:.1f} KB"
+    else:
+        size_str = f"{db_size / (1024 * 1024):.1f} MB"
+
+    # Previous regime for comparison
+    prev_regime = history[1] if len(history) >= 2 else None
+
+    # ── Print ─────────────────────────────────────────────────────
+    print(f"\n{BOLD}{'=' * W}{RESET}")
+    print(f"{BOLD}  SOMA STATUS DASHBOARD{RESET}")
+    print(f"{BOLD}{'=' * W}{RESET}")
+
+    # ── MACRO ─────────────────────────────────────────────────────
+    print(f"\n{_bar('MACRO')}")
+    if regime:
+        regime_str = regime["regime"] or "N/A"
+        if prev_regime and prev_regime["regime"] != regime["regime"]:
+            regime_str = f"{prev_regime['regime']} -> {YELLOW}{regime_str}{RESET}"
+
+        gli_delta_str = ""
+        if prev_regime and prev_regime["gli_value"] is not None:
+            delta = regime["gli_value"] - prev_regime["gli_value"]
+            sign = "+" if delta >= 0 else ""
+            gli_delta_str = f"  ({sign}{delta:.2f})"
+
+        mom = regime.get("momentum")
+        if mom is not None:
+            mom_color = GREEN if mom >= 0 else RED
+            mom_str = f"{mom_color}{mom:+.2f}{RESET}"
+        else:
+            mom_str = "N/A"
+
+        diff = regime.get("diffusion_index")
+        diff_str = f"{diff:.1f}%" if diff is not None else "N/A"
+
+        print(f"  Regime:      {regime_str}")
+        print(f"  GLI:         {regime['gli_value']}{gli_delta_str}")
+        print(f"  Diffusion:   {diff_str}")
+        print(f"  Momentum:    {mom_str}")
+        print(f"  Data Age:    {_fresh_label(regime_fresh, regime_age)}")
+    else:
+        print(f"  {DIM}No regime data yet (ORACLE not run){RESET}")
+
+    # ── PORTFOLIO (MANTIS) ────────────────────────────────────────
+    print(f"\n{_bar('PORTFOLIO (MANTIS)')}")
+    if portfolio:
+        cash = portfolio.get("cash_pct")
+        total = portfolio.get("total_value")
+        dd = portfolio.get("dd_from_hwm")
+        exposure = f"{(1 - cash) * 100:.1f}%" if cash is not None else "N/A"
+        cash_str = f"{cash * 100:.1f}%" if cash is not None else "N/A"
+        total_str = f"${total:,.0f}" if total is not None else "N/A"
+        dd_str = f"{dd:.2f}%" if dd is not None else "N/A"
+        print(f"  Net Exposure: {exposure}")
+        print(f"  Cash:         {cash_str}")
+        print(f"  Total Value:  {total_str}")
+        print(f"  DD from HWM:  {dd_str}")
+    else:
+        print(f"  {DIM}No portfolio data yet (MANTIS not connected){RESET}")
+
+    # ── VALUATIONS ────────────────────────────────────────────────
+    print(f"\n{_bar('VALUATIONS')}")
+    if valuations:
+        header = f"  {'Ticker':<8} {'Fair Value':>10} {'Price':>10} {'Upside':>8} {'Score':>6}"
+        print(f"{WHITE}{header}{RESET}")
+        print(f"  {'─' * 46}")
+        for v in valuations:
+            ticker = v.get("ticker", "?")
+            fv = v.get("fair_value")
+            price = v.get("current_price")
+            upside = v.get("implied_upside")
+            score = v.get("execution_score")
+            fv_str = f"${fv:,.2f}" if fv is not None else "—"
+            price_str = f"${price:,.2f}" if price is not None else "—"
+            if upside is not None:
+                up_color = GREEN if upside >= 0 else RED
+                upside_str = f"{up_color}{upside:+.1%}{RESET}"
+            else:
+                upside_str = "—"
+            score_str = f"{score:.1f}" if score is not None else "—"
+            print(f"  {ticker:<8} {fv_str:>10} {price_str:>10} {upside_str:>17} {score_str:>6}")
+    else:
+        print(f"  {DIM}No valuation data yet{RESET}")
+
+    # ── COMMUNICATION ─────────────────────────────────────────────
+    print(f"\n{_bar('COMMUNICATION')}")
+    if outlook:
+        print(f"  Last Outlook: {outlook.get('date', '?')} (v{outlook.get('version', '?')})")
+    else:
+        print(f"  {DIM}No outlooks yet{RESET}")
+
+    # ── SYSTEM HEALTH ─────────────────────────────────────────────
+    print(f"\n{_bar('SYSTEM HEALTH')}")
+    # Last ORACLE write
+    oracle_ts = regime.get("write_timestamp", "N/A") if regime else "N/A"
+    print(f"  Last Write:   {oracle_ts}  {_fresh_label(regime_fresh, regime_age)}")
+    print(f"  Schema:       v{schema_v}")
+    print(f"  DB Size:      {size_str}")
+    print(f"  Records:")
+    for t in tables:
+        label = t.replace("_", " ").title()
+        print(f"    {label:<22} {counts[t]:>6}")
+
+    print(f"\n{BOLD}{'=' * W}{RESET}\n")
+
+
+if __name__ == "__main__":
+    print_status()
