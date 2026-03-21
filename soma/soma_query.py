@@ -369,6 +369,141 @@ def query_outlook_history(db):
     print()
 
 
+# ── CLIENT PROFILE queries ───────────────────────────────────────────
+
+def query_clients(db):
+    """List all client profiles."""
+    profiles = db.get_all_client_profiles()
+    if not profiles:
+        _no_data("No client profiles yet. Add one with CIPHER or SomaBridge.")
+        return
+    _title(f"Client Profiles ({len(profiles)})")
+    print(f"\n  {'Alias':<14} {'Positioning':<14} {'Risk':<8} {'Horizon':<8} {'Style':<14} {'Last Contact':<12}")
+    print(f"  {'─' * 72}")
+    for p in profiles:
+        name = p.get('display_name') or p['client_alias']
+        pos = p.get('positioning', '—')
+        risk = p.get('risk_tolerance', '—')
+        horizon = p.get('time_horizon', '—')
+        style = p.get('communication_style', '—')
+        last = p.get('last_contact_date', '—') or '—'
+        print(f"  {name:<14} {pos:<14} {risk:<8} {horizon:<8} {style:<14} {last:<12}")
+    print()
+
+
+def query_client_detail(db, alias):
+    """Show full detail for a single client profile."""
+    profile = db.get_client_profile(alias)
+    if not profile:
+        # Try case-insensitive search
+        all_profiles = db.get_all_client_profiles()
+        for p in all_profiles:
+            if p['client_alias'].lower() == alias.lower():
+                profile = p
+                break
+    if not profile:
+        _no_data(f"No client profile found for '{alias}'. Try: clients")
+        return
+
+    name = profile.get('display_name') or profile['client_alias']
+    _title(f"Client: {name}")
+
+    print(f"\n  {BOLD}THESIS POSITIONING{RESET}")
+    print(f"  {CYAN}Positioning:{RESET}      {profile.get('positioning', '—')}")
+    print(f"  {CYAN}Risk Tolerance:{RESET}   {profile.get('risk_tolerance', '—')}")
+    print(f"  {CYAN}Time Horizon:{RESET}     {profile.get('time_horizon', '—')}")
+    print(f"  {CYAN}Wealth Level:{RESET}     {profile.get('wealth_level', '—')}")
+
+    print(f"\n  {BOLD}MACRO BIAS{RESET}")
+    print(f"  {CYAN}Macro Bias:{RESET}       {profile.get('macro_bias', '—')}")
+    sens = profile.get('regime_sensitivity', '—')
+    sens_color = RED if sens == 'high' else GREEN if sens == 'low' else YELLOW
+    print(f"  {CYAN}Regime Sens.:{RESET}    {sens_color}{sens}{RESET}")
+
+    if profile.get('sector_convictions_json'):
+        try:
+            import json
+            sectors = json.loads(profile['sector_convictions_json'])
+            print(f"\n  {BOLD}SECTOR CONVICTIONS{RESET}")
+            for s in sectors:
+                conv_color = GREEN if s.get('conviction') == 'high' else YELLOW if s.get('conviction') == 'medium' else DIM
+                print(f"    {s.get('sector', '?'):<16} {conv_color}{s.get('conviction', '?')}{RESET}")
+        except Exception:
+            pass
+
+    print(f"\n  {BOLD}COMMUNICATION{RESET}")
+    print(f"  {CYAN}Style:{RESET}            {profile.get('communication_style', '—')}")
+    print(f"  {CYAN}Frequency:{RESET}        {profile.get('preferred_frequency', '—')}")
+    print(f"  {CYAN}Channel:{RESET}          {profile.get('preferred_channel', '—')}")
+
+    print(f"\n  {BOLD}CFA FRAMEWORK{RESET}")
+    print(f"  {CYAN}Money Script:{RESET}     {profile.get('money_script', '—')}")
+    print(f"  {CYAN}Primary Goal:{RESET}     {profile.get('primary_goal', '—')}")
+    if profile.get('known_biases_json'):
+        try:
+            import json
+            biases = json.loads(profile['known_biases_json'])
+            print(f"  {CYAN}Known Biases:{RESET}     {', '.join(biases)}")
+        except Exception:
+            pass
+
+    print(f"\n  {BOLD}RELATIONSHIP{RESET}")
+    last = profile.get('last_contact_date', '—') or '—'
+    last_type = profile.get('last_contact_type', '—') or '—'
+    next_rev = profile.get('next_review_date', '—') or '—'
+    print(f"  {CYAN}Last Contact:{RESET}     {last} ({last_type})")
+    print(f"  {CYAN}Next Review:{RESET}      {next_rev}")
+    if profile.get('notes'):
+        print(f"  {CYAN}Notes:{RESET}            {profile['notes']}")
+
+    # Show recent interactions
+    interactions = db.get_client_interactions(profile['client_alias'], limit=5)
+    if interactions:
+        print(f"\n  {BOLD}RECENT INTERACTIONS{RESET}")
+        print(f"  {'Date':<12} {'Type':<14} {'Topic'}")
+        print(f"  {'─' * 50}")
+        for ix in interactions:
+            topic = ix.get('topic', '—') or '—'
+            print(f"  {ix['date']:<12} {ix['interaction_type']:<14} {topic}")
+    print()
+
+
+def query_clients_due(db):
+    """Show clients due for contact."""
+    due = db.get_clients_due_for_contact()
+    if not due:
+        _no_data("No clients due for contact right now.")
+        return
+    _title(f"Clients Due for Contact ({len(due)})")
+    print(f"\n  {'Alias':<14} {'Review Date':<12} {'Last Contact':<12} {'Positioning'}")
+    print(f"  {'─' * 54}")
+    for p in due:
+        name = p.get('display_name') or p['client_alias']
+        review = p.get('next_review_date', '—')
+        last = p.get('last_contact_date', '—') or 'never'
+        pos = p.get('positioning', '—')
+        print(f"  {name:<14} {review:<12} {last:<12} {pos}")
+    print()
+
+
+def query_clients_by_positioning(db, positioning):
+    """Show clients filtered by positioning type."""
+    clients = db.get_clients_by_positioning(positioning)
+    if not clients:
+        _no_data(f"No clients with '{positioning}' positioning.")
+        return
+    _title(f"{positioning.title()} Clients ({len(clients)})")
+    print(f"\n  {'Alias':<14} {'Risk':<8} {'Macro Bias':<12} {'Goal'}")
+    print(f"  {'─' * 50}")
+    for p in clients:
+        name = p.get('display_name') or p['client_alias']
+        risk = p.get('risk_tolerance', '—')
+        bias = p.get('macro_bias', '—')
+        goal = p.get('primary_goal', '—') or '—'
+        print(f"  {name:<14} {risk:<8} {bias:<12} {goal}")
+    print()
+
+
 # ── META queries ──────────────────────────────────────────────────────
 
 def query_status(db):
@@ -394,7 +529,8 @@ def query_health(db):
     print(f"  {CYAN}Schema:{RESET}    v{db.get_schema_version()}")
 
     tables = ["regime_history", "valuations", "trade_log",
-              "outlook_snapshots", "portfolio_state"]
+              "outlook_snapshots", "portfolio_state",
+              "client_profiles", "client_interactions"]
     print(f"\n  {'Table':<22} {'Records':>8}  Freshness")
     print(f"  {'─' * 52}")
     for t in tables:
@@ -450,6 +586,13 @@ def query_help(_db=None):
             ('"kb sections macro"', "Show section headings for a KB file"),
             ('"what is GLI"', "Search KB (alias for kb search)"),
             ('"explain drawdown"', "Search KB (alias for kb search)"),
+        ]),
+        ("CLIENTS", [
+            ('"clients"', "List all client profiles"),
+            ('"client JSmith"', "Full detail for one client"),
+            ('"clients due"', "Clients due for contact/review"),
+            ('"conservative clients"', "Filter by positioning"),
+            ('"aggressive clients"', "Filter by positioning"),
         ]),
         ("META", [
             ('"status"', "Full SOMA status dashboard"),
@@ -767,6 +910,22 @@ def route_query(query, db):
         return
     if q in ("outlook history", "outlooks"):
         query_outlook_history(db)
+        return
+
+    # ── Clients ──
+    if q in ("clients", "client list", "all clients", "profiles"):
+        query_clients(db)
+        return
+    if q in ("clients due", "due for contact", "contact due", "reviews due"):
+        query_clients_due(db)
+        return
+    for pos in ("conservative", "moderate", "aggressive", "opportunistic"):
+        if q in (f"{pos} clients", f"clients {pos}", pos):
+            query_clients_by_positioning(db, pos)
+            return
+    m = re.match(r'^client\s+(.+)$', q)
+    if m:
+        query_client_detail(db, m.group(1).strip())
         return
 
     # ── Knowledge Base ──

@@ -1,4 +1,12 @@
-# SOMA Knowledge Base — Changelog
+# SOMA — Changelog
+
+## Schema v2 — 2026-03-21
+- **Client Profiles (Phase 2.3):** `client_profiles` + `client_interactions` tables
+- Per-client investment thesis patterns: positioning, macro bias, sector convictions, CFA framework fields
+- SomaBridge: `write_client_profile()` (upsert), `write_client_interaction()`, 6 read methods
+- `get_client_context_for_cipher()` — bridges SOMA profiles to CIPHER's framework dict shape
+- soma_query.py: "clients", "client [alias]", "clients due", "[positioning] clients"
+- Interaction logging auto-updates `last_contact_date` on the profile
 
 ## v1.0 — 2026-03-20
 - **Initial merge**: Split ORACLE + CIPHER monolithic KBs into 4 domain files

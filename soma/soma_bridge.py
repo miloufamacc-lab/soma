@@ -167,6 +167,96 @@ class SomaBridge:
         except Exception as e:
             print(f"[SOMA] write_portfolio_state failed: {e}")
 
+    # ── CLIENT PROFILES (Phase 2.3 — Client Alpha Layer) ─────────────
+
+    def write_client_profile(self, client_alias, display_name=None,
+                             positioning='moderate', risk_tolerance='medium',
+                             time_horizon='medium', wealth_level=None,
+                             macro_bias='neutral', regime_sensitivity='moderate',
+                             sector_convictions_json=None,
+                             communication_style='formal',
+                             preferred_frequency='quarterly',
+                             preferred_channel='email',
+                             money_script=None, primary_goal=None,
+                             known_biases_json=None,
+                             last_contact_date=None, last_contact_type=None,
+                             next_review_date=None, notes=None,
+                             module_version=None):
+        """Create or update a client profile (upsert on client_alias)."""
+        try:
+            now = self._now()
+            existing = self.conn.execute(
+                "SELECT id FROM client_profiles WHERE client_alias = ?",
+                (client_alias,),
+            ).fetchone()
+            if existing:
+                self.conn.execute(
+                    """UPDATE client_profiles SET
+                       display_name=?, positioning=?, risk_tolerance=?,
+                       time_horizon=?, wealth_level=?, macro_bias=?,
+                       regime_sensitivity=?, sector_convictions_json=?,
+                       communication_style=?, preferred_frequency=?,
+                       preferred_channel=?, money_script=?, primary_goal=?,
+                       known_biases_json=?, last_contact_date=?,
+                       last_contact_type=?, next_review_date=?, notes=?,
+                       updated_at=?, write_timestamp=?, module_version=?
+                     WHERE client_alias = ?""",
+                    (display_name, positioning, risk_tolerance,
+                     time_horizon, wealth_level, macro_bias,
+                     regime_sensitivity, sector_convictions_json,
+                     communication_style, preferred_frequency,
+                     preferred_channel, money_script, primary_goal,
+                     known_biases_json, last_contact_date,
+                     last_contact_type, next_review_date, notes,
+                     now, now, module_version, client_alias),
+                )
+            else:
+                self.conn.execute(
+                    """INSERT INTO client_profiles
+                       (client_alias, display_name, positioning, risk_tolerance,
+                        time_horizon, wealth_level, macro_bias, regime_sensitivity,
+                        sector_convictions_json, communication_style,
+                        preferred_frequency, preferred_channel, money_script,
+                        primary_goal, known_biases_json, last_contact_date,
+                        last_contact_type, next_review_date, notes,
+                        created_at, updated_at, write_timestamp, module_version)
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                    (client_alias, display_name, positioning, risk_tolerance,
+                     time_horizon, wealth_level, macro_bias, regime_sensitivity,
+                     sector_convictions_json, communication_style,
+                     preferred_frequency, preferred_channel, money_script,
+                     primary_goal, known_biases_json, last_contact_date,
+                     last_contact_type, next_review_date, notes,
+                     now, now, now, module_version),
+                )
+            self.conn.commit()
+        except Exception as e:
+            print(f"[SOMA] write_client_profile failed: {e}")
+
+    def write_client_interaction(self, client_alias, date, interaction_type,
+                                 topic=None, regime_at_time=None, notes=None,
+                                 module_version=None):
+        """Log a client interaction and update last_contact on the profile."""
+        try:
+            self.conn.execute(
+                """INSERT INTO client_interactions
+                   (client_alias, date, interaction_type, topic,
+                    regime_at_time, notes, write_timestamp, module_version)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+                (client_alias, date, interaction_type, topic,
+                 regime_at_time, notes, self._now(), module_version),
+            )
+            # Also update last_contact on profile
+            self.conn.execute(
+                """UPDATE client_profiles
+                   SET last_contact_date=?, last_contact_type=?, updated_at=?, write_timestamp=?
+                   WHERE client_alias=?""",
+                (date, interaction_type, self._now(), self._now(), client_alias),
+            )
+            self.conn.commit()
+        except Exception as e:
+            print(f"[SOMA] write_client_interaction failed: {e}")
+
     def write_event(self, date, event_type, source_module, details_json=None,
                     module_version=None):
         """Log a system event (universe change, config update, etc.)."""
@@ -278,3 +368,88 @@ class SomaBridge:
                 "SELECT * FROM events ORDER BY id DESC LIMIT ?", (limit,)
             ).fetchall()
         return self._rows_to_dicts(rows)
+
+    # ── CLIENT PROFILE reads ──────────────────────────────────────────
+
+    def get_client_profile(self, client_alias):
+        """Return a single client profile by alias."""
+        try:
+            row = self.conn.execute(
+                "SELECT * FROM client_profiles WHERE client_alias = ?",
+                (client_alias,),
+            ).fetchone()
+            return self._row_to_dict(row)
+        except Exception:
+            return None
+
+    def get_all_client_profiles(self):
+        """Return all client profiles, sorted by alias."""
+        try:
+            rows = self.conn.execute(
+                "SELECT * FROM client_profiles ORDER BY client_alias"
+            ).fetchall()
+            return self._rows_to_dicts(rows)
+        except Exception:
+            return []
+
+    def get_clients_due_for_contact(self, before_date=None):
+        """Return clients whose next_review_date is on or before the given date.
+
+        If before_date is None, uses today.
+        """
+        try:
+            if before_date is None:
+                before_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+            rows = self.conn.execute(
+                """SELECT * FROM client_profiles
+                   WHERE next_review_date IS NOT NULL
+                     AND next_review_date <= ?
+                   ORDER BY next_review_date""",
+                (before_date,),
+            ).fetchall()
+            return self._rows_to_dicts(rows)
+        except Exception:
+            return []
+
+    def get_clients_by_positioning(self, positioning):
+        """Return all clients with a given positioning (conservative/moderate/aggressive/opportunistic)."""
+        try:
+            rows = self.conn.execute(
+                "SELECT * FROM client_profiles WHERE positioning = ? ORDER BY client_alias",
+                (positioning,),
+            ).fetchall()
+            return self._rows_to_dicts(rows)
+        except Exception:
+            return []
+
+    def get_client_interactions(self, client_alias, limit=20):
+        """Return recent interactions for a specific client."""
+        try:
+            rows = self.conn.execute(
+                "SELECT * FROM client_interactions WHERE client_alias = ? ORDER BY date DESC LIMIT ?",
+                (client_alias, limit),
+            ).fetchall()
+            return self._rows_to_dicts(rows)
+        except Exception:
+            return []
+
+    def get_client_context_for_cipher(self, client_alias):
+        """Return a dict formatted for CIPHER's framework engines.
+
+        Maps SOMA fields to the dict shape that ADViCE, WIIFT, PRACTICE,
+        and TalkingPointsGenerator expect.
+        """
+        profile = self.get_client_profile(client_alias)
+        if not profile:
+            return None
+        return {
+            'name': profile.get('display_name') or profile.get('client_alias'),
+            'wealth_level': profile.get('wealth_level'),
+            'risk_tolerance': profile.get('risk_tolerance'),
+            'time_horizon': profile.get('time_horizon'),
+            'money_script': profile.get('money_script'),
+            'primary_goal': profile.get('primary_goal'),
+            'positioning': profile.get('positioning'),
+            'macro_bias': profile.get('macro_bias'),
+            'communication_style': profile.get('communication_style'),
+        }
