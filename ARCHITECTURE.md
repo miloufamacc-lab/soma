@@ -18,7 +18,7 @@ TIER  LAYER              LOCATION                           RETENTION
  T2   Snapshot Fallback  oracle/output/last_good_snapshot    Rolling + 3 backups
  T3   SOMA Database      shared/soma/data/soma.db            WAL mode, persistent
  T4   Local Backups      shared/soma/backups/                30 rolling copies
- T5   iCloud Offsite     ~/Library/.../DABEIBA_Backups/      7 daily + latest
+ T5   Cloud Offsite      ~/DABEIBA_Cloud/{module}/            7 daily + latest
  T6   What Changed Logs  shared/soma/logs/                   JSON archive (forever)
  T7   Git History        GitHub (miloufamacc-lab/*)          Full commit history
 ```
@@ -96,14 +96,24 @@ The only way to make live calls is to manually edit `api_refresh_tracker.json`.
 
 ---
 
-## T5: iCloud Offsite Sync
+## T5: Cloud Offsite Sync (Google Drive — jacobo.pae@gmail.com)
 
-- **Location:** `~/Library/Mobile Documents/com~apple~CloudDocs/DABEIBA_Backups/`
-- **Files:**
-  - `soma_latest.db` — always overwritten (fastest restore path)
-  - `soma_daily_YYYYMMDD.db` — one per calendar day, 7 kept (weekly coverage)
-- **Trigger:** Automatic — runs as part of `backup_soma.py` (Tier 2)
-- **Failure mode:** If iCloud Drive not found, prints warning and continues
+- **Symlink:** `~/DABEIBA_Cloud` → Google Drive `My Drive/DABEIBA/`
+- **Setup:** Run once: `python3 ~/Desktop/DABEIBA/shared/setup_cloud.py`
+- **Config:** `shared/cloud_config.py` — all modules import `get_cloud_dir("module_name")`
+- **Structure:**
+  ```
+  ~/DABEIBA_Cloud/
+      soma/       ← soma_latest.db + 7 daily snapshots
+      oracle/     ← last_good_snapshot.json, api_tracker
+      mantis/     ← backtest results, portfolio state
+      cipher/     ← generated reports, outlooks
+      exports/    ← on-demand exports (Excel, HTML, PDF)
+  ```
+- **Trigger:** Automatic — each module's backup script writes via `get_cloud_dir()`
+- **Failure mode:** If symlink doesn't exist, all cloud writes silently skip
+- **Provider-agnostic:** To switch from Google Drive to iCloud/Dropbox/etc.,
+  just repoint the symlink. Zero code changes.
 
 ---
 
@@ -131,6 +141,6 @@ The only way to make live calls is to manually edit `api_refresh_tracker.json`.
 | API down mid-month | T1 cache serves all requests (744h TTL) |
 | API returns garbage | T2 snapshot fallback auto-triggers |
 | SOMA corrupted | T4 local backup → copy to data/soma.db |
-| Disk failure | T5 iCloud → download soma_latest.db |
+| Disk failure | T5 Google Drive → download from ~/DABEIBA_Cloud/ |
 | Need historical state | T6 What Changed logs + T7 git history |
 | Accidental code change | T7 git revert |
