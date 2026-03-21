@@ -444,6 +444,13 @@ def query_help(_db=None):
             ('"last outlook"', "Latest outlook snapshot"),
             ('"outlook history"', "Last 5 outlooks"),
         ]),
+        ("KNOWLEDGE BASE", [
+            ('"kb list"', "List all KB files with descriptions"),
+            ('"kb [keywords]"', "Search KB for matching content"),
+            ('"kb sections macro"', "Show section headings for a KB file"),
+            ('"what is GLI"', "Search KB (alias for kb search)"),
+            ('"explain drawdown"', "Search KB (alias for kb search)"),
+        ]),
         ("META", [
             ('"status"', "Full SOMA status dashboard"),
             ('"health"', "Table counts, DB size, freshness"),
@@ -454,6 +461,225 @@ def query_help(_db=None):
         print(f"\n  {BOLD}{section}{RESET}")
         for cmd, desc in commands:
             print(f"    {cmd:<26} {DIM}{desc}{RESET}")
+    print()
+
+
+# ── KNOWLEDGE BASE queries ────────────────────────────────────────────
+
+_KB_DIR = os.path.join(os.path.dirname(__file__), "knowledge")
+
+# Map short aliases to filenames for direct file access
+_KB_FILES = {
+    "macro": "macro_regimes.md",
+    "regimes": "macro_regimes.md",
+    "liquidity": "macro_regimes.md",
+    "gli": "macro_regimes.md",
+    "valuation": "valuation_models.md",
+    "dcf": "valuation_models.md",
+    "portfolio construction": "valuation_models.md",
+    "fixed income": "valuation_models.md",
+    "bonds": "valuation_models.md",
+    "communication": "communication_compliance.md",
+    "compliance": "communication_compliance.md",
+    "ethics": "communication_compliance.md",
+    "gips": "communication_compliance.md",
+    "advice": "communication_compliance.md",
+    "practice": "communication_compliance.md",
+    "epic": "communication_compliance.md",
+    "mantis": "mantis_mechanics.md",
+    "execution": "mantis_mechanics.md",
+    "position sizing": "mantis_mechanics.md",
+    "rebalancing": "mantis_mechanics.md",
+    "drawdown": "mantis_mechanics.md",
+    "stop loss": "mantis_mechanics.md",
+}
+
+
+def _search_kb_files(keywords):
+    """Search all KB markdown files for lines matching any keyword.
+
+    Returns a list of (filename, section_heading, matching_lines) tuples.
+    """
+    if not os.path.isdir(_KB_DIR):
+        return []
+
+    results = []
+    for fname in sorted(os.listdir(_KB_DIR)):
+        if not fname.endswith(".md"):
+            continue
+        filepath = os.path.join(_KB_DIR, fname)
+        try:
+            with open(filepath, "r") as f:
+                lines = f.readlines()
+        except Exception:
+            continue
+
+        current_section = fname.replace(".md", "").replace("_", " ").title()
+        section_matches = []
+        in_frontmatter = False
+
+        for line in lines:
+            stripped = line.strip()
+            # Skip YAML frontmatter
+            if stripped == "---":
+                in_frontmatter = not in_frontmatter
+                continue
+            if in_frontmatter:
+                continue
+            # Track current section heading
+            if stripped.startswith("## "):
+                current_section = stripped.lstrip("# ").strip()
+            elif stripped.startswith("### "):
+                current_section = stripped.lstrip("# ").strip()
+
+            # Check if any keyword appears in this line (case-insensitive)
+            line_lower = stripped.lower()
+            if any(kw in line_lower for kw in keywords):
+                section_matches.append((current_section, stripped))
+
+        if section_matches:
+            results.append((fname, section_matches))
+
+    return results
+
+
+def query_kb_search(_db, search_terms):
+    """Search the knowledge base for matching content."""
+    keywords = [t.strip().lower() for t in search_terms.split() if len(t.strip()) > 2]
+    if not keywords:
+        _no_data("Search terms too short. Try: kb position sizing")
+        return
+
+    if not os.path.isdir(_KB_DIR):
+        _no_data("Knowledge base not found. Expected at: " + _KB_DIR)
+        return
+
+    results = _search_kb_files(keywords)
+
+    if not results:
+        _title(f"KB Search: \"{search_terms}\"")
+        print(f"\n  {YELLOW}No matches found. Try different keywords.{RESET}")
+        print(f"  {DIM}Available KB files:{RESET}")
+        for f in sorted(os.listdir(_KB_DIR)):
+            if f.endswith(".md"):
+                print(f"    {f}")
+        print()
+        return
+
+    _title(f"KB Search: \"{search_terms}\"")
+
+    total_matches = sum(len(matches) for _, matches in results)
+    print(f"\n  {GREEN}{total_matches} matches across {len(results)} file(s){RESET}\n")
+
+    for fname, matches in results:
+        file_label = fname.replace(".md", "").replace("_", " ").title()
+        print(f"  {BOLD}{CYAN}[{file_label}]{RESET}")
+
+        # Group by section, show up to 5 matches per file
+        shown = 0
+        last_section = None
+        for section, line in matches:
+            if shown >= 8:
+                remaining = len(matches) - shown
+                print(f"    {DIM}... and {remaining} more matches{RESET}")
+                break
+            if section != last_section:
+                print(f"    {YELLOW}{section}{RESET}")
+                last_section = section
+            # Truncate long lines
+            display = line[:100] + "..." if len(line) > 100 else line
+            # Highlight keywords
+            for kw in keywords:
+                # Case-insensitive highlight
+                idx = display.lower().find(kw)
+                if idx >= 0:
+                    original = display[idx:idx + len(kw)]
+                    display = display[:idx] + f"{GREEN}{BOLD}{original}{RESET}" + display[idx + len(kw):]
+                    break  # one highlight per line is enough
+            print(f"      {display}")
+            shown += 1
+        print()
+
+
+def query_kb_list(_db=None):
+    """List all knowledge base files with their descriptions."""
+    if not os.path.isdir(_KB_DIR):
+        _no_data("Knowledge base not found.")
+        return
+
+    _title("Knowledge Base Files")
+    files = sorted(f for f in os.listdir(_KB_DIR) if f.endswith(".md"))
+    if not files:
+        _no_data("No knowledge base files found.")
+        return
+
+    for fname in files:
+        filepath = os.path.join(_KB_DIR, fname)
+        # Read first few lines to get description from frontmatter
+        desc = ""
+        line_count = 0
+        try:
+            with open(filepath, "r") as f:
+                in_fm = False
+                for line in f:
+                    line_count += 1
+                    stripped = line.strip()
+                    if stripped == "---":
+                        in_fm = not in_fm
+                        continue
+                    if in_fm and stripped.startswith("description:"):
+                        desc = stripped.split(":", 1)[1].strip()
+        except Exception:
+            pass
+
+        label = fname.replace(".md", "").replace("_", " ").title()
+        print(f"\n  {BOLD}{label}{RESET} ({fname})")
+        print(f"    {DIM}{line_count} lines{RESET}")
+        if desc:
+            print(f"    {desc}")
+    print()
+
+
+def query_kb_section(_db, filename_key):
+    """Show the table of contents (## headings) for a specific KB file."""
+    # Resolve alias to filename
+    target = _KB_FILES.get(filename_key.lower())
+    if not target:
+        # Try direct match
+        for f in os.listdir(_KB_DIR) if os.path.isdir(_KB_DIR) else []:
+            if filename_key.lower() in f.lower():
+                target = f
+                break
+    if not target:
+        _no_data(f"No KB file matching \"{filename_key}\". Try: kb list")
+        return
+
+    filepath = os.path.join(_KB_DIR, target)
+    if not os.path.exists(filepath):
+        _no_data(f"File not found: {target}")
+        return
+
+    label = target.replace(".md", "").replace("_", " ").title()
+    _title(f"KB: {label} — Sections")
+
+    try:
+        with open(filepath, "r") as f:
+            in_fm = False
+            for line in f:
+                stripped = line.strip()
+                if stripped == "---":
+                    in_fm = not in_fm
+                    continue
+                if in_fm:
+                    continue
+                if stripped.startswith("## "):
+                    heading = stripped.lstrip("# ").strip()
+                    print(f"\n  {BOLD}{heading}{RESET}")
+                elif stripped.startswith("### "):
+                    heading = stripped.lstrip("# ").strip()
+                    print(f"    {heading}")
+    except Exception as e:
+        _no_data(f"Error reading {target}: {e}")
     print()
 
 
@@ -542,6 +768,26 @@ def route_query(query, db):
     if q in ("outlook history", "outlooks"):
         query_outlook_history(db)
         return
+
+    # ── Knowledge Base ──
+    if q in ("kb list", "knowledge base", "kb"):
+        query_kb_list(db)
+        return
+    if q.startswith("kb sections ") or q.startswith("kb toc "):
+        key = q.split(None, 2)[2] if len(q.split(None, 2)) > 2 else ""
+        query_kb_section(db, key)
+        return
+    if q.startswith("kb "):
+        search_terms = q[3:].strip()
+        if search_terms:
+            query_kb_search(db, search_terms)
+            return
+    if q.startswith("what is ") or q.startswith("explain ") or q.startswith("define "):
+        # Treat conceptual questions as KB searches
+        search_terms = re.sub(r'^(what is|explain|define)\s+', '', q).strip()
+        if search_terms:
+            query_kb_search(db, search_terms)
+            return
 
     # ── Fallback ──
     print(f"\n  {YELLOW}I don't understand that query. Type 'help' to see what I can answer.{RESET}\n")
