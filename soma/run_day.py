@@ -6,10 +6,11 @@ Usage:
     python3 ~/Desktop/DABEIBA/shared/soma/run_day.py
 
 Steps:
-    [1/4] Run ORACLE (macro + valuations)
-    [2/4] Run What Changed (diff analysis)
-    [3/4] Show SOMA Status (dashboard)
-    [4/4] Action Items (if material changes detected)
+    [0/5] Back up SOMA database
+    [1/5] Run ORACLE (macro + valuations)
+    [2/5] Run What Changed (diff analysis)
+    [3/5] Show SOMA Status (dashboard)
+    [4/5] Action Items (if material changes detected)
 """
 
 import os
@@ -48,9 +49,27 @@ def _step_fail(msg):
     print(f"  {RED}FAIL{RESET} {msg}")
 
 
+def step_0_backup():
+    """Back up soma.db before any new writes."""
+    _header("0/5", "Back Up SOMA Database")
+
+    from shared.soma.backup_soma import run_backup
+
+    try:
+        result = run_backup()
+        if result:
+            _step_ok(f"Database backed up as {result}")
+        else:
+            _step_ok("No database to back up yet (first run)")
+        return True
+    except Exception as e:
+        _step_fail(f"Backup error: {e}")
+        return False
+
+
 def step_1_oracle():
     """Run ORACLE's main.py."""
-    _header("1/4", "Run ORACLE")
+    _header("1/5", "Run ORACLE")
 
     if not os.path.exists(_ORACLE_MAIN):
         print(f"  {YELLOW}ORACLE not found at: {_ORACLE_MAIN}{RESET}")
@@ -81,7 +100,7 @@ def step_1_oracle():
 
 def step_2_what_changed():
     """Run WhatChanged analysis."""
-    _header("2/4", "What Changed")
+    _header("2/5", "What Changed")
 
     from shared.soma.what_changed import WhatChanged
 
@@ -99,7 +118,7 @@ def step_2_what_changed():
 
 def step_3_status():
     """Show the SOMA status dashboard."""
-    _header("3/4", "SOMA Status")
+    _header("3/5", "SOMA Status")
 
     from shared.soma.soma_status import print_status
 
@@ -113,7 +132,7 @@ def step_3_status():
 
 def step_4_actions(wc_result):
     """Print action items based on What Changed results."""
-    _header("4/4", "Action Items")
+    _header("4/5", "Action Items")
 
     if wc_result is None:
         print(f"  {DIM}Could not determine actions (What Changed did not run){RESET}")
@@ -150,6 +169,12 @@ def main():
     print(f"\n{BOLD}{'#' * W}{RESET}")
     print(f"{BOLD}  SOMA DAILY RUN{RESET}")
     print(f"{BOLD}{'#' * W}{RESET}")
+
+    # Step 0: Back up database before anything writes
+    try:
+        step_0_backup()
+    except Exception as e:
+        _step_fail(f"Unexpected error in Backup step: {e}")
 
     # Step 1: ORACLE
     try:

@@ -169,21 +169,53 @@ class SomaBridge:
     def _rows_to_dicts(self, rows):
         return [dict(r) for r in rows]
 
+    # ── run_id consistency ────────────────────────────────────────────
+
+    def get_latest_complete_run(self, table="regime_history"):
+        """Return the most recent run_id whose expected writes are complete.
+
+        For regime_history: at least 1 entry exists for that run_id.
+        For valuations:     at least 1 entry exists for that run_id.
+
+        Returns the run_id string, or None if no complete run exists.
+        """
+        try:
+            row = self.conn.execute(
+                f"SELECT run_id FROM [{table}] "
+                "WHERE run_id IS NOT NULL "
+                "GROUP BY run_id "
+                "HAVING COUNT(*) >= 1 "
+                "ORDER BY MAX(id) DESC LIMIT 1"
+            ).fetchone()
+            return row["run_id"] if row else None
+        except Exception:
+            return None
+
+    def get_data_by_run_id(self, table, run_id):
+        """Return all rows for a specific run_id in the given table."""
+        rows = self.conn.execute(
+            f"SELECT * FROM [{table}] WHERE run_id = ? ORDER BY id",
+            (run_id,),
+        ).fetchall()
+        return self._rows_to_dicts(rows)
+
     def get_latest_regime(self):
+        run_id = self.get_latest_complete_run("regime_history")
+        if not run_id:
+            return None
         row = self.conn.execute(
-            "SELECT * FROM regime_history ORDER BY id DESC LIMIT 1"
+            "SELECT * FROM regime_history WHERE run_id = ? ORDER BY id DESC LIMIT 1",
+            (run_id,),
         ).fetchone()
         return self._row_to_dict(row)
 
     def get_latest_valuations(self):
-        latest = self.conn.execute(
-            "SELECT run_id FROM valuations ORDER BY id DESC LIMIT 1"
-        ).fetchone()
-        if not latest:
+        run_id = self.get_latest_complete_run("valuations")
+        if not run_id:
             return []
         rows = self.conn.execute(
             "SELECT * FROM valuations WHERE run_id = ? ORDER BY ticker",
-            (latest["run_id"],),
+            (run_id,),
         ).fetchall()
         return self._rows_to_dicts(rows)
 

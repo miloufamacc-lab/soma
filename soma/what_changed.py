@@ -13,6 +13,7 @@ Usage:
 import json
 import math
 import os
+import statistics
 from datetime import datetime, timezone
 
 from .soma_bridge import SomaBridge
@@ -94,6 +95,30 @@ class WhatChanged:
             return {
                 "type": "gli_delta",
                 "description": f"|DELTA GLI| = {delta:.2f} (threshold 3.5)",
+                "severity": "MEDIUM",
+                "before": prev["gli_value"],
+                "after": cur["gli_value"],
+            }
+        return None
+
+    def _check_gli_adaptive(self, cur, prev):
+        """Flag if |DELTA GLI| exceeds 1.5x the rolling 30-day standard deviation."""
+        history = self._bridge.get_regime_history(limit=30)
+        if len(history) < 10:
+            return None  # not enough data points for a meaningful std dev
+        gli_values = [h["gli_value"] for h in history]
+        std = statistics.stdev(gli_values)
+        if std == 0:
+            return None  # all identical values, no volatility to compare against
+        delta = abs(cur["gli_value"] - prev["gli_value"])
+        threshold = 1.5 * std
+        if delta > threshold:
+            return {
+                "type": "gli_adaptive",
+                "description": (
+                    f"GLI moved {delta:.2f} points, exceeding "
+                    f"1.5x the 30-day volatility of {std:.2f}"
+                ),
                 "severity": "MEDIUM",
                 "before": prev["gli_value"],
                 "after": cur["gli_value"],
@@ -224,6 +249,7 @@ class WhatChanged:
                 "gli_delta": round(cur_regime["gli_value"] - prev_regime["gli_value"], 4),
             }
             for check in (self._check_regime_transition, self._check_gli_delta,
+                          self._check_gli_adaptive,
                           self._check_diffusion_cross, self._check_momentum_flip):
                 result = check(cur_regime, prev_regime)
                 if result:
@@ -258,16 +284,102 @@ class WhatChanged:
 
     # ── Persistence ────────────────────────────────────────────────────
 
+    def _build_event_study(self):
+        """Build the structured event-study payload for the log.
+
+        Returns a dict with trigger_type, before, after, delta,
+        materiality_score, and context fields.
+        """
+        r = self._result
+        changes = r.get("changes", [])
+
+        # Which checks fired
+        trigger_type = [c["type"] for c in changes]
+
+        # Reconstruct before / after / delta from regime + valuation summaries
+        rs = r.get("regime_summary") or {}
+        vs = r.get("valuation_summary") or {}
+
+        before = {
+            "gli": rs.get("gli_value", 0) - rs.get("gli_delta", 0)
+                   if rs.get("gli_delta") is not None else None,
+            "regime": rs.get("previous_regime"),
+            "diffusion": None,
+            "momentum": None,
+            "avg_upside": vs.get("avg_upside_previous"),
+        }
+        after = {
+            "gli": rs.get("gli_value"),
+            "regime": rs.get("current_regime"),
+            "diffusion": None,
+            "momentum": None,
+            "avg_upside": vs.get("avg_upside_current"),
+        }
+
+        # Fill diffusion/momentum from individual change entries if they fired
+        for c in changes:
+            if c["type"] == "diffusion_cross":
+                before["diffusion"] = c["before"]
+                after["diffusion"] = c["after"]
+            elif c["type"] == "momentum_flip":
+                before["momentum"] = c["before"]
+                after["momentum"] = c["after"]
+
+        delta = {
+            "gli": rs.get("gli_delta"),
+            "diffusion": (after["diffusion"] - before["diffusion"])
+                         if after["diffusion"] is not None and before["diffusion"] is not None
+                         else None,
+            "momentum": (after["momentum"] - before["momentum"])
+                        if after["momentum"] is not None and before["momentum"] is not None
+                        else None,
+            "avg_upside": vs.get("delta"),
+        }
+
+        # Context: how much history we have
+        try:
+            all_regimes = self._bridge.get_regime_history(limit=999)
+        except Exception:
+            all_regimes = []
+        data_points_available = len(all_regimes)
+
+        # Regime streak: how many consecutive entries share the same regime
+        regime_streak = 0
+        if all_regimes:
+            current = all_regimes[0].get("regime")
+            for entry in all_regimes:
+                if entry.get("regime") == current:
+                    regime_streak += 1
+                else:
+                    break
+
+        return {
+            "trigger_type": trigger_type,
+            "before": before,
+            "after": after,
+            "delta": delta,
+            "materiality_score": len(changes),
+            "context": {
+                "data_points_available": data_points_available,
+                "regime_streak": regime_streak,
+            },
+        }
+
     def save_log(self):
-        """Write the analysis result to a JSON file in shared/soma/logs/."""
+        """Write the enriched event-study analysis to a JSON file in shared/soma/logs/."""
         if self._result is None:
             self.analyze()
+
+        # Merge the event-study fields into the result
+        event_study = self._build_event_study()
+        enriched = {**self._result, **event_study}
+
         logs_dir = os.path.join(os.path.dirname(__file__), "logs")
         os.makedirs(logs_dir, exist_ok=True)
         ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         path = os.path.join(logs_dir, f"what_changed_{ts}.json")
         with open(path, "w") as f:
-            json.dump(self._result, f, indent=2, default=str)
+            json.dump(enriched, f, indent=2, default=str)
         return os.path.realpath(path)
 
     # ── Terminal display ──────────────────────────────────────────────
