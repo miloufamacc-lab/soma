@@ -57,7 +57,9 @@ def print_status(db_path=None):
         portfolio = db.get_latest_portfolio_state()
         outlook = db.get_latest_outlook()
         history = db.get_regime_history(limit=2)
+        trades = db.get_trade_log(limit=50)
         regime_fresh, regime_age = db.is_fresh("regime_history")
+        portfolio_fresh, portfolio_age = db.is_fresh("portfolio_state")
         schema_v = db.get_schema_version()
 
         # Record counts
@@ -133,6 +135,21 @@ def print_status(db_path=None):
         print(f"  Cash:         {cash_str}")
         print(f"  Total Value:  {total_str}")
         print(f"  DD from HWM:  {dd_str}")
+        print(f"  Data Age:     {_fresh_label(portfolio_fresh, portfolio_age)}")
+        if portfolio.get("module_version"):
+            print(f"  Source:        {portfolio['module_version']}")
+
+        # Trade activity summary
+        if trades:
+            rebalances = [t for t in trades if t.get("action") == "REBALANCE"]
+            tier_changes = [t for t in trades if t.get("action") == "TIER_CHANGE"]
+            total_trades = len(trades)
+            last_trade = trades[0] if trades else None
+            print(f"  Trades:       {total_trades} total "
+                  f"({len(rebalances)} rebalances, {len(tier_changes)} tier changes)")
+            if last_trade:
+                print(f"  Last Trade:   {last_trade.get('date', '?')} "
+                      f"— {last_trade.get('action', '?')} {last_trade.get('ticker', '?')}")
     else:
         print(f"  {DIM}No portfolio data yet (MANTIS not connected){RESET}")
 
