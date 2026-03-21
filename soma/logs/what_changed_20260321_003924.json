@@ -1,0 +1,113 @@
+{
+  "has_material_change": true,
+  "changes": [
+    {
+      "type": "regime_transition",
+      "description": "Regime changed from TURBULENCE to RISK_ON",
+      "severity": "HIGH",
+      "before": "TURBULENCE",
+      "after": "RISK_ON"
+    },
+    {
+      "type": "gli_delta",
+      "description": "|DELTA GLI| = 7.00 (threshold 3.5)",
+      "severity": "MEDIUM",
+      "before": 41.0,
+      "after": 48.0
+    },
+    {
+      "type": "gli_adaptive",
+      "description": "GLI moved 7.00 points, exceeding 1.5x the 30-day volatility of 2.61",
+      "severity": "MEDIUM",
+      "before": 41.0,
+      "after": 48.0
+    },
+    {
+      "type": "diffusion_cross",
+      "description": "Diffusion crossed above 55 (41.0 -> 56.0)",
+      "severity": "MEDIUM",
+      "before": 41.0,
+      "after": 56.0
+    },
+    {
+      "type": "momentum_flip",
+      "description": "Momentum sign flipped (-1.20 -> 1.80)",
+      "severity": "MEDIUM",
+      "before": -1.2,
+      "after": 1.8
+    }
+  ],
+  "timestamp": "2026-03-21T00:39:24.310225+00:00",
+  "regime_summary": {
+    "current_regime": "RISK_ON",
+    "previous_regime": "TURBULENCE",
+    "gli_value": 48.0,
+    "gli_delta": 7.0
+  },
+  "valuation_summary": {
+    "avg_upside_current": 0.2088,
+    "avg_upside_previous": 0.1798,
+    "delta": 0.029,
+    "tickers_changed": [
+      "TSLA"
+    ]
+  },
+  "outlook_summary": null,
+  "trigger_type": [
+    "regime_transition",
+    "gli_delta",
+    "gli_adaptive",
+    "diffusion_cross",
+    "momentum_flip"
+  ],
+  "before": {
+    "gli": 41.0,
+    "regime": "TURBULENCE",
+    "diffusion": 41.0,
+    "momentum": -1.2,
+    "avg_upside": 0.1798
+  },
+  "after": {
+    "gli": 48.0,
+    "regime": "RISK_ON",
+    "diffusion": 56.0,
+    "momentum": 1.8,
+    "avg_upside": 0.2088
+  },
+  "delta": {
+    "gli": 7.0,
+    "diffusion": 15.0,
+    "momentum": 3.0,
+    "avg_upside": 0.029
+  },
+  "materiality_score": 5,
+  "context": {
+    "data_points_available": 37,
+    "regime_streak": 1
+  },
+  "historical_context": [
+    {
+      "change_type": "regime_transition",
+      "context_lines": [
+        "TURBULENCE -> RISK_ON",
+        "This is the first time this transition has occurred",
+        "Total occurrences in history: 1",
+        "Previous regime (TURBULENCE) lasted 2 entries"
+      ]
+    },
+    {
+      "change_type": "gli_delta",
+      "context_lines": [
+        "GLI was last near 48.0 (+-2.0) on 2026-03-19 at 50.00",
+        "Regime at that time: RISK_ON"
+      ]
+    },
+    {
+      "change_type": "gli_adaptive",
+      "context_lines": [
+        "GLI was last near 48.0 (+-2.0) on 2026-03-19 at 50.00",
+        "Regime at that time: RISK_ON"
+      ]
+    }
+  ]
+}

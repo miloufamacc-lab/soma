@@ -282,6 +282,174 @@ class WhatChanged:
         }
         return self._result
 
+    # ── Historical context ("Why" explanations) ─────────────────────────
+
+    def explain_context(self):
+        """Enrich each material change with historical precedent from SOMA data.
+
+        Must be called after analyze(). Returns a list of context dicts,
+        one per material change that has historical data to reference.
+        """
+        if self._result is None:
+            self.analyze()
+
+        changes = self._result.get("changes", [])
+        if not changes:
+            return []
+
+        explanations = []
+        history = self._bridge.get_regime_history(limit=999)
+
+        for change in changes:
+            ctype = change["type"]
+
+            if ctype == "regime_transition":
+                explanations.append(self._explain_regime_transition(change, history))
+
+            elif ctype in ("gli_delta", "gli_adaptive"):
+                explanations.append(self._explain_gli_breach(change, history))
+
+            elif ctype == "valuation_shift":
+                explanations.append(self._explain_valuation_shift(change))
+
+        # Filter out None entries (checks with no context to add)
+        self._explanations = [e for e in explanations if e]
+        return self._explanations
+
+    def _explain_regime_transition(self, change, history):
+        """Context for regime transitions: precedent, frequency, duration."""
+        from_regime = change["before"]
+        to_regime = change["after"]
+
+        # How many times has this exact transition occurred?
+        transition_count = 0
+        last_occurrence = None
+        for i in range(len(history) - 1):
+            cur_r, prev_r = history[i]["regime"], history[i + 1]["regime"]
+            if prev_r == from_regime and cur_r == to_regime:
+                transition_count += 1
+                if last_occurrence is None and i > 0:
+                    # Skip the first match (that's the current one)
+                    pass
+                elif last_occurrence is None:
+                    last_occurrence = history[i]["date"]
+                else:
+                    pass
+        # Find the *previous* occurrence (not the current one)
+        occurrences = []
+        for i in range(len(history) - 1):
+            cur_r, prev_r = history[i]["regime"], history[i + 1]["regime"]
+            if prev_r == from_regime and cur_r == to_regime:
+                occurrences.append(history[i]["date"])
+        previous_date = occurrences[1] if len(occurrences) >= 2 else None
+
+        # How long did the previous regime last? Count consecutive entries
+        prev_duration = 0
+        for i in range(1, len(history)):
+            if history[i]["regime"] == from_regime:
+                prev_duration += 1
+            else:
+                break
+
+        lines = []
+        lines.append(f"{from_regime} -> {to_regime}")
+        if previous_date:
+            lines.append(f"This transition last occurred on {previous_date}")
+        else:
+            lines.append("This is the first time this transition has occurred")
+        lines.append(f"Total occurrences in history: {transition_count}")
+        lines.append(f"Previous regime ({from_regime}) lasted {prev_duration} entries")
+
+        return {
+            "change_type": "regime_transition",
+            "context_lines": lines,
+        }
+
+    def _explain_gli_breach(self, change, history):
+        """Context for GLI threshold breaches: similar levels, regime at that time."""
+        current_gli = change["after"]
+        tolerance = 2.0
+
+        # Find last time GLI was at a similar level (skip the most recent entry)
+        similar = None
+        for h in history[1:]:
+            if abs(h["gli_value"] - current_gli) <= tolerance:
+                similar = h
+                break
+
+        lines = []
+        if similar:
+            lines.append(f"GLI was last near {current_gli:.1f} (+-{tolerance}) "
+                         f"on {similar['date']} at {similar['gli_value']:.2f}")
+            lines.append(f"Regime at that time: {similar['regime']}")
+
+            # Check if valuation data exists around that time
+            try:
+                conn = self._bridge.conn
+                vals = conn.execute(
+                    "SELECT AVG(implied_upside) as avg_up FROM valuations "
+                    "WHERE date = ?", (similar["date"],)
+                ).fetchone()
+                if vals and vals["avg_up"] is not None:
+                    lines.append(f"Avg implied upside at that time: {vals['avg_up']:.1%}")
+            except Exception:
+                pass
+        else:
+            lines.append(f"No prior GLI reading near {current_gli:.1f} found in history")
+
+        return {
+            "change_type": change["type"],
+            "context_lines": lines,
+        }
+
+    def _explain_valuation_shift(self, change):
+        """Context for valuation shifts: which tickers moved most."""
+        conn = self._bridge.conn
+
+        # Get current and previous valuation runs
+        run_ids = conn.execute(
+            "SELECT DISTINCT run_id FROM valuations ORDER BY id DESC LIMIT 2"
+        ).fetchall()
+        if len(run_ids) < 2:
+            return None
+
+        cur_id, prev_id = run_ids[0]["run_id"], run_ids[1]["run_id"]
+        cur_vals = {r["ticker"]: r["implied_upside"] for r in conn.execute(
+            "SELECT ticker, implied_upside FROM valuations WHERE run_id = ?", (cur_id,)
+        ).fetchall()}
+        prev_vals = {r["ticker"]: r["implied_upside"] for r in conn.execute(
+            "SELECT ticker, implied_upside FROM valuations WHERE run_id = ?", (prev_id,)
+        ).fetchall()}
+
+        # Top 3 movers by |delta upside|
+        deltas = []
+        for ticker in set(cur_vals) & set(prev_vals):
+            d = cur_vals[ticker] - prev_vals[ticker]
+            deltas.append((ticker, d))
+        deltas.sort(key=lambda x: abs(x[1]), reverse=True)
+
+        lines = []
+        lines.append("Top movers by |delta upside|:")
+        for ticker, d in deltas[:3]:
+            sign = "+" if d >= 0 else ""
+            lines.append(f"  {ticker}: {sign}{d:.1%}")
+
+            # Trend: last 5 entries for this ticker
+            trend_rows = conn.execute(
+                "SELECT date, implied_upside FROM valuations "
+                "WHERE ticker = ? ORDER BY id DESC LIMIT 5", (ticker,)
+            ).fetchall()
+            if len(trend_rows) > 1:
+                trend = " -> ".join(
+                    f"{r['implied_upside']:+.1%}" for r in reversed(trend_rows)
+                )
+                lines.append(f"    Trend: {trend}")
+
+        return {
+            "change_type": "valuation_shift",
+            "context_lines": lines,
+        }
+
     # ── Persistence ────────────────────────────────────────────────────
 
     def _build_event_study(self):
@@ -372,7 +540,8 @@ class WhatChanged:
 
         # Merge the event-study fields into the result
         event_study = self._build_event_study()
-        enriched = {**self._result, **event_study}
+        explanations = self.explain_context()
+        enriched = {**self._result, **event_study, "historical_context": explanations}
 
         logs_dir = os.path.join(os.path.dirname(__file__), "logs")
         os.makedirs(logs_dir, exist_ok=True)
@@ -440,4 +609,14 @@ class WhatChanged:
                 color = severity_color.get(c["severity"], RESET)
                 print(f"  {color}[{c['severity']}]{RESET} {c['description']}")
 
-        print(f"{BOLD}{'=' * 60}{RESET}\n")
+        # Historical context (the "Why" section)
+        if r["changes"]:
+            explanations = self.explain_context()
+            if explanations:
+                print(f"\n{BOLD}--- Historical Context ---{RESET}")
+                for exp in explanations:
+                    print(f"\n  {CYAN}[{exp['change_type']}]{RESET}")
+                    for line in exp["context_lines"]:
+                        print(f"    {line}")
+
+        print(f"\n{BOLD}{'=' * 60}{RESET}\n")
