@@ -45,10 +45,17 @@ class SomaBridge:
         return datetime.now(timezone.utc).isoformat()
 
     def initialize_db(self):
-        """Run the initial migration to create all tables."""
-        migration = _MIGRATIONS_DIR / "001_initial_schema.sql"
-        sql = migration.read_text()
-        self.conn.executescript(sql)
+        """Run all pending migrations to create/update tables."""
+        current_version = self.get_schema_version()
+        migrations = sorted(_MIGRATIONS_DIR.glob("*.sql"))
+        for mig in migrations:
+            # Extract version number from filename (e.g., 001_initial_schema.sql -> 1)
+            try:
+                ver = int(mig.name.split("_")[0])
+            except (ValueError, IndexError):
+                continue
+            if ver > current_version:
+                self.conn.executescript(mig.read_text())
 
     def get_schema_version(self):
         """Return the current schema version number, or 0 if not initialized."""
@@ -160,6 +167,22 @@ class SomaBridge:
         except Exception as e:
             print(f"[SOMA] write_portfolio_state failed: {e}")
 
+    def write_event(self, date, event_type, source_module, details_json=None,
+                    module_version=None):
+        """Log a system event (universe change, config update, etc.)."""
+        try:
+            self.conn.execute(
+                """INSERT INTO events
+                   (date, event_type, source_module, details_json,
+                    write_timestamp, module_version)
+                   VALUES (?, ?, ?, ?, ?, ?)""",
+                (date, event_type, source_module, details_json,
+                 self._now(), module_version),
+            )
+            self.conn.commit()
+        except Exception as e:
+            print(f"[SOMA] write_event failed: {e}")
+
     # ── READ methods ─────────────────────────────────────────────────
     def _row_to_dict(self, row):
         if row is None:
@@ -241,4 +264,17 @@ class SomaBridge:
         rows = self.conn.execute(
             "SELECT * FROM trade_log ORDER BY id DESC LIMIT ?", (limit,)
         ).fetchall()
+        return self._rows_to_dicts(rows)
+
+    def get_events(self, event_type=None, limit=50):
+        """Return recent events, optionally filtered by event_type."""
+        if event_type:
+            rows = self.conn.execute(
+                "SELECT * FROM events WHERE event_type = ? ORDER BY id DESC LIMIT ?",
+                (event_type, limit),
+            ).fetchall()
+        else:
+            rows = self.conn.execute(
+                "SELECT * FROM events ORDER BY id DESC LIMIT ?", (limit,)
+            ).fetchall()
         return self._rows_to_dicts(rows)
