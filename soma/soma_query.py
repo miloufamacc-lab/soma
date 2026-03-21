@@ -528,6 +528,18 @@ def query_health(db):
     print(f"  {CYAN}Size:{RESET}      {size_str}")
     print(f"  {CYAN}Schema:{RESET}    v{db.get_schema_version()}")
 
+    # KB rules summary
+    try:
+        rule_row = db.conn.execute("SELECT COUNT(*) AS c FROM kb_rules").fetchone()
+        rule_count = rule_row["c"]
+        last_idx = db.conn.execute(
+            "SELECT MAX(parsed_at) AS t FROM kb_rules"
+        ).fetchone()
+        last_time = last_idx["t"] if last_idx and last_idx["t"] else "never"
+        print(f"  {CYAN}KB Rules:{RESET}  {rule_count} indexed (last: {last_time})")
+    except Exception:
+        print(f"  {CYAN}KB Rules:{RESET}  {DIM}not available{RESET}")
+
     tables = ["regime_history", "valuations", "trade_log",
               "outlook_snapshots", "portfolio_state",
               "client_profiles", "client_interactions"]
@@ -579,6 +591,12 @@ def query_help(_db=None):
         ("OUTLOOK", [
             ('"last outlook"', "Latest outlook snapshot"),
             ('"outlook history"', "Last 5 outlooks"),
+        ]),
+        ("KB RULES", [
+            ('"rules"', "List all indexed KB rules"),
+            ('"rule REGIME_ALLOC..."', "Show full rule data by ID"),
+            ('"rule audit"', "Last 20 audit log entries"),
+            ('"rebuild index"', "Re-parse KB files into rules index"),
         ]),
         ("KNOWLEDGE BASE", [
             ('"kb list"', "List all KB files with descriptions"),
@@ -826,6 +844,104 @@ def query_kb_section(_db, filename_key):
     print()
 
 
+# ── KB RULES queries ─────────────────────────────────────────────────
+
+def query_rules(db):
+    """List all indexed KB rules."""
+    try:
+        reader = db.get_kb_reader()
+        rules = reader.get_all_rules()
+    except Exception:
+        _no_data("KB rules table not available. Run migration first.")
+        return
+    if not rules:
+        _no_data("No rules indexed yet. Add RULE_BLOCK markers to KB files, then: rebuild index")
+        return
+    _title(f"KB Rules ({len(rules)})")
+    print(f"\n  {'Rule ID':<32} {'Source File':<28} {'Conf':>5}")
+    print(f"  {'─' * 68}")
+    try:
+        rows = db.conn.execute(
+            "SELECT rule_id, source_file, confidence FROM kb_rules ORDER BY rule_id"
+        ).fetchall()
+        for r in rows:
+            conf = f"{r['confidence']:.2f}" if r['confidence'] is not None else "—"
+            print(f"  {r['rule_id']:<32} {r['source_file']:<28} {conf:>5}")
+    except Exception:
+        for rid, data in sorted(rules.items()):
+            print(f"  {rid:<32} {'—':<28} {'—':>5}")
+    print()
+
+
+def query_rule_detail(db, rule_id):
+    """Show full rule data for a specific rule_id."""
+    try:
+        reader = db.get_kb_reader()
+        rule = reader.get_rule(rule_id.upper())
+    except KeyError:
+        _no_data(f"Rule '{rule_id}' not found. Try: rules")
+        return
+    except Exception:
+        _no_data("KB rules table not available. Run migration first.")
+        return
+
+    import json
+    _title(f"Rule: {rule_id.upper()}")
+    print(f"\n  {CYAN}Rule ID:{RESET}       {rule.get('rule_id', '—')}")
+    src = rule.get('source_module', '—')
+    if isinstance(src, list):
+        src = ', '.join(src)
+    print(f"  {CYAN}Source Module:{RESET} {src}")
+    print(f"  {CYAN}Confidence:{RESET}    {rule.get('confidence', '—')}")
+
+    rules_data = rule.get('rules', {})
+    if rules_data:
+        print(f"\n  {BOLD}Rules:{RESET}")
+        for name, params in rules_data.items():
+            print(f"\n    {YELLOW}{name}{RESET}")
+            if isinstance(params, dict):
+                for k, v in params.items():
+                    print(f"      {CYAN}{k}:{RESET} {v}")
+            else:
+                print(f"      {params}")
+    print()
+
+
+def query_rule_audit(db):
+    """Show last 20 audit log entries."""
+    try:
+        reader = db.get_kb_reader()
+        entries = reader.get_rule_audit(limit=20)
+    except Exception:
+        _no_data("KB audit log not available. Run migration first.")
+        return
+    if not entries:
+        _no_data("No audit log entries yet.")
+        return
+    _title(f"KB Rule Audit Log (last {len(entries)})")
+    print(f"\n  {'Rule ID':<28} {'Module':<10} {'Read At':<22} {'Run ID'}")
+    print(f"  {'─' * 76}")
+    for e in entries:
+        rid = e.get('rule_id', '—')[:26]
+        mod = e.get('read_by_module', '—')
+        read_at = (e.get('read_at', '—') or '—')[:20]
+        run = e.get('run_id', '—') or '—'
+        print(f"  {rid:<28} {mod:<10} {read_at:<22} {run}")
+    print()
+
+
+def query_rebuild_index(db):
+    """Trigger KBReader.build_index()."""
+    try:
+        reader = db.get_kb_reader()
+        reader.build_index()
+        rules = reader.get_all_rules()
+        _title("KB Index Rebuilt")
+        print(f"\n  {GREEN}{len(rules)} rule(s) indexed.{RESET}\n")
+    except Exception as e:
+        _no_data(f"Rebuild failed: {e}")
+
+
 # ── Query router ──────────────────────────────────────────────────────
 
 def route_query(query, db):
@@ -926,6 +1042,21 @@ def route_query(query, db):
     m = re.match(r'^client\s+(.+)$', q)
     if m:
         query_client_detail(db, m.group(1).strip())
+        return
+
+    # ── KB Rules ──
+    if q in ("rules", "kb rules"):
+        query_rules(db)
+        return
+    if q in ("rule audit", "rules audit", "audit"):
+        query_rule_audit(db)
+        return
+    if q in ("rebuild index", "rebuild"):
+        query_rebuild_index(db)
+        return
+    m = re.match(r'^rule\s+(.+)$', q)
+    if m:
+        query_rule_detail(db, m.group(1).strip())
         return
 
     # ── Knowledge Base ──

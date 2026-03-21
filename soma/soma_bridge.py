@@ -433,6 +433,23 @@ class SomaBridge:
         except Exception:
             return []
 
+    # ── KB RULES (Phase 2.3b — Runtime KB Reader) ─────────────────────
+
+    def get_kb_reader(self):
+        """Lazy-initialize and return a KBReader instance."""
+        if not hasattr(self, '_kb_reader'):
+            from soma.kb_reader import KBReader
+            self._kb_reader = KBReader(self)
+        return self._kb_reader
+
+    def get_rule(self, rule_id):
+        """Convenience wrapper: get a KB rule by ID."""
+        return self.get_kb_reader().get_rule(rule_id)
+
+    def log_rule_usage(self, rule_id, module, run_id=None, context=None):
+        """Convenience wrapper: log a KB rule read."""
+        self.get_kb_reader().log_rule_usage(rule_id, module, run_id, context)
+
     def get_client_context_for_cipher(self, client_alias):
         """Return a dict formatted for CIPHER's framework engines.
 

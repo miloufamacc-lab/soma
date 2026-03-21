@@ -40,6 +40,30 @@ Real target rate = policy-neutral real rate + 0.5(expected GDP growth - trend gr
 - Bear steepening (LT rates rise faster) → inflation expectations rising → real assets, TIPS, commodities
 - Bull flattening (ST rates fall faster) → rate cuts beginning → early cycle positioning
 
+<!-- RULE_BLOCK: YIELD_CURVE_SIGNALS_V1 -->
+```yaml
+rule_id: YIELD_CURVE_SIGNALS_V1
+source_module: [ORACLE]
+confidence: 0.85
+rules:
+  STEEP_UPWARD:
+    signal: expansive_policy
+    positioning: bullish_equities
+    sectors: cyclicals
+  FLAT_INVERTED:
+    signal: restrictive_or_slowdown
+    positioning: defensive
+    duration: long_duration_bonds
+  BEAR_STEEPENING:
+    signal: inflation_expectations_rising
+    positioning: real_assets
+    instruments: [TIPS, commodities]
+  BULL_FLATTENING:
+    signal: rate_cuts_beginning
+    positioning: early_cycle
+```
+<!-- END_RULE_BLOCK -->
+
 ### 1.2 Inflation Transmission Chains
 
 **Inflation Within Expectations:**
@@ -67,6 +91,31 @@ Supply shock (energy, commodities) → input costs rise → producer margins com
 **Demand-Pull Inflation Chain:**
 Excess stimulus → aggregate demand exceeds supply → labor market tightens → wages rise → spending accelerates → prices rise broadly → CB tightens → rates rise → growth moderates → eventually inflation subsides BUT asset prices may decline first
 
+<!-- RULE_BLOCK: INFLATION_ASSET_MAP_V1 -->
+```yaml
+rule_id: INFLATION_ASSET_MAP_V1
+source_module: [ORACLE]
+confidence: 0.90
+rules:
+  WITHIN_EXPECTATIONS:
+    cash: neutral
+    bonds: neutral_to_slightly_negative
+    equity: neutral
+    real_estate: neutral
+  ABOVE_EXPECTATIONS:
+    cash: positive
+    bonds: negative
+    equity: negative
+    real_estate: positive
+    commodities: positive
+  DEFLATION:
+    cash: positive_real
+    bonds: positive
+    equity: negative
+    real_estate: negative
+```
+<!-- END_RULE_BLOCK -->
+
 ### 1.3 Credit Cycle Chains
 
 **Credit Expansion Chain:**
@@ -77,6 +126,26 @@ Rates rise / defaults spike → lending standards tighten → credit growth slow
 
 **Credit Spread Signal Chain:**
 Investment grade spreads widening → market pricing higher default risk → leading indicator of economic slowdown → typically leads equity decline by 3-6 months → high yield spreads follow with amplification → when spreads exceed 500bps HY → distressed opportunity approaching → watch for stabilization as contrarian entry signal
+
+<!-- RULE_BLOCK: CREDIT_SPREAD_THRESHOLDS_V1 -->
+```yaml
+rule_id: CREDIT_SPREAD_THRESHOLDS_V1
+source_module: [ORACLE]
+confidence: 0.85
+rules:
+  HY_DISTRESSED:
+    spread_bps_threshold: 500
+    signal: distressed_opportunity_approaching
+    action: watch_for_stabilization_contrarian_entry
+  IG_WIDENING:
+    signal: leading_indicator_slowdown
+    equity_lead_months: [3, 6]
+    description: "IG widening typically leads equity decline by 3-6 months"
+  CREDIT_EXPANSION_WARNING:
+    signal: late_cycle_excess
+    indicators: ["spreads_tighten", "bond_issuance_rises", "M&A_peaks", "PE_activity_peaks"]
+```
+<!-- END_RULE_BLOCK -->
 
 ### 1.4 Currency & Trade Chains
 

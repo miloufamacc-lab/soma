@@ -60,6 +60,36 @@ sections:
 - Asset-heavy businesses (real estate, natural resources)
 - Book value is meaningful approximation of economic value
 
+<!-- RULE_BLOCK: VALUATION_METHOD_SELECTOR_V1 -->
+```yaml
+rule_id: VALUATION_METHOD_SELECTOR_V1
+source_module: [ORACLE]
+confidence: 0.90
+rules:
+  DCF:
+    use_when: ["predictable_cash_flows", "estimable_growth_rate", "going_concern"]
+    preferred_for: ["mature_companies", "utilities", "stable_dividend_payers"]
+    variants: [FCFF, FCFE, DDM]
+  DDM:
+    use_when: ["stable_predictable_dividends", "sustainable_payout_ratio"]
+    not_suitable: ["growth_companies_reinvesting_all_earnings"]
+    model: "P = D1 / (r - g), only when g < r and g is constant"
+  RELATIVE:
+    use_when: ["sufficient_comparables", "industry_standard_multiples"]
+    multiples: [PE, EV_EBITDA, PB, PS]
+    limitations: ["comparables_may_all_be_over_or_undervalued"]
+  SOTP:
+    use_when: ["conglomerate_diverse_lines", "segments_need_different_multiples"]
+    applications: ["breakup_value_analysis", "hidden_division_value"]
+  REAL_OPTIONS:
+    use_when: ["significant_optionality", "high_uncertainty"]
+    examples: ["mineral_rights", "patents", "growth_options"]
+  ASSET_BASED:
+    use_when: ["distress_or_wind_down", "asset_heavy_business"]
+    examples: ["real_estate", "natural_resources"]
+```
+<!-- END_RULE_BLOCK -->
+
 ### 3.2 Equity Return Building Blocks (Grinold-Kroner Decomposition)
 
 E(R_equity) = (D1/P0 - delta_S) + (i + g) + delta(P/E)

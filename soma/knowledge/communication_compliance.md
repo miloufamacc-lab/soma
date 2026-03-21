@@ -207,6 +207,30 @@ These frameworks are the foundation for identifying, researching, and communicat
 - Verify every output against all five criteria before client distribution
 - Build into reporting templates with section-by-section validation
 
+<!-- RULE_BLOCK: ADVICE_FRAMEWORK_V1 -->
+```yaml
+rule_id: ADVICE_FRAMEWORK_V1
+source_module: [CIPHER]
+confidence: 0.95
+rules:
+  A_AWARE:
+    description: "Consensus context — how your view differs from consensus"
+    requirement: "Specify consensus estimate and your estimate with reasoning"
+  D_DIFFERENTIATED:
+    description: "Your edge — which FaVeS element is primary differentiator"
+    requirement: "Explain WHY consensus is wrong with specific research"
+  V_VALIDATED:
+    description: "Independent sources confirming thesis"
+    requirement: "Minimum 2 independent sources for high-conviction ideas"
+  C_CONCLUSION:
+    description: "Lead with recommendation"
+    format: "FIRST sentence: Rating + price target + timeframe. THEN: 2-3 key reasons."
+  E_EASY:
+    description: "Accessible language"
+    rules: ["no_jargon", "short_sentences_1_2_lines", "80_pct_on_first_2_pages", "one_chart_replaces_3_paragraphs"]
+```
+<!-- END_RULE_BLOCK -->
+
 ---
 
 ### 1.6 PRACTICE Framework (Influencing Clients & Sources)
@@ -281,6 +305,34 @@ These frameworks are the foundation for identifying, researching, and communicat
 - Train advisors on PRACTICE framework for client interactions
 - Build PRACTICE reminders into pre-presentation checklists
 - Create templates for common interaction scenarios
+
+<!-- RULE_BLOCK: PRACTICE_FRAMEWORK_V1 -->
+```yaml
+rule_id: PRACTICE_FRAMEWORK_V1
+source_module: [CIPHER]
+confidence: 0.90
+rules:
+  P_PREPARE:
+    actions: ["research_WIIFT", "self_assess_credibility", "goal_clarity", "homework", "contingency_for_objections"]
+  R_RAPPORT:
+    actions: ["first_to_say_hello", "sincere_questions", "active_listening_95_pct", "find_common_ground", "non_judgmental"]
+  A_ASK:
+    identify: ["information_need", "emotional_need", "friendship_need"]
+    approach: "Listen for explicit and implicit needs"
+  C_CONFORM:
+    actions: ["no_judgment", "use_their_terminology", "match_pace", "match_formality", "respect_channel"]
+  T_TRUSTWORTHY:
+    actions: ["share_insights_in_advance", "be_honest", "follow_through_100_pct", "discretion", "consistency", "track_record"]
+  I_IGNORE_DISTRACTIONS:
+    actions: ["be_present", "conducive_environment", "adequate_time", "single_topic_focus", "engaged_body_language"]
+  C_COMMUNICATE:
+    tone: comforting
+    eye_contact_pct: 0.70
+    persuasion_strategies: ["reciprocation", "social_proof", "authority", "scarcity", "commitment_consistency", "liking"]
+  E_ENSURE:
+    actions: ["24_48hr_response", "proactive_follow_up", "monthly_check_in", "adapt_on_feedback", "measure_action_rate"]
+```
+<!-- END_RULE_BLOCK -->
 
 ---
 
@@ -1146,6 +1198,35 @@ Money scripts are unconscious beliefs about money formed in childhood. They driv
 - Respect: Acknowledge their intelligence and care
 - Detail: Dense analysis with full supporting documentation
 - AVOID: Pressure sales, oversimplification, "trust me," aggressive selling
+
+<!-- RULE_BLOCK: MONEY_SCRIPT_TYPES_V1 -->
+```yaml
+rule_id: MONEY_SCRIPT_TYPES_V1
+source_module: [CIPHER]
+confidence: 0.90
+rules:
+  WORSHIP:
+    belief: "Happiness equals wealth level"
+    behaviors: ["accumulation_focused", "status_conscious", "competitive_returns"]
+    blind_spots: ["underestimates_downside", "avoids_discussing_losses"]
+    communication: ["lead_with_growth", "emphasize_wealth_accumulation", "use_metrics"]
+  STATUS:
+    belief: "Wealth equals power and intelligence"
+    behaviors: ["wants_perceived_as_smart", "learns_details", "wants_early_access"]
+    blind_spots: ["overconfidence", "chases_performance", "conflicts_with_advisor"]
+    communication: ["position_as_exclusive", "emphasize_analytical_depth", "ask_their_opinion"]
+  AVOIDANCE:
+    belief: "Wealth brings problems"
+    behaviors: ["delegates_fully", "minimal_meetings", "wants_safety"]
+    blind_spots: ["ignores_tax_optimization", "underestimates_inflation_risk"]
+    communication: ["simplify_max_3_pages", "emphasize_safety", "quarterly_contact", "focus_downside_protection"]
+  VIGILANCE:
+    belief: "Be careful and discreet"
+    behaviors: ["questions_everything", "wants_documentation", "independent_verification"]
+    blind_spots: ["analysis_paralysis", "over_focus_on_process", "misses_opportunities"]
+    communication: ["comprehensive_documentation", "show_all_assumptions", "enable_control", "be_patient"]
+```
+<!-- END_RULE_BLOCK -->
 
 ---
 
