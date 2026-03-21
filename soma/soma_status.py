@@ -119,6 +119,29 @@ def print_status(db_path=None):
         print(f"  Diffusion:   {diff_str}")
         print(f"  Momentum:    {mom_str}")
         print(f"  Data Age:    {_fresh_label(regime_fresh, regime_age)}")
+
+        # Surface GLI spot components if available
+        if regime.get("gli_components_json"):
+            try:
+                import json
+                comp = json.loads(regime["gli_components_json"])
+                spot = comp.get("spot", {})
+                if spot:
+                    parts = []
+                    if "vix" in spot:
+                        parts.append(f"VIX={spot['vix']}")
+                    if "ust_10y" in spot:
+                        parts.append(f"10Y={spot['ust_10y']}%")
+                    if "dxy" in spot:
+                        parts.append(f"DXY={spot['dxy']}")
+                    if "hy_spread" in spot:
+                        parts.append(f"HY={spot['hy_spread']}")
+                    if "stress_index" in spot:
+                        parts.append(f"Stress={spot['stress_index']}")
+                    if parts:
+                        print(f"  Context:     {DIM}{', '.join(parts)}{RESET}")
+            except Exception:
+                pass
     else:
         print(f"  {DIM}No regime data yet (ORACLE not run){RESET}")
 
@@ -211,6 +234,19 @@ def print_status(db_path=None):
     print(f"  Last Write:   {oracle_ts}  {_fresh_label(regime_fresh, regime_age)}")
     print(f"  Schema:       v{schema_v}")
     print(f"  DB Size:      {size_str}")
+
+    # Cloud backup health check
+    try:
+        _shared_dir = os.path.join(os.path.dirname(__file__), "..")
+        if _shared_dir not in sys.path:
+            sys.path.insert(0, _shared_dir)
+        from cloud_config import cloud_available
+        if cloud_available():
+            print(f"  Cloud:        {GREEN}CONNECTED{RESET} (~/DABEIBA_Cloud)")
+        else:
+            print(f"  Cloud:        {YELLOW}UNAVAILABLE{RESET} — offsite backup disabled")
+    except ImportError:
+        print(f"  Cloud:        {RED}NOT CONFIGURED{RESET} — run setup_cloud.py")
     print(f"  Records:")
     for t in tables:
         label = t.replace("_", " ").title()

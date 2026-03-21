@@ -25,6 +25,7 @@ class SomaBridge:
     def __init__(self, db_path=None):
         self.db_path = str(db_path or _DEFAULT_DB_PATH)
         self.conn = None
+        self._batch_mode = False
 
     # ── Context manager ──────────────────────────────────────────────
     def __enter__(self):
@@ -43,6 +44,29 @@ class SomaBridge:
     # ── Utility ──────────────────────────────────────────────────────
     def _now(self):
         return datetime.now(timezone.utc).isoformat()
+
+    def begin_batch(self):
+        """Start a batch transaction — write methods skip individual commits."""
+        self._batch_mode = True
+        self.conn.execute("BEGIN")
+
+    def commit_batch(self):
+        """Commit the batch transaction. All writes since begin_batch() are atomic."""
+        self.conn.commit()
+        self._batch_mode = False
+
+    def rollback_batch(self):
+        """Rollback all writes since begin_batch() on failure."""
+        try:
+            self.conn.rollback()
+        except Exception:
+            pass
+        self._batch_mode = False
+
+    def _maybe_commit(self):
+        """Commit only if NOT in batch mode."""
+        if not self._batch_mode:
+            self.conn.commit()
 
     def initialize_db(self):
         """Run all pending migrations to create/update tables."""
@@ -99,7 +123,7 @@ class SomaBridge:
                 (date, run_id, gli_value, regime, diffusion_index, momentum,
                  gli_components_json, self._now(), module_version),
             )
-            self.conn.commit()
+            self._maybe_commit()
         except Exception as e:
             print(f"[SOMA] write_regime failed: {e}")
 
@@ -114,7 +138,7 @@ class SomaBridge:
                 (date, run_id, ticker, fair_value, current_price, implied_upside,
                  execution_score, self._now(), module_version),
             )
-            self.conn.commit()
+            self._maybe_commit()
         except Exception as e:
             print(f"[SOMA] write_valuation failed: {e}")
 
@@ -133,7 +157,7 @@ class SomaBridge:
                  gli_value, diffusion_index, momentum, vol_reading,
                  onchain_tx_id, confirm_block, self._now(), module_version),
             )
-            self.conn.commit()
+            self._maybe_commit()
         except Exception as e:
             print(f"[SOMA] write_trade failed: {e}")
 
@@ -148,7 +172,7 @@ class SomaBridge:
                 (date, version, full_text_hash, key_conclusions_json,
                  self._now(), module_version),
             )
-            self.conn.commit()
+            self._maybe_commit()
         except Exception as e:
             print(f"[SOMA] write_outlook failed: {e}")
 
@@ -163,7 +187,7 @@ class SomaBridge:
                 (date, positions_json, cash_pct, total_value, dd_from_hwm,
                  self._now(), module_version),
             )
-            self.conn.commit()
+            self._maybe_commit()
         except Exception as e:
             print(f"[SOMA] write_portfolio_state failed: {e}")
 
@@ -229,7 +253,7 @@ class SomaBridge:
                      last_contact_type, next_review_date, notes,
                      now, now, now, module_version),
                 )
-            self.conn.commit()
+            self._maybe_commit()
         except Exception as e:
             print(f"[SOMA] write_client_profile failed: {e}")
 
@@ -253,7 +277,7 @@ class SomaBridge:
                    WHERE client_alias=?""",
                 (date, interaction_type, self._now(), self._now(), client_alias),
             )
-            self.conn.commit()
+            self._maybe_commit()
         except Exception as e:
             print(f"[SOMA] write_client_interaction failed: {e}")
 
@@ -269,7 +293,7 @@ class SomaBridge:
                 (date, event_type, source_module, details_json,
                  self._now(), module_version),
             )
-            self.conn.commit()
+            self._maybe_commit()
         except Exception as e:
             print(f"[SOMA] write_event failed: {e}")
 
@@ -287,12 +311,27 @@ class SomaBridge:
     def get_latest_complete_run(self, table="regime_history"):
         """Return the most recent run_id whose expected writes are complete.
 
-        For regime_history: at least 1 entry exists for that run_id.
-        For valuations:     at least 1 entry exists for that run_id.
+        A run is 'complete' only if its run_id appears in BOTH regime_history
+        AND valuations (ORACLE writes both atomically). This prevents partial
+        runs (e.g. regime written but valuations failed) from being used by
+        WhatChanged or other consumers.
 
         Returns the run_id string, or None if no complete run exists.
         """
         try:
+            # Find run_ids that exist in BOTH tables
+            row = self.conn.execute(
+                """SELECT r.run_id
+                   FROM regime_history r
+                   INNER JOIN valuations v ON r.run_id = v.run_id
+                   WHERE r.run_id IS NOT NULL
+                   GROUP BY r.run_id
+                   ORDER BY MAX(r.id) DESC LIMIT 1"""
+            ).fetchone()
+            if row:
+                return row["run_id"]
+            # Fallback: if no joined run exists, try the requested table alone
+            # (handles MANTIS-only or CIPHER-only runs)
             row = self.conn.execute(
                 f"SELECT run_id FROM [{table}] "
                 "WHERE run_id IS NOT NULL "

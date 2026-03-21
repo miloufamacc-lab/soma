@@ -1,4 +1,4 @@
--- SOMA Migration 002: Client Profiles (Phase 2.3 — Client Alpha Layer)
+-- SOMA Migration 004: Client Profiles (Phase 2.3 — Client Alpha Layer)
 --
 -- Per-client investment thesis profiles: NOT personal data.
 -- Profiles the advisor's own thinking patterns per client:
@@ -78,4 +78,4 @@ CREATE INDEX IF NOT EXISTS idx_interaction_date ON client_interactions(date);
 
 -- Update schema version
 INSERT OR IGNORE INTO schema_version (version, applied_at, description)
-VALUES (2, datetime('now'), 'Client profiles + interaction log (Phase 2.3)');
+VALUES (4, datetime('now'), 'Client profiles + interaction log (Phase 2.3)');
