@@ -60,6 +60,7 @@ def print_status(db_path=None):
         trades = db.get_trade_log(limit=50)
         regime_fresh, regime_age = db.is_fresh("regime_history")
         portfolio_fresh, portfolio_age = db.is_fresh("portfolio_state")
+        outlook_fresh, outlook_age = db.is_fresh("outlook_snapshots")
         schema_v = db.get_schema_version()
 
         # Record counts
@@ -177,12 +178,31 @@ def print_status(db_path=None):
     else:
         print(f"  {DIM}No valuation data yet{RESET}")
 
-    # ── COMMUNICATION ─────────────────────────────────────────────
-    print(f"\n{_bar('COMMUNICATION')}")
+    # ── COMMUNICATION (CIPHER) ─────────────────────────────────────
+    print(f"\n{_bar('COMMUNICATION (CIPHER)')}")
     if outlook:
         print(f"  Last Outlook: {outlook.get('date', '?')} (v{outlook.get('version', '?')})")
+        print(f"  Data Age:     {_fresh_label(outlook_fresh, outlook_age)}")
+        if outlook.get("full_text_hash"):
+            print(f"  Hash:         {outlook['full_text_hash'][:16]}")
+        if outlook.get("module_version"):
+            print(f"  Source:        {outlook['module_version']}")
+        # Show key conclusions
+        if outlook.get("key_conclusions_json"):
+            try:
+                import json
+                conclusions = json.loads(outlook["key_conclusions_json"])
+                if conclusions:
+                    print(f"  Conclusions:")
+                    for c in conclusions[:5]:
+                        print(f"    - {c}")
+            except Exception:
+                pass
+        # Recommend new outlook if regime data is much fresher than outlook
+        if regime and outlook_age > regime_age + 24:
+            print(f"  {YELLOW}Outlook may be stale — regime data is {outlook_age - regime_age:.0f}h newer{RESET}")
     else:
-        print(f"  {DIM}No outlooks yet{RESET}")
+        print(f"  {DIM}No outlooks yet (CIPHER not connected){RESET}")
 
     # ── SYSTEM HEALTH ─────────────────────────────────────────────
     print(f"\n{_bar('SYSTEM HEALTH')}")

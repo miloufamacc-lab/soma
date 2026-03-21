@@ -6,11 +6,12 @@ Usage:
     python3 ~/Desktop/DABEIBA/shared/soma/run_day.py
 
 Steps:
-    [0/5] Back up SOMA database
-    [1/5] Run ORACLE (macro + valuations)
-    [2/5] Run What Changed (diff analysis)
-    [3/5] Show SOMA Status (dashboard)
-    [4/5] Action Items (if material changes detected)
+    [0/6] Back up SOMA database
+    [1/6] Run ORACLE (macro + valuations)
+    [2/6] Run What Changed (diff analysis)
+    [3/6] Show SOMA Status (dashboard)
+    [4/6] Action Items (if material changes detected)
+    [5/6] CIPHER Outlook (if material changes detected)
 """
 
 import os
@@ -51,7 +52,7 @@ def _step_fail(msg):
 
 def step_0_backup():
     """Back up soma.db before any new writes."""
-    _header("0/5", "Back Up SOMA Database")
+    _header("0/6", "Back Up SOMA Database")
 
     from shared.soma.backup_soma import run_backup
 
@@ -69,7 +70,7 @@ def step_0_backup():
 
 def step_1_oracle():
     """Run ORACLE's main.py."""
-    _header("1/5", "Run ORACLE")
+    _header("1/6", "Run ORACLE")
 
     if not os.path.exists(_ORACLE_MAIN):
         print(f"  {YELLOW}ORACLE not found at: {_ORACLE_MAIN}{RESET}")
@@ -100,7 +101,7 @@ def step_1_oracle():
 
 def step_2_what_changed():
     """Run WhatChanged analysis."""
-    _header("2/5", "What Changed")
+    _header("2/6", "What Changed")
 
     from shared.soma.what_changed import WhatChanged
 
@@ -118,7 +119,7 @@ def step_2_what_changed():
 
 def step_3_status():
     """Show the SOMA status dashboard."""
-    _header("3/5", "SOMA Status")
+    _header("3/6", "SOMA Status")
 
     from shared.soma.soma_status import print_status
 
@@ -132,7 +133,7 @@ def step_3_status():
 
 def step_4_actions(wc_result):
     """Print action items based on What Changed results."""
-    _header("4/5", "Action Items")
+    _header("4/6", "Action Items")
 
     if wc_result is None:
         print(f"  {DIM}Could not determine actions (What Changed did not run){RESET}")
@@ -161,6 +162,44 @@ def step_4_actions(wc_result):
         print(f"    [ ] Consider writing a new Outlook to reflect changed conditions")
     if high:
         print(f"\n  {RED}{BOLD}HIGH severity changes require immediate attention.{RESET}")
+
+
+def step_5_cipher(wc_result):
+    """Generate CIPHER outlook if material changes detected."""
+    _header("5/6", "CIPHER Outlook")
+
+    if wc_result is None:
+        print(f"  {DIM}Skipping — What Changed did not run{RESET}")
+        return
+
+    if not wc_result.get("has_material_change"):
+        print(f"  {GREEN}No new outlook needed — no material changes detected.{RESET}")
+        return
+
+    try:
+        # Add CIPHER to path
+        _CIPHER_ROOT = os.path.join(_PROJECT_ROOT, "cipher")
+        if _CIPHER_ROOT not in sys.path:
+            sys.path.insert(0, _CIPHER_ROOT)
+
+        from cipher.soma_integration import generate_soma_powered_outlook
+
+        print(f"  {YELLOW}Material changes detected — generating outlook...{RESET}")
+        result = generate_soma_powered_outlook()
+
+        if result.get("generated"):
+            n_conclusions = len(result.get("conclusions", []))
+            print(f"  {GREEN}OK{RESET} Outlook generated with {n_conclusions} key conclusions")
+            for c in result.get("conclusions", [])[:5]:
+                print(f"    - {c}")
+        else:
+            reason = result.get("context", {}).get("reason", "unknown")
+            print(f"  {YELLOW}SOMA data unavailable ({reason}) — skipped{RESET}")
+
+    except ImportError:
+        print(f"  {DIM}CIPHER not connected to SOMA yet (import failed){RESET}")
+    except Exception as e:
+        _step_fail(f"CIPHER error: {e}")
 
 
 def main():
@@ -200,6 +239,12 @@ def main():
         step_4_actions(wc_result)
     except Exception as e:
         _step_fail(f"Unexpected error in Action Items step: {e}")
+
+    # Step 5: CIPHER Outlook (depends on step 2 result)
+    try:
+        step_5_cipher(wc_result)
+    except Exception as e:
+        _step_fail(f"Unexpected error in CIPHER step: {e}")
 
     # Footer
     elapsed = time.time() - start
