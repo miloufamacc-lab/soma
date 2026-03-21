@@ -1,0 +1,31 @@
+# SOMA Knowledge Base Manifest
+# Lists all KB files, their source modules, and content scope
+# Updated: 2026-03-21
+
+version: "1.0"
+compiled_output: "../SOMA_COMPILED.md"
+
+files:
+  - path: macro_regimes.md
+    source_module: ORACLE
+    scope: GLI framework, regime definitions, liquidity cycles, macro signals
+    sections: ~15
+    lines: 944
+
+  - path: valuation_models.md
+    source_module: ORACLE
+    scope: Fair value models, sector analysis, execution scores, DCF methodology
+    sections: ~20
+    lines: 1399
+
+  - path: communication_compliance.md
+    source_module: CIPHER
+    scope: ADViCE framework, PRACTICE model, ethics, GIPS, compliance rules
+    sections: ~30
+    lines: 2345
+
+  - path: mantis_mechanics.md
+    source_module: MANTIS
+    scope: Always-in rationale, inverse-vol sizing, circuit breaker, cross-AI consensus
+    sections: ~8
+    lines: 283
