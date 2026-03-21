@@ -1,0 +1,57 @@
+{
+  "has_material_change": true,
+  "changes": [
+    {
+      "type": "gli_delta",
+      "description": "|DELTA GLI| = 5.00 (threshold 3.5)",
+      "severity": "MEDIUM",
+      "before": 50.0,
+      "after": 55.0
+    },
+    {
+      "type": "gli_adaptive",
+      "description": "GLI moved 5.00 points, exceeding 1.5x the 30-day volatility of 1.40",
+      "severity": "MEDIUM",
+      "before": 50.0,
+      "after": 55.0
+    }
+  ],
+  "timestamp": "2026-03-21T00:21:26.503113+00:00",
+  "regime_summary": {
+    "current_regime": "RISK_ON",
+    "previous_regime": "RISK_ON",
+    "gli_value": 55.0,
+    "gli_delta": 5.0
+  },
+  "valuation_summary": {},
+  "outlook_summary": null,
+  "trigger_type": [
+    "gli_delta",
+    "gli_adaptive"
+  ],
+  "before": {
+    "gli": 50.0,
+    "regime": "RISK_ON",
+    "diffusion": null,
+    "momentum": null,
+    "avg_upside": null
+  },
+  "after": {
+    "gli": 55.0,
+    "regime": "RISK_ON",
+    "diffusion": null,
+    "momentum": null,
+    "avg_upside": null
+  },
+  "delta": {
+    "gli": 5.0,
+    "diffusion": null,
+    "momentum": null,
+    "avg_upside": null
+  },
+  "materiality_score": 2,
+  "context": {
+    "data_points_available": 34,
+    "regime_streak": 34
+  }
+}

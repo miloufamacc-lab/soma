@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+pydantic
+requests
+aiohttp
+beautifulsoup4
+apscheduler
+httpx

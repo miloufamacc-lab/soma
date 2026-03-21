@@ -1,0 +1,883 @@
+================================================================================
+          GLOBAL LIQUIDITY INDEX (GLI) REPLICATION — COMPLETE RESEARCH FILE
+          Based on CrossBorder Capital / Michael Howell Framework
+          Compiled: February 2026
+================================================================================
+
+
+TABLE OF CONTENTS
+─────────────────
+1.  Executive Summary
+2.  CrossBorder Capital — Firm Profile
+3.  Core Philosophy: The Liquidity-First Framework
+4.  The P = L × (P/L) Asset Pricing Identity
+5.  Global Liquidity Pool — Definition & Scope
+6.  GLI Index Construction Methodology
+7.  The Three Sub-Components
+8.  The 65-Month Liquidity Cycle
+9.  Four-Phase Asset Allocation Framework
+10. Asset Class Signals & Lead-Lag Relationships
+11. Collateral Dynamics & Crisis Mechanics
+12. Historical Anchor Points (1990–2026)
+13. Central Bank Balance Sheet Data
+14. Public Data Sources for Replication
+15. Replication Architecture (What We Built)
+16. Gaps & Limitations
+17. Key Terminology Glossary
+18. Bibliography & Source Attribution
+
+
+================================================================================
+1. EXECUTIVE SUMMARY
+================================================================================
+
+This document compiles all research, data, and methodology gathered during the
+construction of a Global Liquidity Intelligence System (GLIS) — an interactive
+application that replicates the analytical framework of CrossBorder Capital's
+proprietary Global Liquidity Index (GLI).
+
+CrossBorder Capital (CBC), founded by Michael Howell in 1996, monitors global
+liquidity flows across 85–90 economies. Their core thesis: liquidity — defined
+as the funding capacity of the financial system's balance sheets — is the master
+variable driving asset prices, not fundamentals, valuations, or interest rates
+alone.
+
+The full GLI dataset is proprietary (sold via GLIndexes subscription). However,
+enough public information exists — from the book Capital Wars (2020), Substack
+(Capital Wars newsletter), X posts (@crossbordercap), interviews, and slide
+decks — to reconstruct the conceptual engine and build a functional proxy.
+
+Our application uses:
+- Simulated data interpolated from 11 public anchor points (1990–2026)
+- The 65-month cycle methodology described in Capital Wars
+- Z-score/diffusion index construction for GLI momentum
+- Three-component decomposition (Central Bank, Private, Cross-Border)
+- Four-phase cycle staging (Rebound/Calm/Speculation/Turbulence)
+- Six asset class signal models with empirical lead-lag relationships
+- Central bank balance sheet breakdown (Fed, ECB, PBoC, BoJ, BoE)
+- 22-question client intelligence center
+
+
+================================================================================
+2. CROSSBORDER CAPITAL — FIRM PROFILE
+================================================================================
+
+Name:           CrossBorder Capital Ltd
+Founded:        1996
+Location:       London, United Kingdom
+Regulation:     FCA-regulated
+Founder:        Michael Howell (often called "King of Liquidity" or
+                "Godfather of Liquidity")
+X Account:      @crossbordercap (~123k followers as of early 2026)
+Website:        crossbordercapital.com / glindexes.com
+Substack:       Capital Wars (weekly liquidity updates)
+
+Core Business:
+- Independent investment advisory and fund management
+- Monitoring global liquidity flows, credit conditions, and cross-border
+  capital movements across 85–90+ economies
+- Providing proprietary data via GLIndexes (GLI™)
+- Systematic fixed-income, currency, and other mandates
+- Recent: CrossBorder Kintore AMC (gold/FX strategies)
+
+The X account (@crossbordercap) is run primarily by Michael Howell himself.
+It serves as a real-time outlet for charts, weekly liquidity updates, market
+commentary, Substack promotions, and sharp takes on policy, USD, gold, crypto,
+China, and risk assets.
+
+The bio has been consistent for years:
+"Global research group focussed on monitoring credit, liquidity conditions
+& capital flows in over 90 economies."
+
+
+================================================================================
+3. CORE PHILOSOPHY: THE LIQUIDITY-FIRST FRAMEWORK
+================================================================================
+
+The entire CrossBorder Capital intellectual system revolves around one core
+conviction:
+
+    LIQUIDITY (funding liquidity / financial-sector balance-sheet capacity)
+    IS THE MASTER VARIABLE DRIVING ASSET PRICES — not fundamentals,
+    valuations, or interest rates alone.
+
+Key tenets:
+
+a) DEBT-REFINANCING MACHINE
+   Modern capital markets are debt-refinancing machines, not capital-allocation
+   mechanisms. Economies run on rolling over existing debt. Crises stem from
+   COLLATERAL SHORTAGES and liquidity dry-ups, not asset mispricing.
+
+b) GROSS LIQUIDITY
+   Liquidity is GROSS, not net. The identity:
+   Sources: Savings + Change in Financial Liabilities
+   = Uses: Investment + Change in Asset Values
+
+   It is elastic and amplified by second-round effects: rising collateral
+   values enable more lending, which creates more liquidity, which pushes
+   asset prices higher (and vice versa in downturns).
+
+c) CENTRAL BANKS AS DEALERS OF LAST RESORT
+   Central banks function as "dealers of last resort" via QE, repo operations,
+   and FX swaps. Rate cuts do NOT automatically equal more liquidity —
+   especially under QT or when private sector/collateral dynamics dominate.
+
+d) DEFLATION MORE DANGEROUS THAN INFLATION
+   Deflationary liquidity collapses are more dangerous than inflation.
+   Finance is fragile; investors play a survival game tracking collateral
+   chains, not earnings.
+
+e) REJECTION OF EQUILIBRIUM MODELS
+   This view explicitly rejects equilibrium/CAPM models that assume
+   diversifiable risk. Markets are driven by flows, not fair values.
+
+Origin: Evolved from Howell's Salomon Brothers days (1980s–90s) and
+flow-of-funds analysis. Laid out most clearly in Capital Wars (2020).
+
+
+================================================================================
+4. THE P = L × (P/L) ASSET PRICING IDENTITY
+================================================================================
+
+The core pricing framework:
+
+    Asset Prices (P) = Liquidity (L) × Positioning (P/L)
+
+Where:
+- L = Global Liquidity — the total funding flows, balance-sheet capacity,
+  and cash/credit moving through wholesale markets
+- P/L = Risk positioning — duration targeting, passive flows, leverage,
+  collateral demand, and risk appetite
+
+This framework says:
+- When L is rising and P/L positioning is aggressive, asset prices surge
+- When L contracts and positioning unwinds, prices crash
+- The 2008 crisis: liquidity dried up + leveraged positioning unwound
+  catastrophically
+
+This explicitly rejects:
+- CAPM (Capital Asset Pricing Model)
+- Efficient Market Hypothesis in its strong form
+- Fundamental valuation as the primary driver of prices
+- The idea that interest rates alone determine financial conditions
+
+
+================================================================================
+5. GLOBAL LIQUIDITY POOL — DEFINITION & SCOPE
+================================================================================
+
+Definition:
+The gross funding pool represents the total short-term liabilities of banks,
+shadow banks, and financial intermediaries across approximately 85–90
+economies. It captures:
+- Traditional bank lending capacity
+- Shadow banking (repo, commercial paper, MMFs, ABS)
+- Wholesale/institutional funding channels
+- Cross-border dollar and Eurodollar funding
+
+Key characteristics:
+- Currently ~US$185 trillion (as of late 2025 / early 2026)
+- Approximately 2.5× World M2 money supply
+- The gap (~$70T) represents wholesale channels invisible to M2
+- Roughly 1.5–1.8× World GDP
+- ~80% generated by US, Eurozone, China, Japan, and UK
+- 60% of global trade invoiced in USD (dollar dominance)
+- ~80% of lending is collateralized
+
+Why it differs from M2:
+M2 measures retail money (checking deposits, savings, small CDs) — the money
+in consumers' bank accounts. Global Liquidity captures the wholesale funding
+capacity of the entire financial system. Crises propagate through wholesale
+channels (2008 GFC, 2019 repo, 2022 UK LDI) that M2 misses entirely.
+
+
+================================================================================
+6. GLI INDEX CONSTRUCTION METHODOLOGY
+================================================================================
+
+The GLI (Global Liquidity Index) is a MOMENTUM/DIFFUSION index, not a level
+indicator. It measures the RATE-OF-CHANGE of the global funding pool.
+
+Construction process (from Capital Wars + public descriptions):
+
+Step 1: RAW DATA COLLECTION
+  - Central bank balance sheets (weekly where available)
+  - Banking system short-term liabilities
+  - Shadow bank liabilities (repo, CP, MMF, ABS)
+  - Cross-border flow proxies
+  - Collected from ~85–90 economies
+
+Step 2: GROWTH RATE COMPUTATION
+  - Convert absolute levels to growth rates
+  - Typically 3-month or 12-month rate of change
+  - Seasonal adjustment where applicable
+
+Step 3: Z-SCORE NORMALIZATION
+  - Standardize each component using rolling z-scores
+  - Ensures comparability across countries and time periods
+  - Accounts for different scales and volatilities
+
+Step 4: DIFFUSION INDEX AGGREGATION
+  - Aggregate z-scores into a diffusion index (similar to PMI construction)
+  - Values above 50 = expanding momentum
+  - Values below 50 = contracting momentum
+  - Weighted by each component's share of total global funding
+
+Step 5: NORMALIZATION TO 0–100
+  - Final index normalized to 0–100 scale
+  - Mean approximately 50
+  - Readings > 70 = overheated / extremely loose
+  - Readings < 30 = severely tight
+  - Extreme readings are rare and tend to reverse
+
+Key properties:
+- Captures momentum (rate of change), not level
+- Mean-reverting by construction
+- 65-month cycle is the dominant frequency
+- Strong lead over asset prices (6–13 weeks for most asset classes)
+- Financial Conditions Index leads GLI by 6–13 weeks (nested lead)
+
+
+================================================================================
+7. THE THREE SUB-COMPONENTS
+================================================================================
+
+All measured GROSS (not net), from the assets side of financial-sector
+balance sheets:
+
+────────────────────────────────────────────────────────────────────────────────
+COMPONENT 1: CENTRAL BANK PROVISION
+────────────────────────────────────────────────────────────────────────────────
+What it captures:
+- Balance sheet expansion (QE, asset purchases)
+- Repo operations (standing facilities, emergency lending)
+- FX swap lines (dollar swap agreements between central banks)
+- Reserve management operations
+
+Key players: Fed, ECB, PBoC, BoJ, BoE (dominate ~80% of CB liquidity)
+
+Characteristics:
+- Most directly policy-driven
+- Can shift rapidly with policy decisions
+- Central banks as "dealers of last resort"
+- Rate cuts ≠ more liquidity (especially under QT)
+
+────────────────────────────────────────────────────────────────────────────────
+COMPONENT 2: PRIVATE SECTOR / SHADOW BANKING
+────────────────────────────────────────────────────────────────────────────────
+What it captures:
+- Traditional bank lending (short-term liabilities)
+- Shadow banks: Money Market Funds (MMFs)
+- Repo market activity
+- Commercial paper issuance
+- Asset-Backed Securities (ABS) creation
+- Securities lending
+- Collateral creation and re-hypothecation
+
+Characteristics:
+- LARGEST component of Global Liquidity
+- Smoother, less volatile than CB or cross-border
+- Driven by collateral availability and credit demand
+- Self-reinforcing: rising assets → more collateral → more lending → more
+  liquidity → rising assets (and reverse)
+- Where crises propagate (invisible to M2)
+
+────────────────────────────────────────────────────────────────────────────────
+COMPONENT 3: CROSS-BORDER FLOWS
+────────────────────────────────────────────────────────────────────────────────
+What it captures:
+- Dollar/Eurodollar funding flows
+- US Treasury International Capital (TIC) data
+- Emerging market capital inflows/outflows
+- FX swap imbalances
+- CFTC positioning data
+- BIS cross-border banking statistics
+
+Characteristics:
+- MOST VOLATILE component
+- Highly sensitive to USD strength/weakness
+- Dollar shortage = tight cross-border liquidity = Risk-Off
+- Dollar weakness = abundant cross-border flows = Risk-On
+- Often "cleaned" for pure global view (removing dollar effects)
+- Drives EM sentiment and allocation
+
+
+================================================================================
+8. THE 65-MONTH LIQUIDITY CYCLE
+================================================================================
+
+The 65-month (~5.4-year) Global Liquidity Cycle is the cornerstone of
+CrossBorder Capital's timing framework.
+
+Key facts:
+- Validated through Fourier spectral analysis of data back to mid-1960s
+- Over 60 years of consistent periodicity
+- Runs trough-to-trough in approximately 65 months
+- Upswing (trough → peak) typically lasts 32–33 months
+- Downswing (peak → trough) lasts approximately 32–33 months
+- The timing is more reliable than the amplitude
+
+Historical cycle troughs (approximate):
+- ~1966
+- ~1971
+- ~1976
+- ~1981
+- ~1986
+- ~1991
+- ~1996
+- ~2001
+- ~2006–07
+- ~2008–09 (GFC compressed the cycle)
+- ~2013–14
+- ~2018–19
+- December 2022 (most recent confirmed trough)
+
+Current cycle:
+- Trough: December 2022
+- Projected peak: September 2025 (confirmed by multiple forecasts)
+- Nowcast showed plateau/turn around August–November 2025
+- Status (early 2026): Post-peak, momentum rolling over
+- Next projected trough: ~2027–28
+
+Cycle alignment with major events:
+- 1987 crash: Aligned with cycle downturn
+- 1997 Asian Crisis: Cycle contraction phase
+- 2000 dot-com peak: Liquidity cycle peak
+- 2007–08 GFC: Severe liquidity contraction
+- 2011 European debt: Cycle trough region
+- 2015 China devaluation: Cycle downturn
+- 2018–19 repo crisis: Cycle trough
+- 2020 COVID crash: Exogenous shock during cycle upturn
+- 2022 tightening: Cycle trough
+- 2025 plateau: Cycle peak
+
+
+================================================================================
+9. FOUR-PHASE ASSET ALLOCATION FRAMEWORK
+================================================================================
+
+The liquidity cycle drives a four-phase asset allocation rhythm:
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ PHASE 1: REBOUND                                                          │
+│ GLI: Rising from trough (below 50 → approaching 50)                       │
+│ Duration: ~8–12 months from trough                                        │
+│ Characteristics:                                                          │
+│   - Strongest phase for risk assets                                       │
+│   - Liquidity accelerating from compressed levels                         │
+│   - Maximum reward-to-risk ratio                                          │
+│ Best assets: Equities (especially cyclicals), high-yield credit           │
+│ Worst assets: Cash (opportunity cost), safe havens                        │
+│ Signal: BUY risk assets aggressively                                      │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ PHASE 2: CALM                                                             │
+│ GLI: Above 50 but decelerating                                            │
+│ Duration: ~8–12 months                                                    │
+│ Characteristics:                                                          │
+│   - Markets well-supported but peak returns have passed                   │
+│   - Equity markets may plateau                                            │
+│   - Still favorable but with diminishing momentum                         │
+│ Best assets: Equities (quality/defensive tilt), investment-grade credit   │
+│ Worst assets: Cash                                                        │
+│ Signal: HOLD risk, begin reducing high-beta                               │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ PHASE 3: SPECULATION                                                      │
+│ GLI: Near peak, above 70                                                  │
+│ Duration: ~6–10 months                                                    │
+│ Characteristics:                                                          │
+│   - Late-cycle euphoria                                                   │
+│   - "Hot money" chases speculative assets                                 │
+│   - Leverage builds, collateral stretches                                 │
+│   - Commodities and alternatives outperform equities                      │
+│ Best assets: Commodities, gold, crypto, real assets                       │
+│ Worst assets: Defensive equities (underperform), cash                     │
+│ Signal: ROTATE from equities to commodities/gold, reduce leverage         │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ PHASE 4: TURBULENCE                                                       │
+│ GLI: Falling from peak                                                    │
+│ Duration: ~8–12 months                                                    │
+│ Characteristics:                                                          │
+│   - Risk-Off environment                                                  │
+│   - USD strengthens (dollar shortage)                                     │
+│   - Collateral becomes scarce                                             │
+│   - Refinancing risk rises                                                │
+│   - Forced selling and de-leveraging                                      │
+│ Best assets: Cash, short-duration Treasuries, gold, USD                   │
+│ Worst assets: Equities, EM, crypto, commodities                           │
+│ Signal: SELL risk assets, go defensive, build cash                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+================================================================================
+10. ASSET CLASS SIGNALS & LEAD-LAG RELATIONSHIPS
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+EQUITIES (MSCI World / S&P 500)
+────────────────────────────────────────────────────────────────────────────────
+Beta to GLI:    +0.85 (strong positive)
+Lead time:      GLI leads equities by 4–8 weeks
+Best phase:     Rebound (strongest), Calm (good)
+Worst phase:    Turbulence
+Mechanism:      More liquidity → more balance-sheet capacity chasing assets →
+                compressed risk premia → higher equity prices
+Notes:          In Speculation phase, equities often plateau while
+                commodities/crypto take leadership
+
+────────────────────────────────────────────────────────────────────────────────
+GOLD
+────────────────────────────────────────────────────────────────────────────────
+Beta to GLI:    +0.45 to +0.60 (moderate, phase-dependent)
+Lead time:      Variable; responds to monetary conditions
+Best phase:     Speculation (monetary expansion) + Turbulence (safe haven)
+Worst phase:    Rebound (opportunity cost vs. risk assets)
+Mechanism:      Monetary-inflation hedge; responds to financial-system
+                balance sheet expansion, not CPI inflation. Outperforms when
+                collateral demand spikes and real rates fall.
+Notes:          Recent data shows gold outperforming BTC in windows where
+                relative monetary shifts favor hard assets. Gold benefits
+                from BOTH late-cycle speculation AND risk-off turbulence.
+
+────────────────────────────────────────────────────────────────────────────────
+BITCOIN / CRYPTO
+────────────────────────────────────────────────────────────────────────────────
+Beta to GLI:    +0.90+ (highest of any major asset class)
+Lead time:      GLI leads BTC by 8–13 weeks
+Best phase:     Rebound + Speculation (extreme upside)
+Worst phase:    Turbulence (crashes hard)
+Mechanism:      Extreme liquidity beta. BTC is the purest expression of
+                excess liquidity in the system.
+Notes:          CrossBorder Capital argues the 5–6 year GL cycle explains
+                BTC price far better than the halving narrative. BTC peaks
+                with liquidity peaks (2017, 2021, 2025). Recent CBC post:
+                "Global Liquidity has peaked. Crypto needs this to reverse."
+                Impulse response to 1% GL$ shock peaks at 8–10 weeks lag,
+                then decays.
+
+────────────────────────────────────────────────────────────────────────────────
+USD (DXY)
+────────────────────────────────────────────────────────────────────────────────
+Beta to GLI:    -0.60 (NEGATIVE — inverse relationship)
+Lead time:      Roughly contemporaneous
+Best phase:     Turbulence (dollar strengthens on funding squeeze)
+Worst phase:    Rebound + Speculation (dollar weakens)
+Mechanism:      60% of global trade invoiced in USD. Dollar-denominated
+                debt outside US exceeds $13T. When liquidity tightens →
+                scramble for dollars to service obligations → "dollar
+                shortage" → USD higher. When abundant → pressure eases.
+Notes:          Frequent CBC posts show "bad news for dollar bears" when
+                liquidity rebounds. Dollar is the inverse signal of global
+                liquidity health.
+
+────────────────────────────────────────────────────────────────────────────────
+EMERGING MARKETS
+────────────────────────────────────────────────────────────────────────────────
+Beta to GLI:    +0.75 (strong positive)
+Lead time:      Follows GLI and USD simultaneously
+Best phase:     Rebound + Speculation (when USD weak + flows strong)
+Worst phase:    Turbulence (capital flight + strong dollar)
+Mechanism:      Highly sensitive to: (a) USD weakness (reduces dollar-debt
+                burden), (b) cross-border capital inflows, (c) PBoC easing.
+                China's liquidity cycle increasingly drives EM sentiment.
+Notes:          2018 and 2022 EM drawdowns both aligned with GLI contraction.
+                PBoC easing / RMB liquidity injections watched obsessively
+                by CBC as leading EM indicators.
+
+────────────────────────────────────────────────────────────────────────────────
+COMMODITIES
+────────────────────────────────────────────────────────────────────────────────
+Beta to GLI:    +0.50 to +0.65 (moderate, late-cycle)
+Lead time:      Lags equities by 6–12 months
+Best phase:     Speculation (strongest — "last to peak")
+Worst phase:    Turbulence + early Rebound
+Mechanism:      Late-cycle outperformers. Hot money rotates from growth
+                assets into real assets. Inflationary dynamics of sustained
+                liquidity expansion → more funding chasing finite resources.
+Notes:          Commodities typically lag equities by 6–12 months.
+                They are the last major asset class to peak before
+                Turbulence. Positive feedback loop with commodity-producing
+                EM economies.
+
+
+================================================================================
+11. COLLATERAL DYNAMICS & CRISIS MECHANICS
+================================================================================
+
+Collateral is central to the CrossBorder framework. Key points:
+
+COLLATERAL MULTIPLIER:
+- ~80% of lending in modern markets is collateralized
+- Rising asset prices → increased collateral values → more borrowing →
+  more funding → higher asset prices (self-reinforcing loop)
+- This makes Global Liquidity ELASTIC — it expands and contracts with
+  asset prices (unlike textbook fixed money supply)
+
+COLLATERAL CHAIN:
+- Treasury securities are the primary collateral asset globally
+- Changes in Treasury availability (QE/QT, issuance patterns, reserve
+  management) directly affect the plumbing of the entire financial system
+- Re-hypothecation multiplies the effective collateral supply
+- Velocity of collateral = how many times a single Treasury is pledged
+
+CRISIS MECHANICS:
+When the collateral loop reverses:
+1. Falling prices reduce collateral values
+2. Margin calls triggered
+3. Forced selling of assets
+4. Further price declines
+5. More collateral impairment
+6. Liquidity crunch → credit freeze
+
+Historical examples:
+- 2008 GFC: Mortgage collateral collapse → systemic liquidity freeze
+- 2019 Repo crisis: Treasury collateral shortage → overnight rate spike
+- 2020 March: COVID → across-the-board collateral panic → Fed intervention
+- 2022 UK LDI: Gilt collateral collapse → pension fund margin calls
+- All originated in wholesale/collateral markets invisible to M2
+
+YIELD CURVE AS PROXY:
+- Term premia (yield curve slope) is a strong real-time proxy for liquidity
+- Steepening = abundant liquidity
+- Flattening = tight liquidity
+- US Liquidity Index leads the 10-2 yield curve by ~9 months
+
+
+================================================================================
+12. HISTORICAL ANCHOR POINTS (1990–2026)
+================================================================================
+
+These are all publicly shared data points from CrossBorder Capital's X
+account, Substack, interviews, and slide decks. They form the backbone
+of any replication effort.
+
+GLOBAL LIQUIDITY POOL SIZE (US$ TRILLIONS):
+┌──────────────────────────┬───────────┬──────────────────────────────────────┐
+│ Date                     │ Pool ($T) │ Notes                                │
+├──────────────────────────┼───────────┼──────────────────────────────────────┤
+│ 1990                     │    23.8   │ Baseline (2022 slide deck)           │
+│ 2000                     │    38.0   │ (2022 slide deck)                    │
+│ 2008 (GFC peak)          │    84.9   │ (2022 slide deck)                    │
+│ 2019 (pre-COVID)         │   131.7   │ China now larger share than USA      │
+│ 2022 (pre-tightening)    │   165.6   │ Peak before contraction              │
+│ Oct/Dec 2022 (trough)    │  ~158.8   │ "Maximum tightness"                  │
+│ Sep 2023                 │   164.0   │ Still -3.5% from prior peak          │
+│ Feb 2024                 │   171.3   │ Record at time                       │
+│ Mid-2025                 │   175.0   │ +16.1T over prior 12m                │
+│ Jan 2025                 │   170.8   │ Weekly drop of $955bn noted          │
+│ Sep 16, 2025             │   184.9   │ New record; +5.6% YoY                │
+│ Sep 30, 2025             │   184.7   │ +9.9% 3-month annualized             │
+│ Late 2025 / early 2026   │  ~185.0   │ Plateau; momentum peaked ~Aug 2025   │
+└──────────────────────────┴───────────┴──────────────────────────────────────┘
+
+Growth context:
+- +~40% since 2019 (~$132T → ~$185T)
+- +~125% since 2008 GFC
+- 2022 peak before tightening: ~$166T, brief contraction to ~$159T
+
+DEBT/LIQUIDITY RATIO (Advanced economies debt / GL):
+- Long-term average: ~2.5×
+- 2008 peak: 2.9×
+- 2025: close to 2.5×
+- 2026–27 projected: >2.7× → refinancing stress
+
+REFINANCING WALL:
+- ~$33T annual roll by 2026–27
+- 2025–2028 maturities represent a "fiscal bill coming due"
+
+
+================================================================================
+13. CENTRAL BANK BALANCE SHEET DATA
+================================================================================
+
+Major central bank roles in global liquidity provision (approximate):
+
+FEDERAL RESERVE (Fed):
+- Pre-COVID: ~$4.2T balance sheet
+- COVID peak (2022): ~$8.9T
+- QT through 2024–25: reduced to ~$7.5T range
+- Dominant in global dollar liquidity
+- Key tools: QE/QT, ON-RRP, discount window, FX swap lines
+- FRED source: WALCL (total assets)
+
+EUROPEAN CENTRAL BANK (ECB):
+- COVID peak: ~€8.8T
+- Significant reduction via TLTRO maturation and APP runoff
+- Key tools: APP, PEPP, TLTRO, TPI
+- Source: ECB Statistical Data Warehouse
+
+PEOPLE'S BANK OF CHINA (PBoC):
+- Balance sheet: ~¥45T (~$6.2T equivalent)
+- Growing share of global liquidity
+- Key tools: MLF, SLF, RRR cuts, targeted lending, FX intervention
+- Easing cycles closely watched for EM implications
+- Source: PBoC monthly releases
+
+BANK OF JAPAN (BoJ):
+- Largest balance sheet relative to GDP (~130%)
+- Yield Curve Control (YCC) policy = implicit unlimited QE
+- Cautious normalization beginning 2024
+- Source: BoJ statistics
+
+BANK OF ENGLAND (BoE):
+- Smaller absolute contribution but systemically important
+- 2022 LDI crisis response = emergency gilt purchases
+- APF runoff ongoing
+- Source: BoE weekly balance sheet
+
+
+================================================================================
+14. PUBLIC DATA SOURCES FOR REPLICATION
+================================================================================
+
+To build a proxy GLI from scratch using only public data:
+
+CENTRAL BANK BALANCE SHEETS (Weekly/Monthly):
+┌────────────────────┬────────────────────────────────────────────────────────┐
+│ Source              │ URL / Access                                          │
+├────────────────────┼────────────────────────────────────────────────────────┤
+│ Fed (H.4.1)        │ fred.stlouisfed.org (WALCL, RRPONTSYD, WTREGEN)      │
+│ ECB                │ sdw.ecb.europa.eu (BSI statistics)                    │
+│ PBoC               │ pbc.gov.cn (monthly balance sheet)                    │
+│ BoJ                │ boj.or.jp (accounts, money stock)                     │
+│ BoE                │ bankofengland.co.uk (weekly report)                   │
+└────────────────────┴────────────────────────────────────────────────────────┘
+
+PRIVATE SECTOR / SHADOW BANKING:
+┌────────────────────┬────────────────────────────────────────────────────────┐
+│ US MMF liabilities │ ICI (ici.org) — weekly money market fund assets       │
+│ Repo volumes       │ DTCC (dtcc.com) — daily repo/GCF volumes             │
+│ Commercial paper   │ Fed H.15 — CP outstanding                            │
+│ ABS issuance       │ SIFMA — securitization statistics                     │
+│ Bank lending       │ Fed H.8 — commercial bank assets/liabilities          │
+└────────────────────┴────────────────────────────────────────────────────────┘
+
+CROSS-BORDER FLOWS:
+┌────────────────────┬────────────────────────────────────────────────────────┐
+│ US TIC data        │ treasury.gov — monthly capital flows                  │
+│ BIS banking stats  │ bis.org — cross-border banking positions              │
+│ EM fund flows      │ EPFR (epfrglobal.com) — subscription required        │
+│ Dollar index       │ FRED (DTWEXBGS) — trade-weighted USD                 │
+│ Cross-currency     │ Bloomberg/Reuters — basis swap spreads                │
+│   basis                                                                    │
+│ CFTC positioning   │ cftc.gov — Commitments of Traders                    │
+└────────────────────┴────────────────────────────────────────────────────────┘
+
+COLLATERAL & STRESS METRICS:
+┌────────────────────┬────────────────────────────────────────────────────────┐
+│ Treasury GC repo   │ DTCC / NY Fed (SOFR, BGCR, TGCR)                     │
+│ MOVE index         │ Bloomberg — bond volatility                           │
+│ On/off-the-run     │ Bloomberg/Reuters                                     │
+│ SOFR-EFFR spread   │ FRED — dollar funding stress proxy                   │
+│ Credit spreads     │ FRED (BAMLH0A0HYM2, BAMLC0A0CM)                     │
+│ VIX                │ CBOE — equity volatility                              │
+└────────────────────┴────────────────────────────────────────────────────────┘
+
+YIELD CURVE / TERM PREMIA:
+┌────────────────────┬────────────────────────────────────────────────────────┐
+│ Treasury yields    │ FRED (DGS2, DGS10, DGS30)                            │
+│ ACM term premia    │ NY Fed Adrian-Crump-Moench model                     │
+│ 10-2 spread        │ FRED (T10Y2Y)                                        │
+└────────────────────┴────────────────────────────────────────────────────────┘
+
+
+================================================================================
+15. REPLICATION ARCHITECTURE (WHAT WE BUILT)
+================================================================================
+
+Our GLIS application was built as a self-contained HTML dashboard with
+embedded data. Here is the technical architecture:
+
+DATA GENERATION (Python):
+- 444 monthly records from January 1990 to December 2026
+- Cubic spline interpolation between 11 public anchor points
+- Added quarterly seasonality and persistent AR(1) noise
+- GLI momentum computed from 12-month rate-of-change, normalized 0–100
+- 65-month sine wave cycle overlay
+- Three sub-components with different volatility profiles and lead-lag
+- Six asset class signals with empirical beta coefficients
+- Central bank breakdown based on historical QE/QT periods
+- Financial conditions index as leading indicator
+
+DASHBOARD (HTML + JavaScript):
+- Self-contained single HTML file (~280 KB)
+- Chart.js 4.x (UMD build for Safari compatibility)
+- No external dependencies or server required
+- Matrix-style dark theme (green on black terminal aesthetic)
+- 7 interactive charts with tooltips and time range filtering
+- 6 KPI cards with real-time calculations
+- Cycle phase wheel (SVG)
+- Asset signal detail cards with 36-month sparklines
+- Central bank heatmap (adding/draining indicators)
+- 22-question client intelligence center
+- Time range filters: 1Y, 3Y, 5Y, 10Y, All
+
+CHART INVENTORY:
+1. Global Liquidity Pool (area chart, $T)
+2. GLI Momentum Index (line chart, 0–100)
+3. Liquidity Sub-Components (multi-line overlay)
+4. Asset Signal Strength (horizontal bar chart)
+5. 65-Month Cycle vs GLI Momentum (dual-line with overlay)
+6. Central Bank Breakdown (stacked bar, quarterly)
+7. Asset Signal Mini-Charts (6× sparkline per asset class)
+
+Q&A KNOWLEDGE BASE:
+- 22 questions across 5 categories
+- Answers reflect CrossBorder Capital's framework faithfully
+- Educational, not advisory
+- Searchable with real-time filtering
+
+
+================================================================================
+16. GAPS & LIMITATIONS
+================================================================================
+
+WHAT WE CANNOT REPLICATE WITHOUT A SUBSCRIPTION:
+1. Exact daily/weekly GLI score time series
+2. Country-by-country sub-index breakdowns (90 economies)
+3. Raw data feeds (cleaned CB balance sheets, shadow bank liabilities)
+4. Proprietary nowcasting model (daily flash estimates)
+5. Granular cross-border flow decomposition
+6. CBC's exact weighting scheme for the three components
+7. Heat maps with country-level detail
+8. Emerging Market Liquidity Index (EMLI)
+9. GLI-BB (Bitcoin Basket) proprietary index
+10. Real-time collateral metrics with CBC's methodology
+
+DATA QUALITY NOTES:
+- Our data is SIMULATED/INTERPOLATED, not actual measured flows
+- The 11 anchor points are accurate (from public sources)
+- Values between anchor points are plausible estimates, not facts
+- The 65-month cycle is approximated with sine wave + noise
+- Asset signals use simplified beta models, not full lead-lag regressions
+- CB breakdown is approximate based on public knowledge of QE/QT timing
+
+FOR PRODUCTION USE, YOU WOULD NEED:
+- GLIndexes subscription (contact: info@crossbordercapital.com)
+- OR: Build from scratch using the 20+ public data sources listed above
+  (significant data engineering effort; the methodology chapter in
+  Capital Wars provides the conceptual framework)
+- Bloomberg/Reuters terminal for real-time collateral and funding metrics
+- EPFR subscription for EM fund flow data
+
+
+================================================================================
+17. KEY TERMINOLOGY GLOSSARY
+================================================================================
+
+ABS             Asset-Backed Securities
+ACM Model       Adrian-Crump-Moench term premium model (NY Fed)
+Basis Swap      Cross-currency basis swap; measures USD funding stress
+BGCR            Broad General Collateral Rate (NY Fed)
+CBC             CrossBorder Capital
+Collateral      Assets pledged to secure lending (~80% of all lending)
+CP              Commercial Paper
+Cross-Currency  Cost of swapping one currency for another (incl. FX
+  Basis           forward premium); negative = dollar funding stress
+Dealer of Last  Central bank role in backstopping funding markets
+  Resort
+DXY             US Dollar Index (trade-weighted)
+EFFR            Effective Federal Funds Rate
+EMLI            Emerging Market Liquidity Index (CBC proprietary)
+Eurodollar      US dollars held in banks outside the United States
+EPFR            Emerging Portfolio Fund Research (flow data provider)
+FX Swap         Foreign exchange swap (short-term dollar lending mechanism)
+GCF             General Collateral Finance (repo rate)
+GFC             Global Financial Crisis (2007–2009)
+GL              Global Liquidity
+GLI             Global Liquidity Index (CBC proprietary momentum index)
+Gross Liquidity Total sources of funding (savings + change in liabilities)
+                vs. net (which would subtract repayments)
+H.4.1           Federal Reserve weekly statistical release (balance sheet)
+H.8             Federal Reserve weekly bank asset/liability release
+ICI             Investment Company Institute (US mutual fund data)
+LDI             Liability-Driven Investment (UK pension strategy)
+LIBOR-OIS       London Interbank Rate minus Overnight Indexed Swap Rate
+                (historical funding stress measure)
+MMF             Money Market Fund
+MOVE            Merrill Lynch Option Volatility Estimate (bond vol index)
+Nowcast         Real-time estimate of current conditions using partial data
+ON-RRP          Overnight Reverse Repo Facility (Fed)
+P/L             Positioning ratio in P = L × (P/L) framework
+QE              Quantitative Easing (central bank asset purchases)
+QT              Quantitative Tightening (central bank balance sheet runoff)
+Re-hypothecation Pledging already-pledged collateral as security for new
+                borrowing (multiplies effective collateral supply)
+Refinancing Wall Volume of debt maturing and requiring rollover
+Repo            Repurchase Agreement (short-term collateralized lending)
+RRR             Reserve Requirement Ratio (PBoC tool)
+SIFMA           Securities Industry and Financial Markets Association
+SLF             Standing Lending Facility (PBoC)
+SOFR            Secured Overnight Financing Rate (replaced LIBOR)
+Term Premium    Extra yield demanded for holding longer-duration bonds
+TGCR            Tri-Party General Collateral Rate (NY Fed)
+TIC             Treasury International Capital (US cross-border flow data)
+TLTRO           Targeted Longer-Term Refinancing Operations (ECB)
+WALCL           Fed total assets (FRED series)
+YCC             Yield Curve Control (BoJ policy)
+Z-Score         Standardized deviation from mean (used in GLI construction)
+
+
+================================================================================
+18. BIBLIOGRAPHY & SOURCE ATTRIBUTION
+================================================================================
+
+PRIMARY SOURCES:
+
+Howell, Michael J. (2020). Capital Wars: The Rise of Global Liquidity.
+    Palgrave Macmillan. ISBN: 978-3-030-39287-1
+    [Core methodology, conceptual framework, historical analysis]
+
+@crossbordercap on X (Twitter). Posts from 2019–2026.
+    [Weekly GLI chart teasers, heat maps, cycle commentary, policy analysis,
+    asset allocation signals. Primary source for public data points.]
+
+Howell, Michael J. "Capital Wars" Substack newsletter (2022–2026).
+    [Weekly "Global Liquidity Watch" updates with pool sizes, growth rates,
+    cycle commentary. Mix of free teasers and paid reports.]
+
+CrossBorder Capital slide decks (various conferences, 2019–2023).
+    [Historical liquidity pool table, long-term cycle charts, methodology
+    overview slides. Source for 1990–2022 anchor points.]
+
+INTERVIEWS & PODCASTS:
+
+Howell, Michael J. Interview with Raoul Pal, Real Vision (multiple).
+    [Detailed framework discussion, cycle analysis, BTC correlation.]
+
+Howell, Michael J. Interview on Bankless podcast.
+    [Crypto-liquidity relationship, 65-month cycle, BTC as liquidity beta.]
+
+Howell, Michael J. Interview on Thoughtful Money (2025).
+    [2025 peak/plateau narrative confirmation, refinancing wall analysis.]
+
+DATA SOURCES REFERENCED:
+
+Federal Reserve Economic Data (FRED): fred.stlouisfed.org
+European Central Bank Statistical Data Warehouse: sdw.ecb.europa.eu
+Bank for International Settlements Statistics: bis.org/statistics
+International Monetary Fund: imf.org
+Bank of Japan Statistics: boj.or.jp
+People's Bank of China: pbc.gov.cn
+Bank of England: bankofengland.co.uk
+US Treasury TIC Data: treasury.gov/tic
+DTCC Repository Statistics: dtcc.com
+Investment Company Institute: ici.org
+SIFMA Research: sifma.org
+CFTC Commitments of Traders: cftc.gov
+
+ACKNOWLEDGMENT:
+
+The Global Liquidity Index (GLI), GLIndexes, EMLI, and related indexes are
+trademarks of CrossBorder Capital Ltd. The methodology, framework, and
+analytical approach described in this document are the intellectual property
+of Michael Howell and CrossBorder Capital. This replication is for
+educational purposes only, based entirely on publicly available information.
+
+For access to the full proprietary dataset and indexes:
+    Contact: info@crossbordercapital.com
+    Website: glindexes.com
+
+
+================================================================================
+                              END OF DOCUMENT
+================================================================================

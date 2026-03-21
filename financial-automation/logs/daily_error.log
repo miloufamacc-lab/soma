@@ -1,0 +1,2 @@
+shell-init: error retrieving current directory: getcwd: cannot access parent directories: Operation not permitted
+/bin/bash: /Users/jacobopaez/Documents/Work-Projects/financial-automation/run_daily.sh: No such file or directory
