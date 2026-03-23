@@ -17,7 +17,14 @@ import os
 from datetime import datetime, timezone
 from pathlib import Path
 
-_DEFAULT_DB_PATH = Path.home() / "Desktop" / "DABEIBA" / "shared" / "soma" / "data" / "soma.db"
+# SOM-005: Allow DB path override via SOMA_DB_PATH environment variable.
+# This supports CI, multi-environment deployments, and isolated testing
+# without modifying code. Falls back to the canonical Desktop path.
+_DEFAULT_DB_PATH = (
+    Path(os.environ["SOMA_DB_PATH"])
+    if "SOMA_DB_PATH" in os.environ
+    else Path.home() / "Desktop" / "DABEIBA" / "shared" / "soma" / "data" / "soma.db"
+)
 _MIGRATIONS_DIR = Path(__file__).parent / "migrations"
 
 
@@ -59,8 +66,8 @@ class SomaBridge:
         """Rollback all writes since begin_batch() on failure."""
         try:
             self.conn.rollback()
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"[SOMA] rollback_batch failed: {e}")
         self._batch_mode = False
 
     def _maybe_commit(self):
@@ -96,7 +103,17 @@ class SomaBridge:
 
         Returns (is_fresh: bool, age_in_hours: float).
         If the table is empty, returns (False, float('inf')).
+
+        Note: table name comes from internal allowlist of known tables.
         """
+        # Allowlist of valid tables to prevent injection (table name cannot be parameterized)
+        _VALID_TABLES = {
+            "regime_history", "valuations", "trade_log", "outlook_snapshots",
+            "portfolio_state", "client_profiles", "client_interactions", "events"
+        }
+        if table not in _VALID_TABLES:
+            return False, float("inf")
+
         try:
             row = self.conn.execute(
                 f"SELECT write_timestamp FROM [{table}] ORDER BY id DESC LIMIT 1"
@@ -108,7 +125,8 @@ class SomaBridge:
                 ts = ts.replace(tzinfo=timezone.utc)
             age = (datetime.now(timezone.utc) - ts).total_seconds() / 3600
             return age < max_age_hours, round(age, 2)
-        except Exception:
+        except Exception as e:
+            print(f"[SOMA] is_fresh check failed for table {table}: {e}")
             return False, float("inf")
 
     # ── WRITE methods (fire-and-forget) ──────────────────────────────
@@ -124,6 +142,10 @@ class SomaBridge:
                  gli_components_json, self._now(), module_version),
             )
             self._maybe_commit()
+            # Active intelligence: validate against KB
+            self._validate_write("regime", gli_value=gli_value, regime=regime,
+                                 diffusion_index=diffusion_index, momentum=momentum,
+                                 module_version=module_version)
         except Exception as e:
             print(f"[SOMA] write_regime failed: {e}")
 
@@ -139,6 +161,10 @@ class SomaBridge:
                  execution_score, self._now(), module_version),
             )
             self._maybe_commit()
+            # Active intelligence: validate against KB
+            self._validate_write("valuation", ticker=ticker, fair_value=fair_value,
+                                 current_price=current_price, implied_upside=implied_upside,
+                                 execution_score=execution_score, module_version=module_version)
         except Exception as e:
             print(f"[SOMA] write_valuation failed: {e}")
 
@@ -158,6 +184,10 @@ class SomaBridge:
                  onchain_tx_id, confirm_block, self._now(), module_version),
             )
             self._maybe_commit()
+            # Active intelligence: validate against KB
+            self._validate_write("trade", ticker=ticker, action=action,
+                                 weight=weight, regime_at_time=regime_at_time,
+                                 module_version=module_version)
         except Exception as e:
             print(f"[SOMA] write_trade failed: {e}")
 
@@ -188,6 +218,10 @@ class SomaBridge:
                  self._now(), module_version),
             )
             self._maybe_commit()
+            # Active intelligence: validate against KB
+            self._validate_write("portfolio", cash_pct=cash_pct, total_value=total_value,
+                                 dd_from_hwm=dd_from_hwm, positions_json=positions_json,
+                                 module_version=module_version)
         except Exception as e:
             print(f"[SOMA] write_portfolio_state failed: {e}")
 
@@ -298,12 +332,14 @@ class SomaBridge:
             print(f"[SOMA] write_event failed: {e}")
 
     # ── READ methods ─────────────────────────────────────────────────
-    def _row_to_dict(self, row):
+    def _row_to_dict(self, row) -> dict | None:
+        """Convert a single sqlite3.Row to dict or None if empty."""
         if row is None:
             return None
         return dict(row)
 
-    def _rows_to_dicts(self, rows):
+    def _rows_to_dicts(self, rows) -> list[dict]:
+        """Convert a list of sqlite3.Row objects to list of dicts."""
         return [dict(r) for r in rows]
 
     # ── run_id consistency ────────────────────────────────────────────
@@ -343,8 +379,18 @@ class SomaBridge:
         except Exception:
             return None
 
-    def get_data_by_run_id(self, table, run_id):
-        """Return all rows for a specific run_id in the given table."""
+    def get_data_by_run_id(self, table: str, run_id: str) -> list[dict]:
+        """Return all rows for a specific run_id in the given table.
+
+        Note: table name comes from internal allowlist.
+        """
+        _VALID_TABLES = {
+            "regime_history", "valuations", "trade_log", "outlook_snapshots",
+            "portfolio_state", "client_profiles", "client_interactions", "events"
+        }
+        if table not in _VALID_TABLES:
+            return []
+
         rows = self.conn.execute(
             f"SELECT * FROM [{table}] WHERE run_id = ? ORDER BY id",
             (run_id,),
@@ -471,6 +517,33 @@ class SomaBridge:
             return self._rows_to_dicts(rows)
         except Exception:
             return []
+
+    # ── KB VALIDATION (Phase 2.4 — Active Intelligence Layer) ──────────
+
+    def get_kb_validator(self):
+        """Lazy-initialize and return a KBValidator instance."""
+        if not hasattr(self, '_kb_validator'):
+            from soma.kb_validator import KBValidator
+            self._kb_validator = KBValidator(self)
+        return self._kb_validator
+
+    def _validate_write(self, write_type, **kwargs):
+        """Fire-and-forget: validate a write against KB rules.
+
+        Never crashes the caller — validation is advisory, not blocking.
+        """
+        try:
+            v = self.get_kb_validator()
+            if write_type == "regime":
+                v.validate_regime_write(**kwargs)
+            elif write_type == "valuation":
+                v.validate_valuation_write(**kwargs)
+            elif write_type == "portfolio":
+                v.validate_portfolio_write(**kwargs)
+            elif write_type == "trade":
+                v.validate_trade_write(**kwargs)
+        except Exception:
+            pass  # validation must never crash a write
 
     # ── KB RULES (Phase 2.3b — Runtime KB Reader) ─────────────────────
 

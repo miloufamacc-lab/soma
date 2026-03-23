@@ -6,9 +6,12 @@ Usage:
     python3 ~/Desktop/DABEIBA/shared/soma/run_day.py
 
 Steps:
+    [KB]  KB Index Check — rebuild if knowledge files changed
     [0/6] Backup soma.db
     [1/6] Run ORACLE → writes regime + valuations to SOMA
     [2/6] What Changed → diffs against previous, flags material shifts
+    [2b]  Narrative Alignment → flags outlook ↔ portfolio contradictions
+    [2c]  KB Violations → reports any new validation violations
     [3/6] SOMA Status → one-screen dashboard
     [4/6] MANTIS → shows portfolio state + trades
     [5/6] CIPHER → generates outlook IF material changes detected
@@ -49,6 +52,31 @@ def _step_ok(msg):
 
 def _step_fail(msg):
     print(f"  {RED}FAIL{RESET} {msg}")
+
+
+# ── Step KB: Knowledge Base Index ─────────────────────────────────────
+
+def step_kb_index():
+    """Rebuild KB rule index if any knowledge files changed."""
+    _header("KB", "Knowledge Base Index")
+    try:
+        from shared.soma.soma_bridge import SomaBridge
+        with SomaBridge() as db:
+            db.initialize_db()
+            kr = db.get_kb_reader()
+            if kr.is_index_stale():
+                print(f"  {YELLOW}KB files changed — rebuilding index...{RESET}")
+                kr.build_index()
+                rules = kr.get_all_rules()
+                _step_ok(f"{len(rules)} rules re-indexed")
+            else:
+                rules = kr.get_all_rules()
+                _step_ok(f"{len(rules)} rules up to date (no changes)")
+            return True
+    except Exception as e:
+        _step_fail(f"KB index check failed: {e}")
+        print(f"  {DIM}Continuing without KB — modules will use fallback values{RESET}")
+        return True  # non-fatal — don't abort the pipeline
 
 
 # ── Step 0: Backup ────────────────────────────────────────────────────
@@ -122,6 +150,96 @@ def step_2_what_changed():
     except Exception as e:
         _step_fail(f"What Changed error: {e}")
         return None
+
+
+# ── Step 2b: Narrative Alignment ──────────────────────────────────────
+
+def step_2b_alignment():
+    """Portfolio-Narrative Alignment — flags contradictions."""
+    _header("2b", "Portfolio-Narrative Alignment")
+
+    try:
+        from shared.soma.narrative_alignment import NarrativeAlignment
+
+        with NarrativeAlignment() as na:
+            result = na.analyze()
+            na.print_terminal()
+            log_path = na.save_log()
+
+            n_issues = len(result.get("inconsistencies", []))
+            alignment = result.get("alignment", 0)
+
+            if n_issues == 0:
+                _step_ok(f"Aligned ({alignment:.0%}) — no contradictions")
+            else:
+                print(f"  {YELLOW}{n_issues} inconsistency(ies) found — review above{RESET}")
+            _step_ok(f"Log saved to {log_path}")
+            return result
+
+    except Exception as e:
+        _step_fail(f"Alignment check failed: {e}")
+        print(f"  {DIM}Continuing — alignment check is non-fatal{RESET}")
+        return None
+
+
+# ── Step 2c: KB Violations ───────────────────────────────────────────
+
+def step_2c_violations():
+    """Check for new KB violations since last run."""
+    _header("2c", "KB Violations Check")
+
+    try:
+        from shared.soma.soma_bridge import SomaBridge
+
+        with SomaBridge() as db:
+            db.initialize_db()
+            try:
+                rows = db.conn.execute(
+                    """SELECT severity, COUNT(*) AS cnt
+                       FROM kb_violations GROUP BY severity"""
+                ).fetchall()
+                counts = {r["severity"]: r["cnt"] for r in rows}
+            except Exception:
+                print(f"  {DIM}No violations table yet (Schema v4 migration not applied){RESET}")
+                return
+
+            total = sum(counts.values())
+            if total == 0:
+                _step_ok("No violations — all writes consistent with KB rules")
+                return
+
+            crit = counts.get("CRITICAL", 0)
+            warn = counts.get("WARNING", 0)
+            info = counts.get("INFO", 0)
+
+            if crit > 0:
+                print(f"  {RED}{BOLD}CRITICAL: {crit}{RESET}  {YELLOW}WARNING: {warn}{RESET}  {DIM}INFO: {info}{RESET}")
+            elif warn > 0:
+                print(f"  {YELLOW}WARNING: {warn}{RESET}  {DIM}INFO: {info}{RESET}")
+            else:
+                print(f"  {DIM}INFO: {info}{RESET}")
+
+            # Show most recent critical/warning violations
+            try:
+                recent = db.conn.execute(
+                    """SELECT severity, rule_id, source_module, description, detected_at
+                       FROM kb_violations
+                       WHERE severity IN ('CRITICAL', 'WARNING')
+                       ORDER BY id DESC LIMIT 5"""
+                ).fetchall()
+                if recent:
+                    print()
+                    for r in recent:
+                        sev_c = RED if r["severity"] == "CRITICAL" else YELLOW
+                        print(f"    {sev_c}[{r['severity']}]{RESET} {r['source_module']}: "
+                              f"{r['description'][:55]}")
+                    print(f"\n  {DIM}Full details: python3 soma_query.py 'violations'{RESET}")
+            except Exception:
+                pass
+
+    except Exception as e:
+        _step_fail(f"Violations check failed: {e}")
+        print(f"  {DIM}Continuing — violations check is non-fatal{RESET}")
 
 
 # ── Step 3: SOMA Status ──────────────────────────────────────────────
@@ -224,8 +342,10 @@ def step_5_cipher(wc_result):
             reason = result.get("context", {}).get("reason", "unknown")
             print(f"  {YELLOW}SOMA data unavailable ({reason}) — skipped{RESET}")
 
-    except ImportError:
-        print(f"  {DIM}CIPHER not connected to SOMA yet (import failed){RESET}")
+    except ImportError as _ie:
+        print(f"  {YELLOW}[SKIP] CIPHER soma_integration not importable — outlook skipped.{RESET}")
+        print(f"  {DIM}Reason: {_ie}{RESET}")
+        print(f"  {DIM}Fix: ensure cipher/ is on sys.path and soma_integration.py exists.{RESET}")
     except Exception as e:
         _step_fail(f"CIPHER error: {e}")
 
@@ -275,48 +395,66 @@ def main():
     print(f"{BOLD}  SOMA DAILY RUN{RESET}")
     print(f"{BOLD}{'#' * W}{RESET}")
 
+    # Step KB: Knowledge Base Index
+    try:
+        step_kb_index()
+    except Exception as e:
+        print(f"  {RED}ERROR{RESET} in KB Index step: {e}")
+
     # Step 0: Backup
     try:
         step_0_backup()
     except Exception as e:
-        _step_fail(f"Unexpected error in Backup step: {e}")
+        print(f"  {RED}ERROR{RESET} in Backup step: {e}")
 
     # Step 1: ORACLE
     try:
         step_1_oracle()
     except Exception as e:
-        _step_fail(f"Unexpected error in ORACLE step: {e}")
+        print(f"  {RED}ERROR{RESET} in ORACLE step: {e}")
 
     # Step 2: What Changed
     wc_result = None
     try:
         wc_result = step_2_what_changed()
     except Exception as e:
-        _step_fail(f"Unexpected error in What Changed step: {e}")
+        print(f"  {RED}ERROR{RESET} in What Changed step: {e}")
+
+    # Step 2b: Narrative Alignment
+    try:
+        step_2b_alignment()
+    except Exception as e:
+        print(f"  {RED}ERROR{RESET} in Alignment step: {e}")
+
+    # Step 2c: KB Violations
+    try:
+        step_2c_violations()
+    except Exception as e:
+        print(f"  {RED}ERROR{RESET} in Violations step: {e}")
 
     # Step 3: SOMA Status
     try:
         step_3_status()
     except Exception as e:
-        _step_fail(f"Unexpected error in Status step: {e}")
+        print(f"  {RED}ERROR{RESET} in Status step: {e}")
 
     # Step 4: MANTIS
     try:
         step_4_mantis()
     except Exception as e:
-        _step_fail(f"Unexpected error in MANTIS step: {e}")
+        print(f"  {RED}ERROR{RESET} in MANTIS step: {e}")
 
     # Step 5: CIPHER
     try:
         step_5_cipher(wc_result)
     except Exception as e:
-        _step_fail(f"Unexpected error in CIPHER step: {e}")
+        print(f"  {RED}ERROR{RESET} in CIPHER step: {e}")
 
     # Step 6: Action Items + Timing
     try:
         step_6_actions(wc_result, start)
     except Exception as e:
-        _step_fail(f"Unexpected error in Action Items step: {e}")
+        print(f"  {RED}ERROR{RESET} in Action Items step: {e}")
 
     # Footer
     elapsed = time.time() - start

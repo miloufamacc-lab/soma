@@ -38,19 +38,24 @@ class WhatChanged:
 
     # ── Data fetching ─────────────────────────────────────────────────
 
-    def _get_regime_pair(self):
+    def _get_regime_pair(self) -> tuple[dict | None, dict | None]:
         """Returns (current, previous) regime dicts, or (None, None)."""
         history = self._bridge.get_regime_history(limit=2)
         if len(history) < 2:
             return (history[0] if history else None), None
         return history[0], history[1]
 
-    def _get_valuation_pair(self):
+    def _get_valuation_pair(self) -> tuple[list[dict], list[dict]]:
         """Returns (current_rows, previous_rows) for the two most recent run_ids."""
         conn = self._bridge.conn
-        run_ids = conn.execute(
-            "SELECT DISTINCT run_id FROM valuations ORDER BY id DESC LIMIT 2"
-        ).fetchall()
+        try:
+            run_ids = conn.execute(
+                "SELECT DISTINCT run_id FROM valuations ORDER BY id DESC LIMIT 2"
+            ).fetchall()
+        except Exception as e:
+            print(f"[WhatChanged] _get_valuation_pair failed: {e}")
+            return [], []
+
         if not run_ids:
             return [], []
         current_id = run_ids[0]["run_id"]
@@ -65,12 +70,17 @@ class WhatChanged:
         ).fetchall()]
         return current, previous
 
-    def _get_outlook_pair(self):
+    def _get_outlook_pair(self) -> tuple[dict | None, dict | None]:
         """Returns (current, previous) outlook dicts."""
         conn = self._bridge.conn
-        rows = conn.execute(
-            "SELECT * FROM outlook_snapshots ORDER BY id DESC LIMIT 2"
-        ).fetchall()
+        try:
+            rows = conn.execute(
+                "SELECT * FROM outlook_snapshots ORDER BY id DESC LIMIT 2"
+            ).fetchall()
+        except Exception as e:
+            print(f"[WhatChanged] _get_outlook_pair failed: {e}")
+            return None, None
+
         rows = [dict(r) for r in rows]
         if len(rows) < 2:
             return (rows[0] if rows else None), None
@@ -533,8 +543,11 @@ class WhatChanged:
             },
         }
 
-    def save_log(self):
-        """Write the enriched event-study analysis to a JSON file in shared/soma/logs/."""
+    def save_log(self) -> str:
+        """Write the enriched event-study analysis to a JSON file in shared/soma/logs/.
+
+        Uses pathlib for better path handling relative to __file__.
+        """
         if self._result is None:
             self.analyze()
 
@@ -543,13 +556,14 @@ class WhatChanged:
         explanations = self.explain_context()
         enriched = {**self._result, **event_study, "historical_context": explanations}
 
-        logs_dir = os.path.join(os.path.dirname(__file__), "logs")
-        os.makedirs(logs_dir, exist_ok=True)
+        from pathlib import Path
+        logs_dir = Path(__file__).parent / "logs"
+        logs_dir.mkdir(parents=True, exist_ok=True)
         ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
-        path = os.path.join(logs_dir, f"what_changed_{ts}.json")
+        path = logs_dir / f"what_changed_{ts}.json"
         with open(path, "w") as f:
             json.dump(enriched, f, indent=2, default=str)
-        return os.path.realpath(path)
+        return str(path.resolve())
 
     # ── Terminal display ──────────────────────────────────────────────
 

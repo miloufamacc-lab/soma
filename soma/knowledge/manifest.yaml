@@ -1,31 +1,70 @@
 # SOMA Knowledge Base Manifest
 # Lists all KB files, their source modules, and content scope
-# Updated: 2026-03-21
+# Updated: 2026-03-22 — CFA KB centralized under SOMA ownership
 
-version: "1.0"
+version: "2.0"
 compiled_output: "../SOMA_COMPILED.md"
 
-files:
+# ── OPERATIONAL RULES (parsed by kb_reader.py into kb_rules table) ──
+# These files contain <!-- RULE_BLOCK --> markers with YAML payloads.
+# The kb_reader scans these and indexes rules for runtime consumption.
+
+rules_files:
   - path: macro_regimes.md
     source_module: ORACLE
     scope: GLI framework, regime definitions, liquidity cycles, macro signals
+    rules: [YIELD_CURVE_SIGNALS_V1, INFLATION_ASSET_MAP_V1]
     sections: ~15
-    lines: 944
+    lines: 1013
 
   - path: valuation_models.md
     source_module: ORACLE
     scope: Fair value models, sector analysis, execution scores, DCF methodology
+    rules: [VALUATION_METHOD_SELECTOR_V1, CREDIT_SPREAD_THRESHOLDS_V1]
     sections: ~20
-    lines: 1399
+    lines: 1429
 
   - path: communication_compliance.md
     source_module: CIPHER
     scope: ADViCE framework, PRACTICE model, ethics, GIPS, compliance rules
+    rules: [ADVICE_FRAMEWORK_V1, PRACTICE_FRAMEWORK_V1, MONEY_SCRIPT_TYPES_V1]
     sections: ~30
-    lines: 2345
+    lines: 2426
 
   - path: mantis_mechanics.md
     source_module: MANTIS
     scope: Always-in rationale, inverse-vol sizing, circuit breaker, cross-AI consensus
+    rules: [REGIME_ALLOCATIONS_V1, POSITION_SIZING_V1, DRAWDOWN_CONTROLS_V1, REGIME_TRANSITION_RULES_V1, TRANSITION_SPEED_V1]
     sections: ~8
-    lines: 283
+    lines: 856
+
+  - path: cfa_operational_rules.md
+    source_module: ALL
+    scope: Ethics decision rules, risk framework, behavioral biases, GIPS, equity factors
+    rules: [ETHICS_STANDARDS_V1, RISK_FRAMEWORK_V1, BEHAVIORAL_BIASES_V1, GIPS_COMPLIANCE_V1, EQUITY_FACTORS_V1]
+    sections: ~5
+    lines: TBD
+    status: NEW — extracted from CFA KB during SOMA centralization
+
+# ── REFERENCE DOCUMENTS (read-only, not parsed for rules) ──
+# These are the authoritative source documents that the operational rules
+# were derived from. Stored here so SOMA owns the full knowledge chain.
+
+reference_files:
+  - path: cfa/CFA_KNOWLEDGE_BASE.md
+    source_module: ORACLE
+    scope: Full CFA L1-L3 knowledge base — 41 sections + 8 appendices, V14.0
+    lines: 10871
+    type: reference
+
+  - path: cfa/CFA_FILE_CATALOG.md
+    source_module: ORACLE
+    scope: Catalog of 963 CFA source files (L1=261, L2=433, L3=188)
+    lines: 1163
+    type: reference
+
+  - path: cfa/KB_CONTINUATION.md
+    source_module: ORACLE
+    scope: KB continuation entries and session notes
+    lines: 1016
+    type: reference

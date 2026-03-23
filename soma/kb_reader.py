@@ -44,7 +44,7 @@ class KBReader:
                 h.update(chunk)
         return h.hexdigest()
 
-    def _load_cache(self):
+    def _load_cache(self) -> None:
         """Load all rules from SQLite into the in-memory cache."""
         try:
             rows = self.bridge.conn.execute(
@@ -52,16 +52,21 @@ class KBReader:
             ).fetchall()
             for row in rows:
                 self._cache[row["rule_id"]] = json.loads(row["rule_data"])
-        except Exception:
+        except Exception as e:
+            print(f"[SOMA] _load_cache failed: {e}")
             self._cache = {}
 
-    def _parse_rule_blocks(self, filepath):
+    def _parse_rule_blocks(self, filepath: str) -> list[dict]:
         """Extract YAML rule blocks from a single markdown file.
 
         Returns a list of parsed dicts, one per RULE_BLOCK found.
         """
-        with open(filepath, "r") as f:
-            content = f.read()
+        try:
+            with open(filepath, "r") as f:
+                content = f.read()
+        except Exception as e:
+            print(f"[SOMA] _parse_rule_blocks failed to read {filepath}: {e}")
+            return []
 
         rules = []
         lines = content.split("\n")
@@ -94,8 +99,8 @@ class KBReader:
                         parsed = yaml.safe_load("\n".join(yaml_lines))
                         if isinstance(parsed, dict) and "rule_id" in parsed:
                             rules.append(parsed)
-                    except yaml.YAMLError:
-                        pass
+                    except yaml.YAMLError as e:
+                        print(f"[SOMA] YAML parse error in {filepath} block {block_id}: {e}")
             i += 1
         return rules
 
@@ -140,7 +145,7 @@ class KBReader:
         self._cache.clear()
         self._load_cache()
 
-    def is_index_stale(self):
+    def is_index_stale(self) -> bool:
         """Compare current file hashes to stored hashes. Return True if any KB file changed."""
         if not _KB_DIR.is_dir():
             return True
@@ -149,7 +154,8 @@ class KBReader:
             rows = self.bridge.conn.execute(
                 "SELECT DISTINCT source_file, file_hash FROM kb_rules"
             ).fetchall()
-        except Exception:
+        except Exception as e:
+            print(f"[SOMA] is_index_stale failed: {e}")
             return True
 
         if not rows:
@@ -159,19 +165,23 @@ class KBReader:
         stored = {row["source_file"]: row["file_hash"] for row in rows}
 
         for md_file in _KB_DIR.glob("*.md"):
-            current_hash = self._file_md5(md_file)
-            if md_file.name not in stored or stored[md_file.name] != current_hash:
+            try:
+                current_hash = self._file_md5(md_file)
+                if md_file.name not in stored or stored[md_file.name] != current_hash:
+                    return True
+            except Exception as e:
+                print(f"[SOMA] could not compute hash for {md_file}: {e}")
                 return True
 
         return False
 
-    def get_rule(self, rule_id):
+    def get_rule(self, rule_id: str) -> dict:
         """Return parsed rule dict from cache. Raise KeyError if not found."""
         if rule_id not in self._cache:
             raise KeyError(f"Rule '{rule_id}' not found in KB index")
         return self._cache[rule_id]
 
-    def get_rules_for_module(self, module_name):
+    def get_rules_for_module(self, module_name: str) -> dict:
         """Return all rules where source_module contains module_name."""
         results = {}
         try:
@@ -181,11 +191,11 @@ class KBReader:
             ).fetchall()
             for row in rows:
                 results[row["rule_id"]] = json.loads(row["rule_data"])
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"[SOMA] get_rules_for_module failed for {module_name}: {e}")
         return results
 
-    def get_all_rules(self):
+    def get_all_rules(self) -> dict:
         """Return dict of all rule_id -> rule_data."""
         return dict(self._cache)
 
@@ -205,7 +215,8 @@ class KBReader:
         except Exception as e:
             print(f"[SOMA] log_rule_usage failed: {e}")
 
-    def get_rule_audit(self, rule_id=None, module=None, limit=50):
+    def get_rule_audit(self, rule_id: str | None = None, module: str | None = None,
+                       limit: int = 50) -> list[dict]:
         """Read audit log, optionally filtered by rule_id or module."""
         try:
             if rule_id and module:
@@ -230,5 +241,6 @@ class KBReader:
                     (limit,),
                 ).fetchall()
             return [dict(r) for r in rows]
-        except Exception:
+        except Exception as e:
+            print(f"[SOMA] get_rule_audit failed: {e}")
             return []

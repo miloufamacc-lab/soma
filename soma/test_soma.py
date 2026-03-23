@@ -6,10 +6,11 @@ checks freshness, then cleans up.
 import os
 import tempfile
 import json
+from pathlib import Path
 from soma_bridge import SomaBridge
 
 
-def main():
+def main() -> None:
     # Use a temp file so we don't pollute the real data directory
     tmp = tempfile.NamedTemporaryFile(suffix=".db", delete=False)
     tmp_path = tmp.name
@@ -68,19 +69,23 @@ def main():
         print(f"\n--- Freshness Check ---")
         print(f"  regime_history fresh (<48h): {fresh}  (age: {age_hrs}h)")
 
-        # 6. Verify schema version
-        assert ver == 1, f"Expected schema version 1, got {ver}"
+        # 6. Verify schema version (5 migrations: initial + events + kb_rules + client_profiles + kb_violations)
+        assert ver == 5, f"Expected schema version 5, got {ver}"
         assert regime["regime"] == "RISK_ON"
         assert len(vals) == 1
         assert fresh is True
         print("\n[OK] All assertions passed!")
 
-    # Cleanup
-    os.remove(tmp_path)
+    # Cleanup — use pathlib for better path handling
+    tmp_p = Path(tmp_path)
+    try:
+        tmp_p.unlink()
+    except FileNotFoundError:
+        pass
     # WAL/SHM files may also exist
     for suffix in ["-wal", "-shm"]:
         try:
-            os.remove(tmp_path + suffix)
+            (tmp_p.parent / (tmp_p.name + suffix)).unlink()
         except FileNotFoundError:
             pass
     print(f"[OK] Cleaned up temp database\n")

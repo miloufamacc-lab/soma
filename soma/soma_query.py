@@ -597,6 +597,7 @@ def query_help(_db=None):
             ('"rule REGIME_ALLOC..."', "Show full rule data by ID"),
             ('"rule audit"', "Last 20 audit log entries"),
             ('"rebuild index"', "Re-parse KB files into rules index"),
+            ('"kb health"', "Comprehensive KB health report"),
         ]),
         ("KNOWLEDGE BASE", [
             ('"kb list"', "List all KB files with descriptions"),
@@ -611,6 +612,12 @@ def query_help(_db=None):
             ('"clients due"', "Clients due for contact/review"),
             ('"conservative clients"', "Filter by positioning"),
             ('"aggressive clients"', "Filter by positioning"),
+        ]),
+        ("VIOLATIONS", [
+            ('"violations"', "Recent KB violations (audit trail)"),
+            ('"violations ORACLE"', "Violations from a specific module"),
+            ('"violations critical"', "Filter by severity"),
+            ('"violations summary"', "Counts by severity"),
         ]),
         ("META", [
             ('"status"', "Full SOMA status dashboard"),
@@ -930,6 +937,48 @@ def query_rule_audit(db):
     print()
 
 
+def query_kb_health(db):
+    """Comprehensive KB health check."""
+    _title("KB Health Report")
+    try:
+        kr = db.get_kb_reader()
+        rules = kr.get_all_rules()
+        stale = kr.is_index_stale()
+
+        print(f"\n  Total rules: {len(rules)}")
+        print(f"  Index stale: {'YES — run: rebuild index' if stale else 'No'}")
+        print()
+
+        # Count by source file
+        by_file = {}
+        for rid, rdata in rules.items():
+            sf = rdata.get("source_file", "unknown")
+            by_file.setdefault(sf, []).append(rid)
+
+        print("  Rules by file:")
+        for f in sorted(by_file):
+            print(f"    {f}: {len(by_file[f])} rules")
+        print()
+
+        # Audit summary
+        audits = kr.get_rule_audit(limit=100)
+        if audits:
+            from collections import Counter
+            modules_seen = set(a.get("read_by_module", "?") for a in audits)
+            print(f"  Audit entries: {len(audits)} (modules: {', '.join(sorted(modules_seen))})")
+            # Most-read rules
+            reads = Counter(a.get("rule_id") for a in audits)
+            print("  Most read:")
+            for rid, count in reads.most_common(5):
+                print(f"    {rid}: {count} reads")
+        else:
+            print("  No audit entries yet")
+
+    except Exception as e:
+        print(f"\n  {YELLOW}KB health check failed: {e}{RESET}")
+    print()
+
+
 def query_rebuild_index(db):
     """Trigger KBReader.build_index()."""
     try:
@@ -940,6 +989,122 @@ def query_rebuild_index(db):
         print(f"\n  {GREEN}{len(rules)} rule(s) indexed.{RESET}\n")
     except Exception as e:
         _no_data(f"Rebuild failed: {e}")
+
+
+# ── VIOLATIONS queries ────────────────────────────────────────────────
+
+def query_violations(db, module_filter=None, severity_filter=None):
+    """Show recent KB violations, optionally filtered."""
+    try:
+        from kb_validator import KBValidator
+        validator = KBValidator(db)
+        violations = validator.get_violation_summary(limit=50)
+    except Exception:
+        try:
+            rows = db.conn.execute(
+                """SELECT severity, rule_id, source_module, write_type,
+                          description, detected_at
+                   FROM kb_violations ORDER BY id DESC LIMIT 50"""
+            ).fetchall()
+            violations = [dict(r) for r in rows]
+        except Exception:
+            _no_data("No kb_violations table found — run Schema v4 migration first.")
+            return
+
+    if module_filter:
+        violations = [v for v in violations if v.get("source_module", "").upper() == module_filter.upper()]
+    if severity_filter:
+        violations = [v for v in violations if v.get("severity", "").upper() == severity_filter.upper()]
+
+    title = "KB Violations"
+    if module_filter:
+        title += f" — {module_filter.upper()}"
+    if severity_filter:
+        title += f" ({severity_filter.upper()})"
+    _title(title)
+
+    if not violations:
+        msg = "No violations found"
+        if module_filter or severity_filter:
+            msg += " matching that filter"
+        msg += "."
+        print(f"\n  {GREEN}{msg}{RESET}\n")
+        return
+
+    header = f"  {'Severity':<10} {'Rule':<28} {'Module':<10} {'Type':<12} {'When':<18}"
+    print(f"\n{BOLD}{header}{RESET}")
+    print(f"  {'─' * 78}")
+    for v in violations[:30]:
+        sev = v.get("severity", "?")
+        if sev == "CRITICAL":
+            color = RED
+        elif sev == "WARNING":
+            color = YELLOW
+        else:
+            color = DIM
+        rule = v.get("rule_id", "?")[:26]
+        module = v.get("source_module", "?")[:8]
+        wtype = v.get("write_type", "?")[:10]
+        when = v.get("detected_at", "?")[:16]
+        desc = v.get("description", "")[:60]
+        print(f"  {color}{sev:<10}{RESET} {rule:<28} {module:<10} {wtype:<12} {when}")
+        print(f"  {DIM}  └─ {desc}{RESET}")
+    if len(violations) > 30:
+        print(f"\n  {DIM}... and {len(violations) - 30} more{RESET}")
+    print()
+
+
+def query_violations_summary(db):
+    """Show violation counts by severity."""
+    _title("KB Violations — Summary")
+    try:
+        from kb_validator import KBValidator
+        validator = KBValidator(db)
+        counts = validator.get_violation_counts()
+    except Exception:
+        try:
+            rows = db.conn.execute(
+                """SELECT severity, COUNT(*) AS cnt
+                   FROM kb_violations GROUP BY severity"""
+            ).fetchall()
+            counts = {r["severity"]: r["cnt"] for r in rows}
+        except Exception:
+            _no_data("No kb_violations table found — run Schema v4 migration first.")
+            return
+
+    if not counts:
+        print(f"\n  {GREEN}No violations recorded — clean slate.{RESET}\n")
+        return
+
+    total = sum(counts.values())
+    print(f"\n  Total violations: {BOLD}{total}{RESET}\n")
+    for sev in ("CRITICAL", "WARNING", "INFO"):
+        cnt = counts.get(sev, 0)
+        if cnt == 0:
+            color = DIM
+        elif sev == "CRITICAL":
+            color = RED
+        elif sev == "WARNING":
+            color = YELLOW
+        else:
+            color = DIM
+        bar_len = min(cnt, 40)
+        bar = "█" * bar_len
+        print(f"  {color}{sev:<10}{RESET} {cnt:>4}  {color}{bar}{RESET}")
+
+    # By module
+    try:
+        rows = db.conn.execute(
+            """SELECT source_module, COUNT(*) AS cnt
+               FROM kb_violations GROUP BY source_module ORDER BY cnt DESC"""
+        ).fetchall()
+        if rows:
+            print(f"\n  {BOLD}By module:{RESET}")
+            for r in rows:
+                print(f"    {r['source_module']:<12} {r['cnt']:>4}")
+    except Exception:
+        pass
+    print()
 
 
 # ── Query router ──────────────────────────────────────────────────────
@@ -1044,12 +1209,31 @@ def route_query(query, db):
         query_client_detail(db, m.group(1).strip())
         return
 
+    # ── Violations ──
+    if q in ("violations", "violation", "violations all"):
+        query_violations(db)
+        return
+    if q in ("violations summary", "violation summary", "violations count"):
+        query_violations_summary(db)
+        return
+    for mod in ("oracle", "mantis", "cipher"):
+        if q in (f"violations {mod}", f"{mod} violations"):
+            query_violations(db, module_filter=mod)
+            return
+    for sev in ("critical", "warning", "info"):
+        if q in (f"violations {sev}", f"{sev} violations"):
+            query_violations(db, severity_filter=sev)
+            return
+
     # ── KB Rules ──
     if q in ("rules", "kb rules"):
         query_rules(db)
         return
     if q in ("rule audit", "rules audit", "audit"):
         query_rule_audit(db)
+        return
+    if q in ("kb health", "kb status"):
+        query_kb_health(db)
         return
     if q in ("rebuild index", "rebuild"):
         query_rebuild_index(db)

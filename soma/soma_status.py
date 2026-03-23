@@ -41,10 +41,14 @@ def _fresh_label(is_fresh, age_hours):
     return f"{RED}STALE{RESET} ({age_str})"
 
 
-def print_status(db_path=None):
-    db_path = db_path or os.path.join(
-        os.path.dirname(__file__), "data", "soma.db"
-    )
+def print_status(db_path: str | None = None) -> None:
+    """Print SOMA status dashboard to terminal.
+
+    Uses pathlib for default path handling relative to __file__.
+    """
+    if db_path is None:
+        from pathlib import Path
+        db_path = str(Path(__file__).parent / "data" / "soma.db")
 
     if not os.path.exists(db_path):
         print(f"\n{RED}SOMA database not found at: {db_path}{RESET}")
@@ -71,7 +75,8 @@ def print_status(db_path=None):
             try:
                 row = db.conn.execute(f"SELECT COUNT(*) AS c FROM [{t}]").fetchone()
                 counts[t] = row["c"]
-            except Exception:
+            except Exception as e:
+                print(f"[SOMA] count query failed for table {t}: {e}", file=sys.stderr)
                 counts[t] = 0
 
     # DB file size
@@ -140,8 +145,8 @@ def print_status(db_path=None):
                         parts.append(f"Stress={spot['stress_index']}")
                     if parts:
                         print(f"  Context:     {DIM}{', '.join(parts)}{RESET}")
-            except Exception:
-                pass
+            except Exception as e:
+                print(f"[SOMA] could not parse gli_components_json: {e}", file=sys.stderr)
     else:
         print(f"  {DIM}No regime data yet (ORACLE not run){RESET}")
 
@@ -219,8 +224,8 @@ def print_status(db_path=None):
                     print(f"  Conclusions:")
                     for c in conclusions[:5]:
                         print(f"    - {c}")
-            except Exception:
-                pass
+            except Exception as e:
+                print(f"[SOMA] could not parse key_conclusions_json: {e}", file=sys.stderr)
         # Recommend new outlook if regime data is much fresher than outlook
         if regime and outlook_age > regime_age + 24:
             print(f"  {YELLOW}Outlook may be stale — regime data is {outlook_age - regime_age:.0f}h newer{RESET}")
@@ -251,6 +256,115 @@ def print_status(db_path=None):
     for t in tables:
         label = t.replace("_", " ").title()
         print(f"    {label:<22} {counts[t]:>6}")
+
+    # ── NARRATIVE ALIGNMENT ─────────────────────────────────────────
+    print(f"\n{_bar('NARRATIVE ALIGNMENT')}")
+    try:
+        from shared.soma.narrative_alignment import NarrativeAlignment
+        with NarrativeAlignment(db_path) as na:
+            result = na.analyze()
+            alignment = result.get("alignment", 0)
+            n_issues = len(result.get("inconsistencies", []))
+
+            if alignment >= 0.8:
+                color = GREEN
+                label = "ALIGNED"
+            elif alignment >= 0.5:
+                color = YELLOW
+                label = "PARTIAL"
+            else:
+                color = RED
+                label = "MISALIGNED"
+
+            print(f"  Score: {color}{alignment:.0%} ({label}){RESET}  |  Issues: {n_issues}")
+
+            for inc in result.get("inconsistencies", [])[:3]:
+                sev_color = RED if inc["severity"] == "HIGH" else YELLOW
+                print(f"  {sev_color}[{inc['severity']}]{RESET} {inc['description'][:60]}")
+
+            missing = [k for k, v in result.get("data_available", {}).items() if not v]
+            if missing:
+                print(f"  {DIM}Missing: {', '.join(missing)}{RESET}")
+    except Exception as e:
+        print(f"  {DIM}Alignment unavailable: {e}{RESET}")
+
+    # ── KB VIOLATIONS ────────────────────────────────────────────
+    print(f"\n{_bar('KB VIOLATIONS')}")
+    try:
+        with SomaBridge(db_path) as db_v:
+            db_v.initialize_db()
+            try:
+                rows = db_v.conn.execute(
+                    """SELECT severity, COUNT(*) AS cnt
+                       FROM kb_violations GROUP BY severity"""
+                ).fetchall()
+                counts_v = {r["severity"]: r["cnt"] for r in rows}
+            except Exception:
+                counts_v = {}
+
+            total_v = sum(counts_v.values())
+            if total_v == 0:
+                print(f"  {GREEN}No violations — clean slate{RESET}")
+            else:
+                crit = counts_v.get("CRITICAL", 0)
+                warn = counts_v.get("WARNING", 0)
+                info = counts_v.get("INFO", 0)
+                crit_color = RED if crit > 0 else DIM
+                warn_color = YELLOW if warn > 0 else DIM
+                print(f"  Total: {total_v}  |  "
+                      f"{crit_color}CRITICAL: {crit}{RESET}  "
+                      f"{warn_color}WARNING: {warn}{RESET}  "
+                      f"{DIM}INFO: {info}{RESET}")
+                # Show last violation
+                try:
+                    last = db_v.conn.execute(
+                        """SELECT severity, rule_id, description, detected_at
+                           FROM kb_violations ORDER BY id DESC LIMIT 1"""
+                    ).fetchone()
+                    if last:
+                        sev_c = RED if last["severity"] == "CRITICAL" else YELLOW
+                        print(f"  Last:  {sev_c}[{last['severity']}]{RESET} "
+                              f"{last['description'][:50]} ({last['detected_at'][:16]})")
+                except Exception:
+                    pass
+    except Exception as e:
+        print(f"  {DIM}Violations unavailable: {e}{RESET}")
+
+    # ── KB RULES ──────────────────────────────────────────────────
+    print(f"\n{_bar('KB RULES')}")
+    try:
+        with SomaBridge(db_path) as db2:
+            db2.initialize_db()
+            kr = db2.get_kb_reader()
+            rules = kr.get_all_rules()
+            if not rules:
+                print(f"  {DIM}No rules indexed. Run: python3 soma_query.py 'rebuild index'{RESET}")
+            else:
+                # Summary line
+                stale = kr.is_index_stale()
+                status_str = f"{YELLOW}STALE — rebuild needed{RESET}" if stale else f"{GREEN}current{RESET}"
+                print(f"  Rules: {len(rules)}  |  Index: {status_str}")
+
+                # Rules by source module
+                by_module = {}
+                for rid, rdata in rules.items():
+                    modules = rdata.get("source_module", "UNKNOWN")
+                    if isinstance(modules, list):
+                        for m in modules:
+                            by_module.setdefault(m, []).append(rid)
+                    elif isinstance(modules, str):
+                        for m in modules.split(","):
+                            by_module.setdefault(m.strip(), []).append(rid)
+
+                for module in sorted(by_module):
+                    print(f"  {module}: {len(by_module[module])} rules")
+
+                # Recent audit activity
+                audits = kr.get_rule_audit(limit=3)
+                if audits:
+                    print(f"  Last read: {audits[0].get('read_at', '?')[:16]} by {audits[0].get('read_by_module', '?')}")
+    except Exception as e:
+        print(f"  {DIM}KB status unavailable: {e}{RESET}")
 
     print(f"\n{BOLD}{'=' * W}{RESET}\n")
 

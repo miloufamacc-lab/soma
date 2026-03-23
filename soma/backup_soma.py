@@ -60,7 +60,7 @@ MAX_CLOUD_DAILY = 7
 # ── Tier 1: Local backup ─────────────────────────────────────────────────────
 
 def _tier1_local_backup(ts: str) -> str | None:
-    """Copy soma.db to local backups/ with timestamp. Prune to 30."""
+    """Copy soma.db to local backups/ with timestamp. Prune to 30 rolling backups."""
     _BACKUP_DIR.mkdir(parents=True, exist_ok=True)
 
     backup_name = f"soma_backup_{ts}.db"
@@ -82,7 +82,7 @@ def _tier1_local_backup(ts: str) -> str | None:
 
 # ── Tier 2: iCloud offsite backup ────────────────────────────────────────────
 
-def _tier2_gdrive_backup(ts: str):
+def _tier2_gdrive_backup(ts: str) -> None:
     """Copy soma.db to Google Drive for offsite sync. Fire-and-forget.
 
     Writes two files:
@@ -122,7 +122,7 @@ def _tier2_gdrive_backup(ts: str):
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
-def run_backup():
+def run_backup() -> str | None:
     """Run all backup tiers. Returns local backup filename or None."""
 
     if not _DB_PATH.exists():
@@ -132,13 +132,17 @@ def run_backup():
     ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
     print("  SOMA Backup:")
 
-    # Tier 1: Local timestamped copy
-    backup_name = _tier1_local_backup(ts)
+    try:
+        # Tier 1: Local timestamped copy
+        backup_name = _tier1_local_backup(ts)
 
-    # Tier 2: Google Drive offsite (fire-and-forget)
-    _tier2_gdrive_backup(ts)
+        # Tier 2: Google Drive offsite (fire-and-forget)
+        _tier2_gdrive_backup(ts)
 
-    return backup_name
+        return backup_name
+    except Exception as e:
+        print(f"  [backup]     error: {e}")
+        return None
 
 
 if __name__ == "__main__":
