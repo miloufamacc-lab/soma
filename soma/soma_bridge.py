@@ -1,5 +1,8 @@
 """
-SomaBridge — the single read/write API for SOMA (Shared Ontology for Market Analysis).
+SOMA — Shared Ontology for Market Analysis
+Core infrastructure for all DABEIBA pipelines (TITAN, DELTA, DOCTRINE, SENTINEL, etc.)
+
+SomaBridge — the single read/write API for SOMA.
 
 Usage:
     with SomaBridge() as db:
@@ -550,7 +553,7 @@ class SomaBridge:
     def get_kb_reader(self):
         """Lazy-initialize and return a KBReader instance."""
         if not hasattr(self, '_kb_reader'):
-            from soma.kb_reader import KBReader
+            from .kb_reader import KBReader
             self._kb_reader = KBReader(self)
         return self._kb_reader
 

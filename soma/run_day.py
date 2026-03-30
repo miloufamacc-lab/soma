@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
-SOMA Daily Orchestrator — runs the full DABEIBA pipeline in one command.
+DABEIBA Daily Orchestrator — runs the full pipeline in one command.
+Coordinates: TITAN → DELTA → DOCTRINE → SENTINEL → FORGE → BEACON
+See pipeline_registry.py for codename reference.
 
 Usage:
     python3 ~/Desktop/DABEIBA/shared/soma/run_day.py

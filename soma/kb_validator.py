@@ -1,4 +1,7 @@
 """
+SENTINEL — Systematic Enforcement of Norms, Thresholds, Investments & Logic
+Pipeline: SOMA/SENTINEL | Module: SOMA | Status: BUILT
+
 KBValidator — SOMA's active intelligence layer.
 
 Validates every write to SOMA against the KB rule base. Violations are

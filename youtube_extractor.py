@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 """
+PRISM — Pipeline for Raw Intelligence Sorting & Materiality
+Pipeline: SOMA/PRISM | Module: SOMA | Status: PLANNED (this tool is built; full PRISM pipeline pending)
+
 DABEIBA — Universal YouTube Transcript Extractor
 
 Extracts transcripts from any YouTube video (short or multi-hour),

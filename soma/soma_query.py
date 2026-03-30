@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
 SOMA Query CLI — ask structured questions about SOMA data from the terminal.
+Queries across all pipelines: TITAN, COBALT, SPECTRE, DELTA, DOCTRINE, SENTINEL, FORGE, VECTOR, BEACON, DOSSIER.
 
 Usage:
     python3 ~/Desktop/DABEIBA/shared/soma/soma_query.py "last regime change"
@@ -613,6 +614,13 @@ def query_help(_db=None):
             ('"conservative clients"', "Filter by positioning"),
             ('"aggressive clients"', "Filter by positioning"),
         ]),
+        ("AI REGISTRY", [
+            ('"ais"', "List all registered AIs with freshness"),
+            ('"ai grok"', "Full profile for one AI"),
+            ('"prompt grok quant"', "Build tailored prompt for AI + task"),
+            ('"check capabilities grok"', "Generate capability-check prompt"),
+            ('"recommend backtest"', "Suggest best AI for a task"),
+        ]),
         ("VIOLATIONS", [
             ('"violations"', "Recent KB violations (audit trail)"),
             ('"violations ORACLE"', "Violations from a specific module"),
@@ -991,6 +999,63 @@ def query_rebuild_index(db):
         _no_data(f"Rebuild failed: {e}")
 
 
+# ── AI REGISTRY queries ──────────────────────────────────────────────
+
+def query_list_ais(_db=None):
+    """List all registered AIs."""
+    try:
+        from ai_prompt_builder import AIPromptBuilder, cmd_list_ais
+        builder = AIPromptBuilder()
+        cmd_list_ais(builder)
+        builder.close()
+    except Exception as e:
+        _no_data(f"AI Registry unavailable: {e}")
+
+
+def query_ai_detail(_db, ai_name):
+    """Show full profile for one AI."""
+    try:
+        from ai_prompt_builder import AIPromptBuilder, cmd_ai_detail
+        builder = AIPromptBuilder()
+        cmd_ai_detail(builder, ai_name)
+        builder.close()
+    except Exception as e:
+        _no_data(f"AI Registry unavailable: {e}")
+
+
+def query_build_prompt(_db, ai_name, task_type, question=None):
+    """Build a tailored prompt."""
+    try:
+        from ai_prompt_builder import AIPromptBuilder, cmd_build_prompt
+        builder = AIPromptBuilder()
+        cmd_build_prompt(builder, ai_name, task_type, question)
+        builder.close()
+    except Exception as e:
+        _no_data(f"Prompt builder unavailable: {e}")
+
+
+def query_check_capabilities(_db, ai_name):
+    """Generate capability-check prompt."""
+    try:
+        from ai_prompt_builder import AIPromptBuilder, cmd_check_capabilities
+        builder = AIPromptBuilder()
+        cmd_check_capabilities(builder, ai_name)
+        builder.close()
+    except Exception as e:
+        _no_data(f"Capability check unavailable: {e}")
+
+
+def query_recommend_ai(_db, description):
+    """Recommend best AI for a task."""
+    try:
+        from ai_prompt_builder import AIPromptBuilder, cmd_recommend
+        builder = AIPromptBuilder()
+        cmd_recommend(builder, description)
+        builder.close()
+    except Exception as e:
+        _no_data(f"AI recommendation unavailable: {e}")
+
+
 # ── VIOLATIONS queries ────────────────────────────────────────────────
 
 def query_violations(db, module_filter=None, severity_filter=None):
@@ -1207,6 +1272,27 @@ def route_query(query, db):
     m = re.match(r'^client\s+(.+)$', q)
     if m:
         query_client_detail(db, m.group(1).strip())
+        return
+
+    # ── AI Registry ──
+    if q in ("ais", "list ais", "ai list", "ai registry"):
+        query_list_ais(db)
+        return
+    m = re.match(r'^ai\s+(\w+)$', q)
+    if m:
+        query_ai_detail(db, m.group(1).strip())
+        return
+    m = re.match(r'^prompt\s+(\w+)\s+(.+?)(?:\s+"(.+)")?$', q)
+    if m:
+        query_build_prompt(db, m.group(1), m.group(2), m.group(3))
+        return
+    m = re.match(r'^check\s+capabilities?\s+(\w+)$', q)
+    if m:
+        query_check_capabilities(db, m.group(1).strip())
+        return
+    m = re.match(r'^recommend\s+(.+)$', q)
+    if m:
+        query_recommend_ai(db, m.group(1).strip())
         return
 
     # ── Violations ──

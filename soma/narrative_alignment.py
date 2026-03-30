@@ -1,4 +1,7 @@
 """
+SENTINEL — Systematic Enforcement of Norms, Thresholds, Investments & Logic
+Pipeline: SOMA/SENTINEL | Module: SOMA | Status: BUILT
+
 NarrativeAlignment — flags contradictions between CIPHER's outlook text
 and MANTIS's portfolio positions + ORACLE's regime state.
 

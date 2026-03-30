@@ -1,4 +1,7 @@
 """
+DELTA — Differential Engine for Longitudinal Trend Analysis
+Pipeline: SOMA/DELTA | Module: SOMA | Status: BUILT
+
 WhatChanged — SOMA's core diff engine.
 
 Compares current vs. previous regime, valuation, and outlook data,
