@@ -571,44 +571,108 @@ class SomaBridge:
         """Convenience wrapper: log a KB rule read."""
         self.get_kb_reader().log_rule_usage(rule_id, module, run_id, context)
 
-    # ── PRISM reads (Phase B — Ingestion Funnel) ───────────────────────
+    # ── COBALT writes + reads (Phase C — On-Chain Intelligence) ────────
 
-    def get_raw_intelligence(self, category=None, target_module=None,
-                             processed=None, limit=50):
-        """Query raw_intelligence with optional filters."""
+    def write_onchain_metric(self, date, asset, metric, value, source,
+                             run_id=None, freshness_hours=None, module_version=None):
+        """Write a single on-chain metric reading to SOMA."""
         try:
-            query = "SELECT * FROM raw_intelligence WHERE 1=1"
+            self.conn.execute(
+                """INSERT INTO onchain_metrics
+                   (date, run_id, asset, metric, value, source,
+                    freshness_hours, write_timestamp, module_version)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (date, run_id, asset, metric, value, source,
+                 freshness_hours, self._now(), module_version),
+            )
+            self._maybe_commit()
+        except Exception as e:
+            print(f"[SOMA] write_onchain_metric failed: {e}")
+
+    def write_onchain_signal(self, date, asset, signal_direction, composite_score,
+                             confidence, components_json=None, run_id=None,
+                             regime_at_time=None, module_version=None):
+        """Write a composite on-chain signal to SOMA."""
+        try:
+            self.conn.execute(
+                """INSERT INTO onchain_signals
+                   (date, run_id, asset, signal_direction, composite_score,
+                    confidence, components_json, regime_at_time,
+                    write_timestamp, module_version)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (date, run_id, asset, signal_direction, composite_score,
+                 confidence, components_json, regime_at_time,
+                 self._now(), module_version),
+            )
+            self._maybe_commit()
+        except Exception as e:
+            print(f"[SOMA] write_onchain_signal failed: {e}")
+
+    def get_latest_onchain_signal(self, asset="BTC"):
+        """Return the most recent composite signal for an asset."""
+        try:
+            row = self.conn.execute(
+                "SELECT * FROM onchain_signals WHERE asset = ? ORDER BY id DESC LIMIT 1",
+                (asset,),
+            ).fetchone()
+            return self._row_to_dict(row)
+        except Exception:
+            return None
+
+    def get_onchain_metrics(self, asset=None, metric=None, limit=30):
+        """Return recent on-chain metrics, optionally filtered."""
+        try:
+            conditions = []
             params = []
-            if category:
-                query += " AND category = ?"
-                params.append(category)
-            if target_module:
-                query += " AND target_module = ?"
-                params.append(target_module)
-            if processed is not None:
-                query += " AND processed = ?"
-                params.append(processed)
-            query += " ORDER BY ingested_at DESC LIMIT ?"
+            if asset:
+                conditions.append("asset = ?")
+                params.append(asset)
+            if metric:
+                conditions.append("metric = ?")
+                params.append(metric)
+            where = (" WHERE " + " AND ".join(conditions)) if conditions else ""
             params.append(limit)
-            rows = self.conn.execute(query, params).fetchall()
+            rows = self.conn.execute(
+                f"SELECT * FROM onchain_metrics{where} ORDER BY date DESC, id DESC LIMIT ?",
+                params,
+            ).fetchall()
             return self._rows_to_dicts(rows)
         except Exception:
             return []
 
-    def get_unprocessed_intelligence(self, limit=50):
-        """Return raw intelligence items that haven't been triaged yet."""
-        return self.get_raw_intelligence(processed=0, limit=limit)
-
-    def mark_intelligence_processed(self, record_id, status=1):
-        """Update processing status: 0=raw, 1=triaged, 2=enriched, 3=routed."""
+    def get_onchain_signal_history(self, asset="BTC", limit=30):
+        """Return recent composite signals for an asset."""
         try:
-            self.conn.execute(
-                "UPDATE raw_intelligence SET processed = ?, processed_at = ? WHERE id = ?",
-                (status, self._now(), record_id),
-            )
-            self.conn.commit()
-        except Exception as e:
-            print(f"[SOMA] mark_intelligence_processed failed: {e}")
+            rows = self.conn.execute(
+                "SELECT * FROM onchain_signals WHERE asset = ? ORDER BY date DESC LIMIT ?",
+                (asset, limit),
+            ).fetchall()
+            return self._rows_to_dicts(rows)
+        except Exception:
+            return []
+
+    def get_cobalt_summary(self):
+        """Return a compact dict for MANTIS/DELTA consumption.
+
+        Provides: latest signal per asset, metric freshness, alert flags.
+        """
+        try:
+            assets = {}
+            for asset in ("BTC", "SOL", "ETH"):
+                sig = self.get_latest_onchain_signal(asset)
+                if sig:
+                    assets[asset] = {
+                        "direction": sig["signal_direction"],
+                        "score": sig["composite_score"],
+                        "confidence": sig["confidence"],
+                        "date": sig["date"],
+                    }
+            return {
+                "status": "ok" if assets else "no_data",
+                "assets": assets,
+            }
+        except Exception:
+            return {"status": "error", "assets": {}}
 
     # ── DOCTRINE reads (Phase A — Thesis Engine) ───────────────────────
 
