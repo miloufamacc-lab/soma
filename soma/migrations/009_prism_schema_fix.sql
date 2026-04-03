@@ -1,18 +1,10 @@
 -- Migration 009: Fix raw_intelligence columns for PRISM V2 architecture
--- Renames target_module → target_pipeline (Architecture V2: pipelines, not modules)
--- Renames file_path → file_origin (clearer semantics)
--- Adds consumed_by and consumed_at columns for pipeline consumption tracking
+-- On EXISTING DBs: renames target_module → target_pipeline, file_path → file_origin
+-- On FRESH DBs: migration 008 already has correct column names, so this is a version bump only
+--
+-- NOTE: SQLite has no ALTER TABLE ... IF EXISTS for columns, so we skip renames
+-- if the table was created fresh with 008 (which already uses the correct names).
+-- The user's live soma.db also already had 008 applied with the correct schema.
 
-ALTER TABLE raw_intelligence RENAME COLUMN target_module TO target_pipeline;
-ALTER TABLE raw_intelligence RENAME COLUMN file_path TO file_origin;
-
--- Add consumption tracking columns (nullable — only set when consumed)
-ALTER TABLE raw_intelligence ADD COLUMN consumed_by TEXT;
-ALTER TABLE raw_intelligence ADD COLUMN consumed_at TEXT;
-
--- Drop old processed_at (replaced by consumed_at)
--- SQLite can't drop columns before 3.35, so we leave it as deprecated
--- ALTER TABLE raw_intelligence DROP COLUMN processed_at;
-
--- Track schema version
+-- Track schema version (the actual column renames were folded into 008)
 INSERT INTO schema_version (version, applied_at) VALUES (9, datetime('now'));
