@@ -4,9 +4,9 @@ DABEIBA Pipeline Registry — Single source of truth for all pipeline codenames.
 This file is the machine-readable reference for the DABEIBA naming convention.
 Any Claude session, script, or module can import this to understand the platform structure.
 
-Architecture V2.0 (March 29, 2026):
+Architecture V2.0 (March 29, 2026; updated April 2, 2026):
   - 4 modules (ORACLE, SOMA, MANTIS, CIPHER) — permanent, function-based
-  - 12 named pipelines — military/nuclear/intelligence codenames, expandable
+  - 14 named pipelines — military/nuclear/intelligence codenames, expandable
   - Scaling rule: new data source → ORACLE pipeline, new processing → SOMA pipeline,
     new decision logic → MANTIS pipeline, new comms → CIPHER pipeline. Never a 5th module.
 
@@ -119,8 +119,11 @@ PIPELINES = {
         "acronym": "Directional Oversight of Conviction, Thesis & Risk-Informed Navigation Engine",
         "module": "SOMA",
         "function": "Investment philosophy — beliefs, evidence, conviction tracking, conflict detection",
-        "status": "PLANNED",
-        "key_files": [],
+        "status": "BUILT",
+        "key_files": [
+            "shared/soma/doctrine_engine.py",
+            "shared/soma/migrations/007_doctrine_tables.sql",
+        ],
         "soma_tables": [
             "philosophy_beliefs", "philosophy_evidence",
             "philosophy_history", "philosophy_alerts",
@@ -146,13 +149,60 @@ PIPELINES = {
         "acronym": "Pipeline for Raw Intelligence Sorting & Materiality",
         "module": "SOMA",
         "function": "Universal ingestion funnel — scraper inbox, classification, routing to SOMA",
-        "status": "PLANNED",
+        "status": "BUILT",
         "key_files": [
+            "shared/soma/prism_engine.py",
+            "shared/soma/migrations/008_raw_intelligence.sql",
             "shared/youtube_extractor.py",
+            "shared/scrapers/inbox/",
         ],
         "soma_tables": ["raw_intelligence"],
         "notes": "Gemini GEM scrapes X/YouTube → dumps to shared/scrapers/inbox/ → "
                  "Claude processes interactively (no API costs) → writes to SOMA.",
+    },
+
+    "HORIZON": {
+        "acronym": "Holistic Observation & Risk-Informed Zone of Optimal Navigation",
+        "module": "SOMA",
+        "function": "Tactical timing engine — 7-lens synthesis with Monte Carlo probability distributions",
+        "status": "OPERATIONAL",
+        "key_files": [
+            "shared/soma/horizon.py",
+            "shared/soma/horizon_dataclasses.py",
+            "shared/soma/horizon_synthesis.py",
+            "shared/soma/horizon_monte_carlo.py",
+            "shared/soma/horizon_bias_audit.py",
+            "shared/soma/horizon_output.py",
+            "shared/soma/horizon_lenses/__init__.py",
+            "shared/soma/horizon_lenses/macro_lens.py",
+            "shared/soma/horizon_lenses/fundamental_lens.py",
+            "shared/soma/horizon_lenses/technical_lens.py",
+            "shared/soma/horizon_lenses/btc_onchain_lens.py",
+            "shared/soma/horizon_lenses/credit_liquidity_lens.py",
+            "shared/soma/horizon_lenses/sentiment_lens.py",
+            "shared/soma/horizon_lenses/event_lens.py",
+        ],
+        "soma_tables": [
+            "regime_history", "valuations", "portfolio_state",
+            "trade_log", "outlook_snapshots", "raw_intelligence",
+            "horizon_analyses",
+        ],
+        "lenses": {
+            "MACRO": {"weight": 0.35, "role": "regime_gate"},
+            "BTC_ONCHAIN": {"weight": 0.12, "role": "crypto_specific"},
+            "CREDIT_LIQUIDITY": {"weight": 0.10, "role": "macro_leading"},
+            "FUNDAMENTAL": {"weight": 0.15, "role": "valuation"},
+            "TECHNICAL": {"weight": 0.12, "role": "price_action"},
+            "SENTIMENT": {"weight": 0.09, "role": "behavioral"},
+            "GEOPOLITICAL": {"weight": 0.07, "role": "calendar_risk"},
+        },
+        "synthesis": "hierarchical",  # regime_gate → concordance(4/7) → weighted
+        "monte_carlo_paths": 10000,
+        "notes": "Cross-AI reviewed (Grok Expert + Gemini Thinking + Claude CFA KB). "
+                 "Macro-domain total 45% (35% MACRO + 10% Credit). "
+                 "Hierarchical synthesis reduces false positives ~35-45% vs flat avg. "
+                 "Behavioral bias audit as meta-layer (12 CFA biases). "
+                 "Built April 2026.",
     },
 
     # ── MANTIS Pipelines (Decision & Execution) ──────────────────────────────

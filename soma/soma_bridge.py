@@ -112,7 +112,10 @@ class SomaBridge:
         # Allowlist of valid tables to prevent injection (table name cannot be parameterized)
         _VALID_TABLES = {
             "regime_history", "valuations", "trade_log", "outlook_snapshots",
-            "portfolio_state", "client_profiles", "client_interactions", "events"
+            "portfolio_state", "client_profiles", "client_interactions", "events",
+            "horizon_analyses", "philosophy_beliefs", "philosophy_evidence",
+            "philosophy_history", "philosophy_alerts",
+            "raw_intelligence"
         }
         if table not in _VALID_TABLES:
             return False, float("inf")
@@ -389,7 +392,10 @@ class SomaBridge:
         """
         _VALID_TABLES = {
             "regime_history", "valuations", "trade_log", "outlook_snapshots",
-            "portfolio_state", "client_profiles", "client_interactions", "events"
+            "portfolio_state", "client_profiles", "client_interactions", "events",
+            "horizon_analyses", "philosophy_beliefs", "philosophy_evidence",
+            "philosophy_history", "philosophy_alerts",
+            "raw_intelligence"
         }
         if table not in _VALID_TABLES:
             return []
@@ -564,6 +570,229 @@ class SomaBridge:
     def log_rule_usage(self, rule_id, module, run_id=None, context=None):
         """Convenience wrapper: log a KB rule read."""
         self.get_kb_reader().log_rule_usage(rule_id, module, run_id, context)
+
+    # ── PRISM reads (Phase B — Ingestion Funnel) ───────────────────────
+
+    def get_raw_intelligence(self, category=None, target_module=None,
+                             processed=None, limit=50):
+        """Query raw_intelligence with optional filters."""
+        try:
+            query = "SELECT * FROM raw_intelligence WHERE 1=1"
+            params = []
+            if category:
+                query += " AND category = ?"
+                params.append(category)
+            if target_module:
+                query += " AND target_module = ?"
+                params.append(target_module)
+            if processed is not None:
+                query += " AND processed = ?"
+                params.append(processed)
+            query += " ORDER BY ingested_at DESC LIMIT ?"
+            params.append(limit)
+            rows = self.conn.execute(query, params).fetchall()
+            return self._rows_to_dicts(rows)
+        except Exception:
+            return []
+
+    def get_unprocessed_intelligence(self, limit=50):
+        """Return raw intelligence items that haven't been triaged yet."""
+        return self.get_raw_intelligence(processed=0, limit=limit)
+
+    def mark_intelligence_processed(self, record_id, status=1):
+        """Update processing status: 0=raw, 1=triaged, 2=enriched, 3=routed."""
+        try:
+            self.conn.execute(
+                "UPDATE raw_intelligence SET processed = ?, processed_at = ? WHERE id = ?",
+                (status, self._now(), record_id),
+            )
+            self.conn.commit()
+        except Exception as e:
+            print(f"[SOMA] mark_intelligence_processed failed: {e}")
+
+    # ── DOCTRINE reads (Phase A — Thesis Engine) ───────────────────────
+
+    def get_active_beliefs(self):
+        """Return all active DOCTRINE beliefs."""
+        try:
+            rows = self.conn.execute(
+                "SELECT * FROM philosophy_beliefs WHERE is_active = 1 ORDER BY domain, belief_id"
+            ).fetchall()
+            return self._rows_to_dicts(rows)
+        except Exception:
+            return []
+
+    def get_belief(self, belief_id):
+        """Return a single belief by ID."""
+        try:
+            row = self.conn.execute(
+                "SELECT * FROM philosophy_beliefs WHERE belief_id = ?",
+                (belief_id,),
+            ).fetchone()
+            return self._row_to_dict(row)
+        except Exception:
+            return None
+
+    def get_belief_evidence(self, belief_id, limit=20):
+        """Return recent evidence entries for a belief."""
+        try:
+            rows = self.conn.execute(
+                "SELECT * FROM philosophy_evidence WHERE belief_id = ? "
+                "ORDER BY date_logged DESC LIMIT ?",
+                (belief_id, limit),
+            ).fetchall()
+            return self._rows_to_dicts(rows)
+        except Exception:
+            return []
+
+    def get_conviction_history(self, belief_id=None, limit=50):
+        """Return conviction change history, optionally for a specific belief."""
+        try:
+            if belief_id:
+                rows = self.conn.execute(
+                    "SELECT * FROM philosophy_history WHERE belief_id = ? "
+                    "ORDER BY change_date DESC LIMIT ?",
+                    (belief_id, limit),
+                ).fetchall()
+            else:
+                rows = self.conn.execute(
+                    "SELECT * FROM philosophy_history ORDER BY change_date DESC LIMIT ?",
+                    (limit,),
+                ).fetchall()
+            return self._rows_to_dicts(rows)
+        except Exception:
+            return []
+
+    def get_open_doctrine_alerts(self):
+        """Return all unresolved DOCTRINE alerts, highest severity first."""
+        try:
+            rows = self.conn.execute(
+                "SELECT * FROM philosophy_alerts WHERE resolved = 0 "
+                "ORDER BY CASE severity "
+                "  WHEN 'CRITICAL' THEN 1 WHEN 'WARNING' THEN 2 ELSE 3 END, "
+                "date_flagged DESC"
+            ).fetchall()
+            return self._rows_to_dicts(rows)
+        except Exception:
+            return []
+
+    def get_doctrine_summary(self):
+        """Return a compact dict for MANTIS/CIPHER consumption.
+
+        Provides: domain-level average conviction (0-1 normalized),
+        active alerts count, and overall thesis health.
+        """
+        try:
+            beliefs = self.get_active_beliefs()
+            if not beliefs:
+                return {"status": "no_beliefs", "domains": {}}
+
+            # Group by domain
+            domains = {}
+            for b in beliefs:
+                d = b["domain"]
+                if d not in domains:
+                    domains[d] = []
+                domains[d].append(b["conviction"])
+
+            domain_scores = {}
+            for d, convictions in domains.items():
+                avg = sum(convictions) / len(convictions)
+                domain_scores[d] = {
+                    "avg_conviction": round(avg, 1),
+                    "normalized": round(avg / 10.0, 2),  # 0-1 for MANTIS
+                    "count": len(convictions),
+                }
+
+            alerts = self.get_open_doctrine_alerts()
+            critical_count = sum(1 for a in alerts if a["severity"] == "CRITICAL")
+
+            overall_avg = sum(b["conviction"] for b in beliefs) / len(beliefs)
+
+            return {
+                "status": "healthy" if critical_count == 0 else "attention_needed",
+                "overall_conviction": round(overall_avg, 1),
+                "overall_normalized": round(overall_avg / 10.0, 2),
+                "domains": domain_scores,
+                "open_alerts": len(alerts),
+                "critical_alerts": critical_count,
+            }
+        except Exception:
+            return {"status": "error", "domains": {}}
+
+    # ── PRISM reads (Phase B — Ingestion Funnel) ───────────────────────
+
+    def get_raw_intelligence(self, category=None, pipeline=None,
+                             processed=None, limit=50):
+        """Return raw intelligence entries, optionally filtered."""
+        try:
+            conditions = []
+            params = []
+            if category:
+                conditions.append("category = ?")
+                params.append(category)
+            if pipeline:
+                conditions.append("target_pipeline = ?")
+                params.append(pipeline)
+            if processed is not None:
+                conditions.append("processed = ?")
+                params.append(processed)
+
+            where = (" WHERE " + " AND ".join(conditions)) if conditions else ""
+            params.append(limit)
+
+            rows = self.conn.execute(
+                f"SELECT * FROM raw_intelligence{where} ORDER BY ingested_at DESC LIMIT ?",
+                params,
+            ).fetchall()
+            return self._rows_to_dicts(rows)
+        except Exception:
+            return []
+
+    def get_unprocessed_intelligence(self, pipeline=None, limit=50):
+        """Return intelligence entries that haven't been consumed yet."""
+        return self.get_raw_intelligence(
+            pipeline=pipeline, processed=0, limit=limit
+        )
+
+    def mark_intelligence_consumed(self, intelligence_id, consumed_by):
+        """Mark a raw_intelligence entry as consumed by a pipeline."""
+        try:
+            now = datetime.now(timezone.utc).isoformat()
+            self.conn.execute(
+                """UPDATE raw_intelligence
+                   SET processed = 3, consumed_by = ?, consumed_at = ?,
+                       write_timestamp = ?
+                   WHERE id = ?""",
+                (consumed_by, now, now, intelligence_id),
+            )
+            self.conn.commit()
+        except Exception as e:
+            print(f"[SOMA] mark_intelligence_consumed failed: {e}")
+
+    def get_intelligence_stats(self):
+        """Return ingestion statistics for PRISM dashboard."""
+        try:
+            total = self.conn.execute(
+                "SELECT COUNT(*) as n FROM raw_intelligence"
+            ).fetchone()["n"]
+            by_category = self.conn.execute(
+                "SELECT category, COUNT(*) as n FROM raw_intelligence GROUP BY category"
+            ).fetchall()
+            by_pipeline = self.conn.execute(
+                "SELECT target_pipeline, COUNT(*) as n FROM raw_intelligence GROUP BY target_pipeline"
+            ).fetchall()
+            unprocessed = self.conn.execute(
+                "SELECT COUNT(*) as n FROM raw_intelligence WHERE processed < 3"
+            ).fetchone()["n"]
+            return {
+                "total": total,
+                "unprocessed": unprocessed,
+                "by_category": {r["category"]: r["n"] for r in by_category},
+                "by_pipeline": {r["target_pipeline"]: r["n"] for r in by_pipeline},
+            }
+        except Exception:
+            return {"total": 0, "unprocessed": 0, "by_category": {}, "by_pipeline": {}}
 
     def get_client_context_for_cipher(self, client_alias):
         """Return a dict formatted for CIPHER's framework engines.

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 DABEIBA Daily Orchestrator — runs the full pipeline in one command.
-Coordinates: TITAN → DELTA → DOCTRINE → SENTINEL → FORGE → BEACON
+Coordinates: TITAN → DELTA → DOCTRINE → SENTINEL → FORGE → BEACON → HORIZON
 See pipeline_registry.py for codename reference.
 
 Usage:
@@ -9,15 +9,18 @@ Usage:
 
 Steps:
     [KB]  KB Index Check — rebuild if knowledge files changed
-    [0/6] Backup soma.db
-    [1/6] Run ORACLE → writes regime + valuations to SOMA
-    [2/6] What Changed → diffs against previous, flags material shifts
-    [2b]  Narrative Alignment → flags outlook ↔ portfolio contradictions
-    [2c]  KB Violations → reports any new validation violations
-    [3/6] SOMA Status → one-screen dashboard
-    [4/6] MANTIS → shows portfolio state + trades
-    [5/6] CIPHER → generates outlook IF material changes detected
-    [6/6] Action items + timing
+    [0/7] Backup soma.db
+    [0.5] PRISM — process scraper inbox (if files present)
+    [1/7] Run ORACLE → writes regime + valuations to SOMA
+    [2/7] What Changed → diffs against previous, flags material shifts
+    [2b]  DOCTRINE → thesis engine: belief testing, conviction adjustments, alerts
+    [2c]  Narrative Alignment → flags outlook ↔ portfolio contradictions
+    [2d]  KB Violations → reports any new validation violations
+    [3/7] SOMA Status → one-screen dashboard
+    [4/7] MANTIS → shows portfolio state + trades
+    [5/7] CIPHER → generates outlook IF material changes detected
+    [6/7] HORIZON → tactical timing analysis (7-lens synthesis)
+    [7/7] Action items + timing
 """
 
 import os
@@ -101,6 +104,38 @@ def step_0_backup():
         return False
 
 
+# ── Step 0.5: PRISM (Inbox Ingestion) ────────────────────────────────
+
+def step_05_prism():
+    """PRISM — process any files in the scraper inbox."""
+    _header("0.5", "PRISM — Inbox Ingestion")
+
+    try:
+        from shared.soma.prism_engine import PrismEngine
+
+        with PrismEngine() as prism:
+            result = prism.process_inbox()
+
+            n_scanned = result.get("files_scanned", 0)
+            n_processed = result.get("files_processed", 0)
+            n_errored = result.get("files_errored", 0)
+
+            if n_scanned == 0:
+                print(f"  {DIM}Inbox empty — nothing to ingest{RESET}")
+            else:
+                prism.print_terminal()
+                prism.save_log()
+                if n_errored:
+                    _step_fail(f"{n_processed} ingested, {n_errored} errored")
+                else:
+                    _step_ok(f"{n_processed} file(s) ingested into SOMA")
+
+    except ImportError as e:
+        print(f"  {YELLOW}[SKIP] PRISM not importable: {e}{RESET}")
+    except Exception as e:
+        _step_fail(f"PRISM error: {e}")
+
+
 # ── Step 1: ORACLE ────────────────────────────────────────────────────
 
 def step_1_oracle():
@@ -154,11 +189,45 @@ def step_2_what_changed():
         return None
 
 
-# ── Step 2b: Narrative Alignment ──────────────────────────────────────
+# ── Step 2b: DOCTRINE (Thesis Engine) ───────────────────────────────────
 
-def step_2b_alignment():
+def step_2b_doctrine():
+    """DOCTRINE — Investment thesis engine: beliefs, evidence, conviction, alerts."""
+    _header("2b", "DOCTRINE — Thesis Engine")
+
+    try:
+        from shared.soma.doctrine_engine import DoctrineEngine
+
+        with DoctrineEngine() as doc:
+            result = doc.analyze()
+            doc.print_terminal()
+            log_path = doc.save_log()
+
+            n_beliefs = result.get("beliefs_analyzed", 0)
+            n_alerts = result.get("alerts_raised", 0)
+            n_changes = len(result.get("conviction_changes", []))
+
+            _step_ok(f"{n_beliefs} beliefs analyzed, {n_changes} conviction change(s), "
+                     f"{n_alerts} alert(s)")
+
+            if n_alerts > 0:
+                critical = [a for a in result.get("alerts", [])
+                            if a["severity"] == "CRITICAL"]
+                if critical:
+                    print(f"\n  {RED}{BOLD}CRITICAL:{RESET} "
+                          f"{len(critical)} belief(s) require mandatory review")
+
+    except ImportError as e:
+        print(f"  {YELLOW}[SKIP] DOCTRINE not importable: {e}{RESET}")
+    except Exception as e:
+        _step_fail(f"DOCTRINE error: {e}")
+
+
+# ── Step 2c: Narrative Alignment ──────────────────────────────────────
+
+def step_2c_alignment():
     """Portfolio-Narrative Alignment — flags contradictions."""
-    _header("2b", "Portfolio-Narrative Alignment")
+    _header("2c", "Portfolio-Narrative Alignment")
 
     try:
         from shared.soma.narrative_alignment import NarrativeAlignment
@@ -184,9 +253,9 @@ def step_2b_alignment():
         return None
 
 
-# ── Step 2c: KB Violations ───────────────────────────────────────────
+# ── Step 2d: KB Violations ───────────────────────────────────────────
 
-def step_2c_violations():
+def step_2d_violations():
     """Check for new KB violations since last run."""
     _header("2c", "KB Violations Check")
 
@@ -352,11 +421,68 @@ def step_5_cipher(wc_result):
         _step_fail(f"CIPHER error: {e}")
 
 
-# ── Step 6: Action Items + Timing ─────────────────────────────────────
+# ── Step 6: HORIZON Tactical Timing ──────────────────────────────────
 
-def step_6_actions(wc_result, start_time):
+def step_6_horizon():
+    """HORIZON → run tactical timing analysis with fresh ORACLE data."""
+    _header("6/7", "HORIZON Tactical Timing")
+
+    try:
+        from shared.soma.horizon import run_horizon
+
+        question = "Daily portfolio timing check — should I hold, reduce, or add to TSLA + MSTR?"
+        analysis = run_horizon(question, verbose=False)
+
+        if analysis.concordance is None:
+            print(f"  {RED}HORIZON failed — no regime gate available{RESET}")
+            return
+
+        # Compact summary
+        dir_val = analysis.composite_direction.value
+        if "BUY" in dir_val:
+            color = GREEN
+        elif "SELL" in dir_val:
+            color = RED
+        else:
+            color = YELLOW
+
+        cc = analysis.concordance
+        passed = f"{GREEN}PASS{RESET}" if cc.passed else f"{YELLOW}FAIL{RESET}"
+
+        print(f"  {BOLD}Signal:{RESET}       {color}{analysis.composite_score:+.3f} ({dir_val}){RESET}")
+        print(f"  {BOLD}Concordance:{RESET}  {cc.agreeing_count}/{cc.total_lenses} [{passed}]")
+        print(f"  {BOLD}Confidence:{RESET}   {analysis.final_confidence:.0%} (raw={analysis.raw_confidence:.0%})")
+
+        if analysis.regime_gate:
+            g = analysis.regime_gate
+            print(f"  {BOLD}Regime:{RESET}       {g.regime.value} (GLI={g.gli_value:.2f})")
+
+        if analysis.bias_audit and analysis.bias_audit.any_detected:
+            names = [b.bias_name for b in analysis.bias_audit.biases_detected]
+            print(f"  {BOLD}Biases:{RESET}       {YELLOW}{', '.join(names)}{RESET}")
+
+        if analysis.monte_carlo and analysis.monte_carlo.windows:
+            # Show best window
+            best = max(analysis.monte_carlo.windows, key=lambda w: w.p_optimal)
+            print(f"  {BOLD}Best window:{RESET}  {best.label} (P={best.p_optimal:.0%}, E={best.expected_move_pct:+.1f}%)")
+
+        if not cc.passed:
+            print(f"\n  {YELLOW}No action recommended — concordance not met{RESET}")
+
+        print(f"\n  {DIM}Full report: soma_query.py \"horizon last\"{RESET}")
+        _step_ok(f"Analysis stored (run={analysis.run_id})")
+
+    except ImportError as e:
+        print(f"  {YELLOW}[SKIP] HORIZON not importable: {e}{RESET}")
+    except Exception as e:
+        _step_fail(f"HORIZON error: {e}")
+
+
+# ── Step 7: Action Items + Timing ─────────────────────────────────────
+
+def step_7_actions(wc_result, start_time):
     """Action items + timing."""
-    _header("6/6", "Action Items + Timing")
+    _header("7/7", "Action Items + Timing")
 
     elapsed = time.time() - start_time
 
@@ -409,6 +535,12 @@ def main():
     except Exception as e:
         print(f"  {RED}ERROR{RESET} in Backup step: {e}")
 
+    # Step 0.5: PRISM (Inbox Ingestion)
+    try:
+        step_05_prism()
+    except Exception as e:
+        print(f"  {RED}ERROR{RESET} in PRISM step: {e}")
+
     # Step 1: ORACLE
     try:
         step_1_oracle()
@@ -422,15 +554,21 @@ def main():
     except Exception as e:
         print(f"  {RED}ERROR{RESET} in What Changed step: {e}")
 
-    # Step 2b: Narrative Alignment
+    # Step 2b: DOCTRINE
     try:
-        step_2b_alignment()
+        step_2b_doctrine()
+    except Exception as e:
+        print(f"  {RED}ERROR{RESET} in DOCTRINE step: {e}")
+
+    # Step 2c: Narrative Alignment
+    try:
+        step_2c_alignment()
     except Exception as e:
         print(f"  {RED}ERROR{RESET} in Alignment step: {e}")
 
-    # Step 2c: KB Violations
+    # Step 2d: KB Violations
     try:
-        step_2c_violations()
+        step_2d_violations()
     except Exception as e:
         print(f"  {RED}ERROR{RESET} in Violations step: {e}")
 
@@ -452,9 +590,15 @@ def main():
     except Exception as e:
         print(f"  {RED}ERROR{RESET} in CIPHER step: {e}")
 
-    # Step 6: Action Items + Timing
+    # Step 6: HORIZON
     try:
-        step_6_actions(wc_result, start)
+        step_6_horizon()
+    except Exception as e:
+        print(f"  {RED}ERROR{RESET} in HORIZON step: {e}")
+
+    # Step 7: Action Items + Timing
+    try:
+        step_7_actions(wc_result, start)
     except Exception as e:
         print(f"  {RED}ERROR{RESET} in Action Items step: {e}")
 
