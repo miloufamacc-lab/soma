@@ -74,12 +74,14 @@ PIPELINES = {
     "COBALT": {
         "acronym": "Chain Observation & Blockchain Analytics for Tactical Leverage",
         "module": "ORACLE",
-        "function": "BTC/SOL on-chain metrics: MVRV Z-Score, NUPL, SOPR, exchange flows",
-        "status": "PLANNED",
-        "key_files": [],
+        "function": "BTC/SOL on-chain metrics: MVRV proxy, NUPL proxy, network health, DeFi TVL, composite signals",
+        "status": "BUILT",
+        "key_files": [
+            "oracle/cobalt_engine.py",
+        ],
         "soma_tables": ["onchain_metrics", "onchain_signals"],
-        "data_sources": ["CoinGecko", "Mempool.space", "DeFiLlama", "Blockchain.com", "Dune"],
-        "notes": "Free tier only. 80% alpha coverage per Grok. Circuit breaker pattern.",
+        "data_sources": ["CoinGecko", "Mempool.space", "DeFiLlama", "Blockchain.com"],
+        "notes": "Free tier only. Proxy MVRV/NUPL via 200d MA + 365d avg mcap. Circuit breaker pattern. 24h cache TTL.",
     },
 
     "SPECTRE": {
