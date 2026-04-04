@@ -12,6 +12,7 @@ Steps:
     [0/7] Backup soma.db
     [0.5] PRISM — process scraper inbox (if files present)
     [1/7] Run ORACLE → writes regime + valuations to SOMA
+    [1b]  COBALT → on-chain intelligence (BTC/SOL metrics, composite signals)
     [2/7] What Changed → diffs against previous, flags material shifts
     [2b]  DOCTRINE → thesis engine: belief testing, conviction adjustments, alerts
     [2c]  Narrative Alignment → flags outlook ↔ portfolio contradictions
@@ -167,6 +168,43 @@ def step_1_oracle():
     except Exception as e:
         _step_fail(f"ORACLE error: {e}")
         return False
+
+
+# ── Step 1b: COBALT (On-Chain Intelligence) ─────────────────────────
+
+def step_1b_cobalt():
+    """COBALT — on-chain intelligence: BTC/SOL metrics, composite signals."""
+    _header("1b", "COBALT — On-Chain Intelligence")
+
+    try:
+        from oracle.cobalt_engine import CobaltEngine
+
+        with CobaltEngine() as cobalt:
+            result = cobalt.analyze()
+            cobalt.print_terminal()
+            log_path = cobalt.save_log()
+
+            assets = result.get("assets", {})
+            sources = result.get("sources", {})
+            degraded = [s for s, st in sources.items() if st != "OK"]
+
+            summary_parts = []
+            for asset, data in assets.items():
+                summary_parts.append(
+                    f"{asset}: {data['direction']} ({data['composite']:.0%})"
+                )
+
+            _step_ok(" | ".join(summary_parts))
+
+            if degraded:
+                print(f"  {YELLOW}Degraded sources: {', '.join(degraded)}{RESET}")
+
+            _step_ok(f"Log saved to {log_path}")
+
+    except ImportError as e:
+        print(f"  {YELLOW}[SKIP] COBALT not importable: {e}{RESET}")
+    except Exception as e:
+        _step_fail(f"COBALT error: {e}")
 
 
 # ── Step 2: What Changed ─────────────────────────────────────────────
@@ -546,6 +584,12 @@ def main():
         step_1_oracle()
     except Exception as e:
         print(f"  {RED}ERROR{RESET} in ORACLE step: {e}")
+
+    # Step 1b: COBALT (On-Chain Intelligence)
+    try:
+        step_1b_cobalt()
+    except Exception as e:
+        print(f"  {RED}ERROR{RESET} in COBALT step: {e}")
 
     # Step 2: What Changed
     wc_result = None
