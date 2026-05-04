@@ -1,0 +1,10 @@
+type: DOCTRINE_EVIDENCE
+schema_version: "1.0"
+date: "2026-04-17"
+source: "dabeiba-doctrine-brief"
+source_type: "scheduled_task"
+source_hash: "24205364"
+belief_id: "ENERGY_OVERWEIGHT_IRAN_SHOCK_V1"
+source_detail: "IEA calls Iran/Hormuz the largest oil supply disruption in history; 4.5-5 MMbpd offline, doubling by mid-April; Urals at 13-year high $116. XOM +42% YTD, sector +34% YTD."
+supports: true
+weight: 1.0

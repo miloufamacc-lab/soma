@@ -1,0 +1,24 @@
+type: PRISM
+schema_version: '1.0'
+date: '2026-04-16'
+source: dabeiba-doctrine-brief
+source_type: scheduled_task
+prism_intake:
+- source_type: scheduled_task
+  category: macro
+  target_pipeline: TITAN
+  relevance_score: 8
+  key_claims:
+  - 'FOMC Apr 28-29: CME FedWatch 86% prob of hold at 3.50-3.75%; first cut now priced June at earliest'
+  - 'Yield curve positive: 10Y 4.31% / 2Y 3.81% = ~50bp spread; non-recessionary structure'
+  - 'Sector rotation: capital leaving Pure-Growth, entering Quality-Value; Energy surprise 2026 leader'
+  - ECB Apr 30 and BOC Apr 29 decisions cluster around FOMC; consensus no move
+  - IMF WEO cut global growth to 3.1% 2026 on Middle East war; inflation 4.4%
+  tags:
+  - doctrine-brief
+  - macro
+  - daily
+  - fomc
+  - yield-curve
+  - imf
+  processed_date: '2026-04-16'

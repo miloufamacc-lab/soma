@@ -1,0 +1,20 @@
+type: PRISM
+schema_version: "1.0"
+date: "2026-04-22"
+source: "muskonomy-daily-sitrep"
+source_type: "scheduled_task"
+prism_intake:
+  - source_type: scheduled_task
+    source_url: ""
+    category: "equities"
+    target_pipeline: "TITAN"
+    relevance_score: 9
+    key_claims:
+      - "Dallas robotaxi fleet +101% overnight to 147 vehicles; unsupervised trips jumped 2→23 on April 22"
+      - "60 Cybercab units in Giga Texas outbound lot confirms April mass production ramp is real"
+      - "Tesla files first robotaxi-only Supercharger permits in Chandler/Mesa AZ — 56 V4 stalls, Phoenix pre-staging"
+      - "Q1 2026 earnings tonight 5:30 PM EDT: $21.9B rev / $0.36 EPS consensus; auto GM below 17% = bearish signal"
+      - "Energy storage 8.8 GWh Q1 — down 38% vs. Q4 14.2 GWh record; highest-margin segment at risk"
+    tags: ["musk-ecosystem", "tsla", "daily-sitrep", "q1-earnings", "robotaxi", "cybercab"]
+    processed_date: "2026-04-22"
+    skill_version: "muskonomy-v1"

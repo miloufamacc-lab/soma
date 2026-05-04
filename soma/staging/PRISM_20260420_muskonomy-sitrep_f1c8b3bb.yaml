@@ -1,0 +1,38 @@
+---
+target_pipeline: TITAN
+source_pipeline: MUSKONOMY
+source_module: ORACLE
+date: 2026-04-20
+serial: MUSKONOMY-021
+uuid: f1c8b3bb
+timestamp: 2026-04-20T11:20:33.040664
+ticker: TSLA
+type: daily_sitrep
+significance_score: 0.9
+tags:
+  - musk-ecosystem
+  - tsla
+  - daily-sitrep
+routing:
+  primary: TITAN
+  secondary: [COBALT, SPECTRE]
+  reason: "TSLA equity intelligence; COBALT for macro linkage (GLI 58.87, regime NORMAL); SPECTRE for sentiment (Elon posts 51/day)."
+payload:
+  price: 401.09
+  price_prev: 400.62
+  fair_value_oracle: 821.43
+  fair_value_sotp: 849.63
+  q1_earnings_date: "2026-04-22"
+  q1_earnings_countdown: "T-2"
+  regime: NORMAL
+  gli: 58.87
+  robotaxi_austin_unsupervised: 13
+  robotaxi_austin_fleet: 46
+  cybercab_status: "MASS_PRODUCTION_LATE_APRIL"
+  fsd_version: "v14.3 (2026.3.6)"
+  energy_q1_gwh: 8.8
+  optimus_internal: 1000
+source_file: /Users/jacobopaez/Desktop/DABEIBA/oracle/output/muskonomy_sitrep_2026-04-20.html
+deliverable_internal: /Users/jacobopaez/Desktop/DABEIBA/oracle/output/muskonomy_sitrep_2026-04-20.html
+deliverable_work: /Users/jacobopaez/Desktop/DABEIBA/oracle/output/muskonomy_sitrep_2026-04-20_work.html
+---

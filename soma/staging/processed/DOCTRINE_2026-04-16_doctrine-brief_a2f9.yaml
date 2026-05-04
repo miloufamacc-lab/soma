@@ -1,0 +1,10 @@
+type: DOCTRINE_EVIDENCE
+schema_version: '1.0'
+date: '2026-04-16'
+source: dabeiba-doctrine-brief
+source_type: scheduled_task
+source_hash: 32b62e58
+belief_id: BELIEF_FED_HOLD_THROUGH_Q2
+source_detail: CME FedWatch 86% prob of hold at FOMC Apr 28-29. Street consensus shifted first cut to June at earliest.
+supports: true
+weight: 1.0

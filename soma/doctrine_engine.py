@@ -29,6 +29,7 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 from .soma_bridge import SomaBridge
+from .pipeline_registry import get_display_name
 
 
 # ── Conviction adjustment rules (from Grok stress-test methodology) ──
@@ -314,12 +315,13 @@ class DoctrineEngine:
                 })
 
         # Evidence from DELTA material changes
+        _delta_name = get_display_name("DELTA")
         if delta_changes and delta_changes.get("has_material_change"):
             for change in delta_changes.get("changes", []):
                 if change["type"] == "regime_transition":
                     evidence.append({
                         "domain": "macro",
-                        "source_module": "DELTA",
+                        "source_module": _delta_name,
                         "source_detail": f"Regime transition: {change.get('description', '')}",
                         "direction": "neutral",  # direction depends on the belief
                         "weight": 1.5,
@@ -327,7 +329,7 @@ class DoctrineEngine:
                 elif change["type"] == "valuation_shift":
                     evidence.append({
                         "domain": "equities",
-                        "source_module": "DELTA",
+                        "source_module": _delta_name,
                         "source_detail": f"Valuation shift: {change.get('description', '')}",
                         "direction": "neutral",
                         "weight": 1.0,
@@ -716,7 +718,7 @@ class DoctrineEngine:
         severity_color = {"CRITICAL": RED, "WARNING": YELLOW, "INFO": DIM}
 
         print(f"\n{BOLD}{'=' * 60}{RESET}")
-        print(f"{BOLD}  DOCTRINE — Investment Thesis Engine{RESET}")
+        print(f"{BOLD}  DOCTRINE — Thesis & Convictions{RESET}")
         print(f"{DIM}  {r['timestamp']}{RESET}")
         print(f"{BOLD}{'=' * 60}{RESET}")
 

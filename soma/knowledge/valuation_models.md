@@ -87,6 +87,58 @@ rules:
   ASSET_BASED:
     use_when: ["distress_or_wind_down", "asset_heavy_business"]
     examples: ["real_estate", "natural_resources"]
+  MNAV_FRANCHISE:
+    use_when: ["treasury_company", "significant_btc_holdings", "btc_financial_intermediary"]
+    special_case_tickers: ["MSTR"]
+    description: "Modified NAV with franchise premium — value as bank P/B (mNAV = Market Cap / BTC NAV)"
+    rationale: "DCF produces absurd results ($2.31) for treasury companies with no operating cash flows. P/B (mNAV) captures franchise premium from capital structure + BTC yield accretion."
+    formula: "Fair Value = (NAV / Share) × mNAV_Multiple"
+    nav_calc: "NAV = (BTC_Price × BTC_Holdings) - Total_Debt - Total_Preferred"
+    key_inputs:
+      btc_price: "live from strategy.com or Val_MSTR!B4"
+      btc_holdings: "SEC 8-K filings"
+      mnav_multiple: "community-weighted: (1.75×0.7)+(1.3×0.3) = 1.60x base"
+      debt: "strategy.com/debt — 6 convertible tranches"
+      preferred: "strategy.com/credit — STRC/STRK/STRF/STRD/STRE"
+    kpi: "BTC Yield (BTC/share accretion) — the ROE equivalent"
+    stress_levels:
+      elevated: 45000
+      warning: 35000
+      critical: 20000
+      death_spiral_floor: 8000
+    community_weighting: "70% community / 30% independent"
+    sources: ["strategy.com", "True North / BTC community", "Gemini AI", "Grok AI + X scrape"]
+    oracle_tab: "Val_MSTR"
+    version: "v1.1_20260324_community_weighted"
+```
+  SOTP_ENHANCED_V3:
+    use_when: ["multi_segment_conglomerate", "pre_revenue_segments", "platform_company", "ARK_style_analysis"]
+    special_case_tickers: ["TSLA"]
+    description: "Enhanced SOTP v3.0 — 9-segment ARK-aligned model with scenarios, feedback loops, real options overlay"
+    rationale: "Standard DCF treats Tesla as a single cash flow stream. SOTP captures that Auto, Energy, Robotaxi, Insurance, Optimus, AI, and Network are independent value drivers with different risk profiles and probabilities."
+    formula: "Fair Value = Σ(Segment_NPV × Probability × Moat_Factor) × Feedback_Multiplier + Synergy_Premium"
+    segments:
+      - core_auto: "Gordon Growth on terminal deliveries × blended ASP"
+      - energy_vpp: "Megapack + Powerwall + Solar + VPP software"
+      - fsd_robotaxi: "Tesla-owned + 3rd-party fleet, per-state regulatory toggles"
+      - human_ride_hail: "Bridge revenue before full autonomy. ARK: $0.28 profit/mile"
+      - insurance: "40% fleet penetration, 35% EBIT margin (ARK: ~40%)"
+      - optimus: "External sales + internal deployment + labor substitution"
+      - ai_chips: "Dojo inference + HW5/6 sales + FSD licensing to OEMs"
+      - network_services: "Supercharger revenue + connectivity subscriptions"
+      - musk_ecosystem: "SpaceX/xAI/Neuralink/Boring synergy premium"
+    enhancements:
+      feedback_loops: "Data flywheel (1.08×), Manufacturing (1.05×), Energy-Fleet (1.03×), Insurance (1.02×)"
+      scenarios: "Bear (25%)/Base (50%)/Bull (25%) — three complete SOTP panels"
+      cross_method: "Reconciles SOTP + DCF + Relative at configurable weights"
+      bias_guardrails: "CFA BEHAVIORAL_BIASES_V1 — auto-flags overconfidence, probability bias, terminal growth excess"
+      sensitivity: "5×5 WACC × TG heatmap with conditional formatting"
+    master_toggle: "B2=1 for Enhanced SOTP, B2=0 for Traditional DCF fallback"
+    key_inputs_count: 80
+    charts: ["SOTP waterfall", "segment pie", "scenario bar", "sensitivity heatmap"]
+    sources: ["ARK Invest 2026/2029 models", "Tesla 10-K", "CFA KB EQUITY_FACTORS_V1", "SOMA RISK_FRAMEWORK_V1"]
+    oracle_tab: "Val_TSLA"
+    version: "v3.0_20260324_ARK_aligned"
 ```
 <!-- END_RULE_BLOCK -->
 
@@ -1427,3 +1479,29 @@ R: Revealing (market hasn't appreciated)
 **Financial Data Retrieval:** yfinance for stock prices, beta, EPS, FCF, P/E, financial statements
 **Portfolio Analytics:** Returns computation, correlation matrices, portfolio optimization, Monte Carlo simulation
 **Decision Rule:** Python enables automation of GAMMA PI tasks — comp tables, Magic Number, HELP analysis, portfolio optimization
+
+<!-- RULE_BLOCK: CRYPTO_STRC_VARIABLE_RATE_V1 -->
+rule_id: CRYPTO_STRC_VARIABLE_RATE_V1
+source_module: PRISM
+domain: crypto
+rule_data:
+  - Variable-rate perpetual preferred stock (STRC) uses company-adjustable credit spread to maintain $100 par stability
+  - Monthly dividend frequency, no investor redemption rights, no liquidation trigger
+  - Volatility transferred from credit to common equity — serving two investor classes from one capital structure
+  - Break-even: underlying BTC needs only ~2% annual appreciation to cover dividends on $50B equity tower
+  - Yield sourced from equity premium sales (primary), BTC sales (secondary), derivatives (tertiary), cash reserves (buffer)
+confidence: 0.75
+<!-- END_RULE_BLOCK -->
+
+<!-- RULE_BLOCK: CRYPTO_REHYPOTHECATION_DYNAMIC_V1 -->
+rule_id: CRYPTO_REHYPOTHECATION_DYNAMIC_V1
+source_module: PRISM
+domain: crypto
+rule_data:
+  - BTC rehypothecation in crypto shadow banking creates structural short selling pressure
+  - $100B pledged BTC that is rehypothecated = ~10 years of mining supply effectively short-sold
+  - Resolution requires bank credit networks (conforming loans without rehypothecation)
+  - Migration from rehypothecated to non-rehypothecated custody could trigger short squeeze
+  - Basel rule normalization is prerequisite for bank credit network formation
+confidence: 0.60
+<!-- END_RULE_BLOCK -->

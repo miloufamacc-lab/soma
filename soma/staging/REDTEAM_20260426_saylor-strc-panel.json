@@ -1,0 +1,42 @@
+[
+  {
+    "claim_id": 1,
+    "speaker": "Michael Saylor",
+    "counter_argument": "Regime-dependence + base-rate neglect: US administrations turn over every 4 years; the prior administration (Gensler SEC, Yellen Treasury) was openly hostile to crypto from 2021-2024, blocking spot BTC ETFs for ~10 years and suing Coinbase/Binance/Kraken. A single midterm or 2028 election can flip the entire stack. Globally, deference is far from automatic: the EU's MiCA regulation (in force Dec 2024) enforces stricter stablecoin/issuance rules than US frameworks; China has maintained a hard crypto ban since 2021; the BIS and ECB (Lagarde, repeatedly through 2024-2025) have publicly warned digital assets threaten monetary sovereignty. Saylor himself is a multi-billion-dollar beneficiary of pro-crypto policy persistence — textbook conflict of interest. Base rate of US financial regulatory regimes surviving one election unchanged: ~50%.",
+    "evidence": "MiCA enforcement Dec 2024 (EU diverges from US); SEC v. Coinbase filed June 2023 under prior admin; ECB consistently anti-crypto stance through Lagarde speeches 2024-2025",
+    "source": "EU Regulation 2023/1114 (MiCA); SEC press releases 2023; ECB Financial Stability Review",
+    "steelman_strength": "STRONG"
+  },
+  {
+    "claim_id": 2,
+    "speaker": "Michael Saylor",
+    "counter_argument": "Selection bias + structural mismatch: STRC/digital credit instruments are uncollateralized claims on a single volatile asset (BTC at 60-80% annualized vol historically). High-yield credit ($1.5T US market) is bought by insurance companies, pension funds, and CLOs that face NAIC capital charges, ERISA prudence rules, and rating-agency mandates that explicitly disqualify crypto-collateralized paper. The Fed's SR 22-6 and OCC Interpretive Letters 1183/1184 (2023) require banks to demonstrate risk-management capability before holding crypto exposure — a binding gate. Even if STRC pays 11.5%, a BB-rated HY bond at 7-8% with senior-secured covenants and 40-year default-rate data wins on a Sharpe-adjusted, regulatory-capital-adjusted basis. Saylor's 5-year displacement timeline ignores that the HY market grew through 1989, 2002, 2008, and 2020 stress cycles — survivorship of the asset class itself.",
+    "evidence": "US HY market $1.5T outstanding (ICE BofA HY Index Dec 2024); NAIC RBC charges for non-rated/crypto = 30%+ vs ~3% for IG; default rate HY long-run avg ~3.5% (Moody's)",
+    "source": "ICE BofA US High Yield Index; NAIC Capital Adequacy Task Force; Moody's Annual Default Study 2024",
+    "steelman_strength": "STRONG"
+  },
+  {
+    "claim_id": 3,
+    "speaker": "Michael Saylor",
+    "counter_argument": "Definitional sleight-of-hand: 'Return-free risk' assumes a single hurdle rate (BTC's ~50% CAGR). But credit instruments serve liability-matching, not return-maximization. A pension fund with $1B of 10-year liabilities at 4.5% needs a 4.5% asset, not a 50% asset with 80% drawdowns. Calling $300T 'non-performing' against a BTC benchmark is category error — it's like calling water 'inferior fuel' because it doesn't combust. Empirically: IG corporate bonds delivered 4.2% annualized 1976-2024 (Bloomberg Agg), HY 7.8% (ICE BofA), beating inflation +1.5-3% in real terms. Saylor's framing also ignores that BTC has had three >75% drawdowns (2014, 2018, 2022) — a credit instrument that triples then halves does NOT replace a pension liability stream. Conflict of interest: Saylor's MSTR thesis literally requires this narrative to be true.",
+    "evidence": "BTC drawdowns: -86% (2014), -84% (2018), -77% (2022); IG corporate 1976-2024 real return ~2%; pension fund duration-matching mandate (ERISA 404(a))",
+    "source": "Bloomberg US Aggregate Index; CoinMetrics BTC price history; ERISA Section 404",
+    "steelman_strength": "STRONG"
+  },
+  {
+    "claim_id": 4,
+    "speaker": "Michael Saylor",
+    "counter_argument": "Historical precedent contradicts: governments DO act when private credit substitutes threaten monetary transmission. India banned private cryptocurrencies via RBI circular 2018 (later partially reversed); Nigeria banned crypto banking 2021; China banned all crypto activity 2021 specifically because Tether/USDT was bypassing capital controls. The Bank for International Settlements 2023 Annual Report explicitly named stablecoins/crypto-credit as 'systemic substitution risk to monetary sovereignty.' If STRC scales to even $50-100B, it would compete with money-market funds (a $6T+ asset class the Fed actively manages via reverse repo). FSB and IOSCO have published 2023-2024 papers calling for stablecoin/yield-bearing token regulation precisely because they DO threaten sovereign credit transmission. Saylor's claim relies on STRC remaining small enough to ignore — a self-defeating prediction.",
+    "evidence": "BIS Annual Economic Report 2023 Ch. III; FSB High-level recommendations on global stablecoin arrangements (July 2023); China's Sept 2021 comprehensive crypto ban",
+    "source": "BIS.org Annual Reports; FSB.org publications; PBoC Notice on Further Preventing Virtual Currency Trading",
+    "steelman_strength": "STRONG"
+  },
+  {
+    "claim_id": 5,
+    "speaker": "Phong Le",
+    "counter_argument": "TAM inflation via aggregation fallacy: $300-400T is the TOTAL global money/short-duration pool — but the addressable subset is a fraction of a fraction. Money-market funds globally are ~$8-10T (ICI data 2024); short-term IG corporate ~$5T; bank deposits earning <1y duration are sticky to FDIC/deposit insurance and payment-network utility, NOT yield arbitrage. STRC's actual addressable market is closer to the yield-seeking, regulation-light, accreditation-tolerant slice — historically estimated at <5% of nominal short-duration capital, or ~$15-20T optimistically. Furthermore, Tether (largest crypto-credit-like instrument) reached only ~$140B after 10 years despite 5%+ effective yields and first-mover advantage. Citing $300-400T as TAM is a classic CEO pitch-deck overstatement that conflates 'money exists' with 'money is competitively addressable.' Conflict: Le is CEO talking to investors at a BTC conference.",
+    "evidence": "Global MMF AUM ~$10T (ICI Worldwide Mutual Fund Assets Q4 2024); USDT supply ~$140B Apr 2026; FDIC-insured US deposits ~$18T",
+    "source": "Investment Company Institute Worldwide Statistics; CoinGecko/Tether transparency reports; FDIC Quarterly Banking Profile",
+    "steelman_strength": "STRONG"
+  }
+]

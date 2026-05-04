@@ -1,0 +1,101 @@
+primary_category: PHILOSOPHY
+primary_score: 45
+secondary_categories:
+  - category: BEHAVIORAL
+    score: 40
+  - category: TECHNOLOGY
+    score: 17
+all_categories_ranked:
+  - category: PHILOSOPHY
+    score: 45
+  - category: BEHAVIORAL
+    score: 40
+  - category: TECHNOLOGY
+    score: 17
+  - category: MACRO
+    score: 24
+  - category: EQUITIES
+    score: 25
+  - category: DIGITAL-ASSETS
+    score: 7
+  - category: RISK
+    score: 13
+  - category: CONSUMER
+    score: 14
+relevance_score: 8.2
+flags:
+  - HIGH_CONVICTION_PREDICTIONS
+  - FOUNDER_PERSPECTIVE
+  - CONTRARIAN_CALLS
+  - MACRO_TECH_CONVERGENCE
+  - CROSS_DOMAIN_SIGNALS_9_CATEGORIES
+suggested_path: intel/by-topic/philosophy/wealth-creation/INTEL_20260417_01_camillo_arbitrage.pptx
+metadata:
+  generated: "2026-04-17T14:32:00"
+  total_signals_analyzed: 9
+  total_points: 68
+  coverage_breadth: 9
+
+# SIGNAL BREAKDOWN
+signals_by_category:
+  PHILOSOPHY:
+    - signal: Philanthropy
+      impact: 6
+    - signal: Risk bucketing
+      impact: 7
+    - signal: Experiential economy
+      impact: 6
+  BEHAVIORAL:
+    - signal: 70%+ returns
+      impact: 9
+    - signal: Value investing dead
+      impact: 8
+    - signal: Risk bucketing
+      impact: 7
+    - signal: TikTok alpha
+      impact: 8
+  TECHNOLOGY:
+    - signal: Humanoid robots 2030
+      impact: 9
+    - signal: AI opportunity + bubble
+      impact: 8
+  MACRO:
+    - signal: AI opportunity + bubble
+      impact: 8
+    - signal: Bitcoin thesis
+      impact: 7
+    - signal: Humanoid robots 2030
+      impact: 9
+  EQUITIES:
+    - signal: 70%+ returns
+      impact: 9
+    - signal: TikTok alpha
+      impact: 8
+    - signal: Value investing dead
+      impact: 8
+  DIGITAL-ASSETS:
+    - signal: Bitcoin thesis
+      impact: 7
+  RISK:
+    - signal: Philanthropy
+      impact: 6
+  CONSUMER:
+    - signal: TikTok alpha
+      impact: 8
+    - signal: Experiential economy
+      impact: 6
+
+# ROUTING DECISION RATIONALE
+rationale: |
+  PHILOSOPHY emerges as primary (45 points) through three distinct signals:
+  - Philanthropy + Risk Bucketing + Experiential Economy form a coherent thesis
+    about wealth purpose and allocation philosophy.
+  - BEHAVIORAL (40 points) is secondary: high-impact performance claims (70%+)
+    paired with contrarian market views. This reflects *how* positions are taken
+    (behavioral alpha), not philosophical positioning.
+  - TECHNOLOGY (17 points) ranks 3rd: two high-impact signals (Robotics 2030,
+    AI Bubble) but narrower thematic cohesion. Both thread through macro forces.
+
+  Cross-domain strength: All 9 categories touched (breadth = 9), but PHILOSOPHY
+  consolidates the speaker's value framework. Filing under philosophy/wealth-creation
+  preserves founder perspective and contrarian positioning.

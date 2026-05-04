@@ -1,0 +1,18 @@
+type: PRISM
+schema_version: "1.0"
+date: "2026-04-26"
+source: "muskonomy-daily-sitrep"
+source_type: "scheduled_task"
+prism_intake:
+  - source_type: scheduled_task
+    source_url: ""
+    category: "equities"
+    target_pipeline: "TITAN"
+    relevance_score: 9
+    key_claims:
+      - "Cybercab volume production started at Giga Texas Apr 23-24, 2026 — continuous manufacturing confirmed by Musk on X"
+      - "Tesla robotaxi expanded to Dallas+Houston (Apr 18-20); fleet 573 US total; pricing $6.15 vs Waymo $13.93 (56% cheaper)"
+      - "Optimus Gen 3 mid-2026 debut confirmed via Weibo Apr 23; mass prod Jul-Aug; Boston Marathon demo Apr 20"
+    tags: ["musk-ecosystem", "tsla", "cybercab", "optimus", "robotaxi", "daily-sitrep"]
+    processed_date: "2026-04-26"
+    skill_version: "muskonomy-v1"

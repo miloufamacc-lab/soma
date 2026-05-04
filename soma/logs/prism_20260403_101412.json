@@ -1,0 +1,51 @@
+{
+  "timestamp": "2026-04-03T10:14:12.061543+00:00",
+  "inbox_path": "/sessions/intelligent-youthful-keller/mnt/DABEIBA/shared/scrapers/inbox",
+  "files_scanned": 4,
+  "files_processed": 4,
+  "files_errored": 0,
+  "processed": [
+    {
+      "file": "gem_btc_analysis.txt",
+      "source_type": "gem_dump",
+      "category": "crypto",
+      "target_pipeline": "COBALT",
+      "relevance": 10,
+      "title": "Bitcoin MVRV Z-Score Analysis \u2014 April 2026",
+      "claims": 5,
+      "content_length": 766
+    },
+    {
+      "file": "taiwan_strait_update.md",
+      "source_type": "manual",
+      "category": "geopolitical",
+      "target_pipeline": "SPECTRE",
+      "relevance": 7,
+      "title": "Taiwan Strait Tensions \u2014 April 3, 2026",
+      "claims": 5,
+      "content_length": 807
+    },
+    {
+      "file": "youtube_palantir_analysis.json",
+      "source_type": "manual",
+      "category": "equities",
+      "target_pipeline": "TITAN",
+      "relevance": 9,
+      "title": "Palantir Q1 2026 Earnings Deep Dive \u2014 AI Revenue Acceleration",
+      "claims": 3,
+      "content_length": 721
+    },
+    {
+      "file": "thesis_discipline_note.txt",
+      "source_type": "manual",
+      "category": "philosophy",
+      "target_pipeline": "DOCTRINE",
+      "relevance": 10,
+      "title": "INVESTMENT THESIS DISCIPLINE \u2014 Personal Reflection",
+      "claims": 5,
+      "content_length": 887
+    }
+  ],
+  "errors": [],
+  "summary": "Processed 4 file(s). Routed to: COBALT: 1, DOCTRINE: 1, SPECTRE: 1, TITAN: 1."
+}

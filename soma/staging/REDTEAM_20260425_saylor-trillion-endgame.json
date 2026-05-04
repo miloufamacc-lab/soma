@@ -1,0 +1,52 @@
+[
+  {
+    "claim_id": "C1",
+    "claim": "Strategy will accumulate $1 trillion of Bitcoin and issue $100B/year of digital credit growing 20-30%/yr — endgame transforms credit markets globally; BTC-back credit captures 50%+ of global credit market over 1-2 decades",
+    "speaker": "Michael Saylor",
+    "impact": 10,
+    "counter_argument": "The global credit market is approximately $300T (BIS Global Debt Securities + bank loans, 2024-2025), and 50% capture would mean $150T of BTC-back credit — yet total Bitcoin market cap was only ~$1.3-2T at 2025 highs and even at Saylor's $21M/coin scenario reaches just ~$420T (with ~50% over-collateralization that gives only ~$200T credit capacity, not $150T+ on top of existing financial uses). Strategy itself trades at a persistent mNAV premium that has historically compressed (Grayscale GBTC's premium collapsed from +40% to -49% in 2021-2022, MicroStrategy mNAV has oscillated 1.5x-3.4x), and the ATM-issuance flywheel mechanically breaks once mNAV approaches 1.0x. Saylor has a direct conflict of interest as the largest individual MSTR holder (~10% economic, ~46% voting), and similar 'one company captures global credit' claims (GE Capital pre-2008, Long-Term Capital Management, Lehman) ended in collapse — GE Capital alone needed $139B Fed/FDIC liquidity backstop in 2008.",
+    "evidence": "Global credit market ~$300T (BIS 2024); GBTC premium swing from +40% to -49% (2021-22); MSTR mNAV has compressed below 2x multiple times in 2024-2026; MicroStrategy's voting control >45% creates governance/conflict risk",
+    "source": "BIS Global Debt Securities Statistics 2024; Grayscale GBTC discount history (Bloomberg); MSTR 10-K voting structure; MicroStrategy investor presentations",
+    "steelman_strength": "STRONG"
+  },
+  {
+    "claim_id": "C2",
+    "claim": "Bitcoin will compound at 29% nominal / 21% real CAGR for the next 21 years, reaching $21M/coin terminal price. This is effectively the risk-free rate for any allocator who understands BTC",
+    "speaker": "Michael Saylor",
+    "impact": 10,
+    "counter_argument": "No asset class in recorded financial history has compounded at 29% nominal for 21 years — even the best post-WWII performers (Japanese equities 1949-1989, US equities 1982-2000) topped out around 15-19% CAGR over multi-decade periods, and both ended in catastrophic drawdowns (Nikkei -82% peak-to-trough, NASDAQ -78%). Mathematically, 29% for 21 years yields ~217x; applied to ~21M coins outstanding at $21M/coin = $441T network value, which exceeds the total value of global equities (~$110T MSCI ACWI) and approaches global real estate (~$380T, Savills) — there is no historical precedent for a single asset reaching that fraction of global wealth. Calling a 70%-volatility asset with five drawdowns >50% (2011, 2014, 2018, 2022, 2025) the 'risk-free rate' is a category error: the CFA definition of risk-free requires zero default risk AND zero volatility of return, not high expected return. Saylor's track record on this exact claim is poor — his 2021 forecast was $6M by 2045 (~21% CAGR), and BTC's actual 2021-2025 CAGR underperformed that path.",
+    "evidence": "Nikkei 225 1989 peak still not recovered as of 2024 (35-year drawdown); BTC realized volatility 60-80% annualized vs T-bills <1%; BTC has had 5 drawdowns >50% since 2011; global equity market cap ~$110T (SIFMA 2024) — $441T BTC implies BTC > all equities + most real estate combined",
+    "source": "SIFMA Capital Markets Fact Book 2024; Bloomberg BTC volatility data; Savills Global Real Estate Value 2023; historical Nikkei/NASDAQ peak-to-trough data",
+    "steelman_strength": "STRONG"
+  },
+  {
+    "claim_id": "C3",
+    "claim": "There are 180+ public Bitcoin treasury companies as of April 2026, doubling roughly every 3 months (60 → 120 → 180+ over 12 months). One day every company will be a Bitcoin treasury company",
+    "speaker": "Michael Saylor",
+    "impact": 9,
+    "counter_argument": "This is a textbook reflexivity/saturation pattern, not a durable trend — the SPAC boom went from ~50 to 600+ in 2020-2021 and then collapsed by 90%+ with most de-SPACs trading below $2 by 2024 (Bloomberg SPAC Index -75%); the cannabis-treasury and 'blockchain pivot' (Long Island Iced Tea → Long Blockchain, 2017) waves followed identical doubling-then-crash arcs. Most BTC-treasury entrants are sub-$500M micro-caps using ATM/PIPE structures that only work above mNAV 1.0x — Semler Scientific, Metaplanet, and several Asian entrants already saw mNAV compress toward 1.0-1.2x in late 2025. The accounting tailwind from FASB ASU 2023-08 (fair-value mark-to-market for crypto, effective 2025) is a one-time benefit already priced in. Most importantly, 'every company will be a BTC treasury' is logically incompatible with operating businesses needing working capital, inventory, payroll in fiat — utilities, banks, REITs, and regulated financials face explicit prudential rules (Basel III crypto exposure cap of 2% Tier 1 capital) that prevent meaningful BTC holdings.",
+    "evidence": "SPAC count peaked ~600 in Q1 2021, fell to <20 IPOs/quarter by 2023 (SPAC Research); FASB ASU 2023-08 tailwind already in effect; Basel III SCO60 caps bank crypto exposure at 2% of Tier 1; Long Blockchain Corp delisted 2018 after 'pivot'",
+    "source": "SPAC Research database; Basel Committee SCO60 (December 2022); FASB ASU 2023-08; SEC delisting records",
+    "steelman_strength": "STRONG"
+  },
+  {
+    "claim_id": "C9",
+    "claim": "BTC-back digital credit will displace traditional credit at scale. Hundreds of trillions of digital credit will be issued backed by ~$200T of BTC capital. 4,000 weak regional banks selling preferred shares get squeezed out. AAA corporate debt at 2.5x over-collateralized is structurally weaker than 2x BTC-back credit because BTC has real-time pricing transparency.",
+    "speaker": "Michael Saylor",
+    "impact": 9,
+    "counter_argument": "The claim that 24/7 mark-to-market collateral is 'stronger' than AAA corporate debt inverts how credit risk actually works — real-time pricing IS the risk in volatile collateral, as the March 2020 BTC flash crash (-50% in 24 hours) and FTX/3AC contagion (June 2022, $40B+ liquidations in 72 hours) demonstrated; Genesis, Celsius, BlockFi, and Voyager all had over-collateralized BTC-back lending books and went bankrupt anyway because correlation goes to 1 in a crisis. AAA corporates default at <0.1%/year (Moody's 1920-2023 cumulative) — orders of magnitude better than crypto-collateralized lenders, where >50% of major 2021-2022 lenders failed. The '4,000 regional banks squeezed out' framing ignores that US regional banks hold ~$10T in deposits backed by FDIC insurance and Fed discount window access — structural advantages no BTC-back issuer has. Basel III, NAIC, and ERISA rules effectively prohibit pension funds, insurers, and banks (representing >$60T of global credit demand) from holding BTC-collateralized paper at meaningful scale, capping the addressable market far below 'hundreds of trillions.'",
+    "evidence": "Moody's 1920-2023: AAA cumulative 10-yr default rate ~0.35%; Celsius/Voyager/BlockFi/Genesis all collapsed despite over-collateralization 2022-2023; BTC -50% in March 2020 single-day move; FDIC insures $10T+ US regional deposits; Basel III risk weight for BTC exposure = 1,250%",
+    "source": "Moody's Annual Default Study 2023; bankruptcy filings of Celsius (Case 22-10964), Voyager (22-10943), BlockFi (22-19361), Genesis (23-10063); Basel SCO60",
+    "steelman_strength": "STRONG"
+  },
+  {
+    "claim_id": "C11",
+    "claim": "When MSTR holds 5% of BTC supply, BTC will trade at $1M/coin minimum. When MSTR holds 7%, BTC will be at $10M/coin (implies $200T total network value)",
+    "speaker": "Michael Saylor",
+    "impact": 9,
+    "counter_argument": "This is a price-from-flow fallacy — single-buyer accumulation does not mechanically dictate market price; the Hunt Brothers cornered ~50% of the silver market in 1979-80 driving silver from $6 to $50, then it collapsed 90% to $5 within 2 years when the buying stopped (CFTC margin rule changes triggered the crash). MSTR going from 3% to 7% of supply requires buying ~840k more BTC at ever-rising prices — the math implies $50T+ deployed at avg cost of ~$60M/coin, which exceeds Strategy's plausible market cap many times over and runs into ATM dilution constraints once mNAV compresses. A $200T BTC network value would represent ~50% of global real estate (~$380T) or ~2x global equities (~$110T), with no productive cash flows backing it — Metcalfe's law and stock-to-flow models (PlanB's S2F) have repeatedly failed out-of-sample, with PlanB's $288k by 2024 forecast missing by >2x. Saylor has direct material interest in talking the price up: every 10% MSTR rally is worth ~$3-4B to his personal stake, creating a textbook conflict that should heavily discount his price targets.",
+    "evidence": "Hunt Brothers silver corner: $50 → $5 (1980-82, -90%); PlanB Stock-to-Flow model failed multiple price targets; Saylor's personal MSTR stake ~$30-40B at 2025 highs; global equity cap ~$110T (SIFMA) vs Saylor's $200T BTC implication",
+    "source": "CFTC Silver Market Report 1985; PlanB S2F model historical forecasts vs realized prices; MSTR proxy statements (DEF 14A); SIFMA 2024 Capital Markets Fact Book",
+    "steelman_strength": "STRONG"
+  }
+]

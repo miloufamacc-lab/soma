@@ -1,0 +1,18 @@
+type: PRISM
+schema_version: "1.0"
+date: "2026-04-21"
+source: "muskonomy-daily-sitrep"
+source_type: "scheduled_task"
+prism_intake:
+  - source_type: scheduled_task
+    source_url: ""
+    category: "equities"
+    target_pipeline: "TITAN"
+    relevance_score: 8
+    key_claims:
+      - "TSLA Q1 deliveries 358,023 missed consensus ~370K; Q1 earnings April 22 after close at 150x+ P/E"
+      - "Dallas+Houston robotaxi launched Apr 18; 120 tracker vehicles across 3 cities; Cybercab mass prod late April"
+      - "NHTSA upgraded FSD probe Engineering Analysis 3.2M vehicles; EU Netherlands FSD Day 12"
+    tags: ["musk-ecosystem", "tsla", "daily-sitrep", "q1-earnings", "robotaxi"]
+    processed_date: "2026-04-21"
+    skill_version: "muskonomy-v1"

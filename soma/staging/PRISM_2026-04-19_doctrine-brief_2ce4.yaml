@@ -1,0 +1,42 @@
+type: PRISM
+schema_version: "1.0"
+date: "2026-04-19"
+source: "dabeiba-doctrine-brief"
+source_type: "scheduled_task"
+prism_intake:
+  - source_type: scheduled_task
+    category: "equities"
+    target_pipeline: "TITAN"
+    relevance_score: 8
+    key_claims:
+      - "TSLA Q1 April 22 pivot-week event; $400 vs $821 ORACLE FV; Cybercab production commenced; EPS $0.30 vs $0.37 consensus"
+      - "Financials sweep (JPM/GS/BAC) + software rotation (ORCL/CRWD/NOW) breaking mega-cap concentration"
+    tags: ["doctrine-brief", "equities", "weekly", "tsla-earnings", "breadth-expansion"]
+    processed_date: "2026-04-19"
+  - source_type: scheduled_task
+    category: "macro"
+    target_pipeline: "TITAN"
+    relevance_score: 9
+    key_claims:
+      - "WTI -11% Friday to $84 on Hormuz reopening converts stagflation scare to disinflation setup if held"
+      - "FOMC April 28-29 no-projections meeting; SPX 7126 NDX 24468 12-day streak; VIX 17.48 sub-20 stress-free"
+    tags: ["doctrine-brief", "macro", "weekly", "oil-shock", "fomc", "regime-upgrade"]
+    processed_date: "2026-04-19"
+  - source_type: scheduled_task
+    category: "crypto"
+    target_pipeline: "COBALT"
+    relevance_score: 7
+    key_claims:
+      - "SEC/CFTC March 2026 interpretation classifies BTC/ETH/SOL/XRP as digital commodities; removes SEC enforcement tail"
+      - "SOL $78-82 consolidation post-Drift $285M hack; TVL $5.9B recovering (+9.8% 2w); Jupiter $3B TVL; RWA $2B on Solana"
+    tags: ["doctrine-brief", "crypto", "solana", "regulation", "etf"]
+    processed_date: "2026-04-19"
+  - source_type: scheduled_task
+    category: "geopolitical"
+    target_pipeline: "TITAN"
+    relevance_score: 8
+    key_claims:
+      - "Iran reopens Strait of Hormuz during ceasefire; loadings recovered from 3.8 to normalizing; April 24 deadline = tail risk"
+      - "Trump-Xi summit framework on semis/rare earths anticipated; removes largest AI/industrials capex supply-chain overhang"
+    tags: ["doctrine-brief", "geopolitical", "oil", "china", "trade"]
+    processed_date: "2026-04-19"

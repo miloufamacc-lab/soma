@@ -1,0 +1,39 @@
+type: PRISM
+schema_version: "1.0"
+date: "2026-04-21"
+source: dabeiba-doctrine-brief
+source_type: scheduled_task
+prism_intake:
+  - source_type: scheduled_task
+    category: macro
+    target_pipeline: TITAN
+    relevance_score: 9
+    key_claims:
+      - "Iran ceasefire expires April 22; Hormuz at 3.8 mb/d vs 20 mb/d; Brent 95/bbl; IEA projects 440mb April supply loss; FOMC April 29 hawkish risk"
+      - "S&P 500 near ATH 7109; Q1 EPS beat rate 88%; 13.2% YoY growth; mega-cap earnings April 29 (META/MSFT/GOOG/AMZN)"
+      - "Fed funds 3.5-3.75%, Powell term ends May 15, Warsh confirmation hearing April 20; Bank of Canada holds 2.25% April 29"
+      - "Sector rotation: Energy +21%, Materials +17%, Staples +15%, Industrials +12% YTD; small-cap Russell new record April 20"
+    tags: [doctrine-brief, macro, daily, iran, fomc, earnings-week]
+    processed_date: "2026-04-21"
+  - source_type: scheduled_task
+    category: crypto
+    target_pipeline: COBALT
+    relevance_score: 8
+    key_claims:
+      - "SEC classified SOL as commodity removing ETF barrier; 8 firms filed spot SOL ETFs (Fidelity VanEck); 75-day approval timeline"
+      - "BTC dominance 57%, price 77200 testing support; total crypto market cap 2.50T; altcoin season index 47"
+      - "Drift Protocol exploit April 1 - 285M loss North Korean attribution; SOL TVL contracted from 9B to 5.5-6B"
+      - "Jupiter 95% aggregator share, 2-4B daily volume; Goldman Sachs filed Bitcoin Premium Income ETF"
+    tags: [doctrine-brief, crypto, daily, solana, btc, etf-pipeline]
+    processed_date: "2026-04-21"
+  - source_type: scheduled_task
+    category: geopolitical
+    target_pipeline: TITAN
+    relevance_score: 10
+    key_claims:
+      - "US-Iran war started Feb 28; ceasefire April 8; expires April 22; US Navy seized Iranian freighter April 20; talks stalled"
+      - "Brent 95/bbl; LNG supply down 20%; Qatar Ras Laffan offline since March 2; global supply -10.1 mb/d to 97 mb/d"
+      - "US threatens 50pct tariffs on China over arms-to-Iran; Supreme Court struck IEEPA tariffs Feb 2026; China tariffs at 47.5pct"
+      - "IMF global growth 3.1pct; headline inflation 4.4pct globally; largest oil supply disruption in history"
+    tags: [doctrine-brief, geopolitical, daily, iran, hormuz, oil-shock, china-tariffs]
+    processed_date: "2026-04-21"

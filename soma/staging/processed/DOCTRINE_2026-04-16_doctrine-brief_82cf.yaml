@@ -1,0 +1,10 @@
+type: DOCTRINE_EVIDENCE
+schema_version: '1.0'
+date: '2026-04-16'
+source: dabeiba-doctrine-brief
+source_type: scheduled_task
+source_hash: 774769c8
+belief_id: BELIEF_GEOECONOMIC_FRAGMENTATION
+source_detail: 'WEF Global Risks Report 2026 ranks geoeconomic confrontation #1 near-term global risk; Trump 50% China tariff threat tied to Iran arms shipments.'
+supports: true
+weight: 1.0

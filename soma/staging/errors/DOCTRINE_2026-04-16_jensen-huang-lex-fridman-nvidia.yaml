@@ -1,0 +1,82 @@
+# DOCTRINE belief integration for 2026-04-16 Jensen Huang / Lex Fridman interview.
+# Transcript hash: d9ec164c
+# Skill version: V3.0
+# Processed date: 2026-04-16
+#
+# Weight convention: Tier 1 -> 1.5, Tier 2 -> 1.0, Tier 3 -> 0.5
+# Jensen is Tier 1 factual, Tier 2 forward-looking with COI dampening. All DOCTRINE evidence below
+# is forward-looking / thesis-level, hence weight 1.0 (Tier 2).
+
+doctrine_evidence:
+
+  - belief_id: EQ_AI_SECULAR_THEME
+    source_module: PRISM
+    source_detail: "Jensen Huang in Lex Fridman interview: $3T revenue, 4 scaling laws live"
+    supports: true
+    weight: 1.0
+    speaker_tier: 2
+    speaker: "Jensen Huang"
+    transcript_hash: "d9ec164c"
+    rationale: >
+      Jensen asserts four scaling laws (pre-train, post-train, test-time, agentic) are simultaneously
+      live and that compute share of GDP rises 100x. If even directionally correct, this is a
+      continuation of the AI secular growth thesis already tracked under EQ_AI_SECULAR_THEME (C=7).
+      COI-adjusted confidence 0.50-0.55.
+
+  - belief_id: EQ_CONCENTRATION_ALPHA
+    source_module: PRISM
+    source_detail: "Jensen Huang: CUDA install base moat, 43K engineers, rack-scale co-design"
+    supports: true
+    weight: 1.0
+    speaker_tier: 2
+    speaker: "Jensen Huang"
+    transcript_hash: "d9ec164c"
+    rationale: >
+      CUDA install-base moat + rack-scale co-design argue for persistent above-market economics at the
+      dominant platform operator (NVDA). Aligns with EQ_CONCENTRATION_ALPHA (C=8) — winners in secular
+      themes compound. Confidence 0.85 on CUDA moat (cross-chunk reinforced), 0.82 on rack-scale.
+
+  - belief_id: RISK_DRAWDOWN_ASYMMETRY
+    source_module: PRISM
+    source_detail: "Red-team: DeepSeek R1 triggered $600B NVDA drawdown in 48h Jan 2025"
+    supports: true
+    weight: 1.0
+    speaker_tier: 2
+    speaker: "Jensen Huang (transcript) / red-team (evidence)"
+    transcript_hash: "d9ec164c"
+    rationale: >
+      The red-team file documents the Jan 2025 DeepSeek R1 shock that erased ~$600B of NVDA market cap
+      in two days on a single algorithmic-efficiency paper. This is a textbook confirmation of
+      RISK_DRAWDOWN_ASYMMETRY (C=9): concentrated AI-exposure portfolios face asymmetric downside on
+      narrative shocks. The transcript itself does NOT acknowledge this event; red-team surfaces it
+      as a risk anchor for the $3T thesis.
+
+  - belief_id: EQ_CUDA_MOAT_DURABLE_CANDIDATE
+    domain: equities
+    statement: "CUDA install base + 43K engineers + several million devs constitute a durable (5-10y) platform moat that sustains NVDA gross margins >70% through the AI capex cycle."
+    conviction: 4
+    source: "Lex Fridman Podcast - Jensen Huang interview, 2026-04-16"
+    status: CANDIDATE
+    transcript_hash: "d9ec164c"
+    rationale: >
+      CANDIDATE belief (NOT auto-added). Raised as candidate because cross-chunk reinforcement + Tier 1
+      factual anchor (43K engineers, GeForce precedent) give the thesis directional support. Conviction
+      kept low (4/10) because red-team produced five STRONG counters (TorchTPU Dec 2025, Triton/MAX,
+      ASIC 44.6% growth, inference-ASIC bifurcation, hyperscaler self-supply). Flagged for manual review
+      before promotion. If promoted, would fit under equities domain alongside EQ_AI_SECULAR_THEME.
+
+meta:
+  subject_slug: "jensen-huang-lex-fridman-nvidia"
+  primary_category: equities
+  target_pipeline: TITAN
+  processed_date: "2026-04-16T00:00:00Z"
+  skill_version: V3.0
+  speakers:
+    - name: "Jensen Huang"
+      tier: 2
+      role: "Founder/CEO NVIDIA"
+      coi_flag: true
+    - name: "Lex Fridman"
+      tier: 3
+      role: "Podcaster / interviewer"
+      coi_flag: false

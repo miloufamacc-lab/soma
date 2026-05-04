@@ -105,11 +105,24 @@ class KBReader:
         return rules
 
     def build_index(self):
-        """Parse all .md files in knowledge/, extract YAML rule blocks, store in kb_rules."""
+        """Parse all .md files in knowledge/, extract YAML rule blocks, store in kb_rules.
+
+        Phase 4.3 — after each rule is stored, validate table.column refs
+        against the live SOMA schema. Invalid refs go to kb_violations
+        (non-blocking — rule is still stored so the system never gets stuck).
+        """
         if not _KB_DIR.is_dir():
             return
 
         now = self._now()
+
+        # Phase 4.3 — lazy-load KBValidator for rule-reference checks.
+        _validator = None
+        try:
+            from kb_validator import KBValidator
+            _validator = KBValidator(self.bridge)
+        except Exception as e:
+            print(f"[SOMA] kb_reader: rule-ref validator unavailable: {e}")
 
         for md_file in sorted(_KB_DIR.glob("*.md")):
             file_hash = self._file_md5(md_file)
@@ -135,6 +148,17 @@ class KBReader:
                     )
                 except Exception as e:
                     print(f"[SOMA] kb_reader build_index failed for {rule_id}: {e}")
+
+                # Phase 4.3 — rule-reference validation (non-blocking)
+                if _validator is not None:
+                    try:
+                        _validator.validate_rule_references(
+                            rule_id=rule_id,
+                            rule_data=rule,
+                            source_module=source_module or "SOMA",
+                        )
+                    except Exception as e:
+                        print(f"[SOMA] kb_reader rule-ref validation failed for {rule_id}: {e}")
 
         try:
             self.bridge.conn.commit()
@@ -174,6 +198,35 @@ class KBReader:
                 return True
 
         return False
+
+    def refresh_cache(self) -> dict:
+        """Phase 4.1 — reload changed rules from disk, mid-run.
+
+        Calls `is_index_stale()`; if any KB file hash changed, runs
+        `build_index()` (which also refreshes the in-memory cache). If
+        nothing changed, just reloads the in-memory cache from SQLite
+        in case another process wrote rules.
+
+        Returns a summary dict: {reloaded: bool, cache_size: int}.
+        Safe to call at the start of every `run_day.py` step.
+        """
+        try:
+            stale = self.is_index_stale()
+        except Exception as e:
+            print(f"[SOMA] refresh_cache staleness check failed: {e}")
+            stale = False
+
+        if stale:
+            try:
+                self.build_index()  # also clears + reloads _cache
+                return {"reloaded": True, "cache_size": len(self._cache)}
+            except Exception as e:
+                print(f"[SOMA] refresh_cache build_index failed: {e}")
+
+        # Not stale — but another process may have updated kb_rules; refresh memory.
+        self._cache.clear()
+        self._load_cache()
+        return {"reloaded": False, "cache_size": len(self._cache)}
 
     def get_rule(self, rule_id: str) -> dict:
         """Return parsed rule dict from cache. Raise KeyError if not found."""

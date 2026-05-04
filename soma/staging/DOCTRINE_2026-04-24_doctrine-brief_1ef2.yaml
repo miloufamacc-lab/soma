@@ -1,0 +1,21 @@
+type: DOCTRINE_EVIDENCE
+schema_version: "1.0"
+date: "2026-04-24"
+source: "dabeiba-doctrine-brief"
+source_type: "scheduled_task"
+source_hash: "32303236"
+belief_id: "fed_rates_on_hold_2026"
+source_detail: "March CPI 3.3% YoY (up from 2.4% Feb), FOMC April 28-29 hold 99.4% priced, Powell final meeting. March dot plot signals one cut H2 2026 at earliest."
+supports: true
+weight: 1.0
+---
+type: DOCTRINE_EVIDENCE
+schema_version: "1.0"
+date: "2026-04-24"
+source: "dabeiba-doctrine-brief"
+source_type: "scheduled_task"
+source_hash: "32303236"
+belief_id: "iran_conflict_oil_premium_embedded"
+source_detail: "Brent $107.10 WTI $97.44 with ceasefire extended but fragile. IEA: largest supply disruption in history. Hormuz closure tail risk active."
+supports: true
+weight: 1.0

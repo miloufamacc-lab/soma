@@ -1,0 +1,20 @@
+{
+  "inconsistencies": [
+    {
+      "type": "regime_instability",
+      "description": "2 regime changes in last 5 entries but outlook shows strong conviction (|sentiment| = 1.00)",
+      "severity": "LOW",
+      "contradiction_score": 0.3
+    }
+  ],
+  "contradiction_score": 0.3,
+  "alignment": 0.7,
+  "data_available": {
+    "outlook": true,
+    "portfolio": true,
+    "regime": true,
+    "valuations": true
+  },
+  "checks_run": 4,
+  "timestamp": "2026-03-23T02:36:35.043262+00:00"
+}

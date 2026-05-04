@@ -1,0 +1,13 @@
+{
+  "inconsistencies": [],
+  "contradiction_score": 0.0,
+  "alignment": 1.0,
+  "data_available": {
+    "outlook": true,
+    "portfolio": true,
+    "regime": true,
+    "valuations": true
+  },
+  "checks_run": 4,
+  "timestamp": "2026-03-30T01:27:41.653343+00:00"
+}

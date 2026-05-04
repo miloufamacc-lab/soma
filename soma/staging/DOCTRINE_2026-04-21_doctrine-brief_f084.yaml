@@ -1,0 +1,10 @@
+type: DOCTRINE_EVIDENCE
+schema_version: "1.0"
+date: "2026-04-21"
+source: dabeiba-doctrine-brief
+source_type: scheduled_task
+source_hash: "eecd2874"
+belief_id: solana_etf_structural_rerating_catalyst
+source_detail: "SEC commodity classification of SOL removes ETF barrier; 8 issuers filed spot SOL ETFs; 75-day approval timeline; Bitwise 15.5M inflows April 17"
+supports: true
+weight: 1.0

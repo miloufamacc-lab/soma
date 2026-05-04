@@ -1,0 +1,100 @@
+---
+# HORIZON Phase 4f: Neato Squishy Toy Trend
+# Catalyst Analysis — Timing Signals
+# Date: 2026-04-17
+# Signal Category: FUNDAMENTAL (Short-Duration Tactical)
+
+catalyst:
+  name: "Neato Squishy Toy Holiday Catalyst (Q4 2026)"
+  description: "6-9 month baseline product-cycle trend with concentrated holiday season peak; 20-40% stock impact if sales triple"
+  primary_conviction: 0.50
+  position_size_impact: "6.5% of unnamed holding company NAV"
+
+timing_window:
+  label: "Trade Window"
+  opens: "2026-07-01"
+  baseline_closes: "2026-12-31"
+  full_window_closes: "2027-03-31"
+  rationale: "Standard toy product cycle: Q3 accumulation → Q4 retail peak → Q1 digestion. Trade thesis active July through December 2026; extension possible if backorders extend into 2027."
+
+action_trigger:
+  primary: "Accumulate position if Amazon #1 tube-toy ranking sustained through September 2026 with no displacement"
+  escalation: "Increase position if July-August Amazon seller review volume >2,000/month (viral indicator)"
+  exit_alpha: "Trim 25% of position at +35% on any Q3 earnings beat; hold balance into Q4 retail"
+  fallback: "Exit 50% of position if Amazon ranking drops below top 5 by September 2026"
+
+monitor_metrics:
+  - metric: "Amazon #1 Tube Toy Ranking"
+    frequency: "weekly (July-Oct 2026)"
+    threshold: "Maintain position #1 or #2 through September 2026; any loss to #5+ triggers de-escalation"
+    source: "Amazon best-sellers (public), retail tracking services (Sensor Tower, data.ai)"
+    technical_note: "Collect weekly snapshots; chart momentum into Labor Day (Sept 7, 2026)"
+
+  - metric: "Amazon Seller Review Volume"
+    frequency: "weekly"
+    threshold: ">2,000 reviews/month July-August as viral signal; >3,000/month Sept-Oct indicates retail confidence"
+    source: "Amazon product page + third-party scrapers (Helium10, Jungle Scout)"
+    leading_indicator: "True indicator of demand (not just price/ranking); precedes earnings by 6-8 weeks"
+
+  - metric: "Holding Company Earnings (Unnamed Co.)"
+    frequency: "quarterly"
+    threshold: "Q3 2026 earnings beat by >15% YoY growth in toy/novelty segment attributable to Neato SKU"
+    source: "Earnings call transcript, segment revenue breakdown"
+    timing: "Q3 earnings typically Aug 15 - Sept 15; results are 6-8 week trailing"
+
+  - metric: "Toy Category Sell-Through Rate"
+    frequency: "monthly"
+    threshold: ">60% sell-through rate in Q3 2026; >85% in Q4 2026 (industry baseline: 40-50%)"
+    source: "Retail syndicated data (Nielsen, GfK), Disney/Hasbro comp stores"
+    note: "Neato sales velocity vs segment baseline"
+
+  - metric: "Competitor Product Launches"
+    frequency: "real-time"
+    threshold: "Watch for Q3 copies from MGA Entertainment, Hasbro, Moose Toys (would compress margin and timeline)"
+    source: "Toy trade publications (Toy Industry Association), Amazon new releases"
+    risk: "If >3 credible competitors launch squishy tube clones by Aug 2026, reduce conviction by 0.25"
+
+  - metric: "Social Media Velocity (TikTok/Instagram Reels)"
+    frequency: "weekly"
+    threshold: ">1M views/week on hashtag #NeatoSquishyToy by August 2026; sustained >2M/week Sept-Oct"
+    source: "TikTok analytics (if available), Instagram Insights, social listening (Brandwatch, Trendify)"
+    leading_indicator: "Precedes Amazon ranking pressure by 3-4 weeks"
+
+fallback_conditions:
+  - condition: "Amazon ranking drops below top 5 by August 31, 2026"
+    action: "Exit 100% of position immediately"
+    rationale: "Signals demand cliff; do not wait for earnings confirmation"
+
+  - condition: "Review velocity stalls (<500/month in August)"
+    action: "Reduce position by 50%; set stop-loss at -20%"
+    rationale: "Indicates viral plateau before peak retail season; momentum window closing"
+
+  - condition: "Competitor launches within 6 weeks of Neato peak (Aug-Sept 2026)"
+    action: "Reduce conviction by 0.15 → 0.35; trim position by 40%"
+    rationale: "Timeline compression; Q4 holiday sales will be fragmented across 2-3 brands"
+
+  - condition: "Q3 earnings miss or flat YoY toy-segment growth"
+    action: "Exit remaining position within 3 trading days"
+    rationale: "Earnings = early reality check; miss invalidates entire bull thesis"
+
+upside_triggers:
+  - "Amazon #1 ranking sustained into October (rare—indicates category momentum)"
+  - "Retail partnerships announced (Target, Walmart end-cap displays) by August 2026"
+  - "Celebrity endorsement or viral TikTok moment (>10M views) in Q3 2026"
+  - "Holding company announces Q4 guidance raise at Sept earnings specifically citing toy segment"
+
+risk_anchors:
+  - "Toy category seasonality: Q4 2026 compares against strong Q4 2025 baseline (if holiday 2025 was also strong, growth rates compress)"
+  - "Retail inventory: if major retailers over-ordered Neato in Q3, expect Q4 price cuts (margin pressure)"
+  - "Demand cliff risk: January 2027 typically sees 50-70% toy category volume drop (capture alpha before Dec 31)"
+  - "Supply risk: check manufacturing lead times for Q4 restocks (if <60 days available, stockouts possible but also upside)"
+
+summary:
+  signal_confidence: 0.50
+  speaker_tier: 2
+  transcript_source: "Chris Camillo × Mark Moss (~78 min, 2026-04-17)"
+  transcript_hash: "fba58360"
+  trade_window: "2026-07-01 to 2026-12-31 (extended March 31, 2027 if backorder thesis activates)"
+  update_frequency: "weekly July-October; monthly November-December"
+  next_review: "2026-06-30 (pre-launch verification)"
+  position_type: "short-dated tactical (close within 60-90 days post-Q4 earnings)"

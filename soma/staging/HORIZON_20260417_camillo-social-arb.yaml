@@ -1,0 +1,55 @@
+# HORIZON Timing Notes — transcript-to-intel V3.0
+# Source: Chris Camillo × Mark Moss (~78 min, pasted)
+# transcript_hash: fba58360 | Date: 2026-04-17
+# Only time-bound, actionable signals included. Vague directional claims excluded.
+
+horizon_signals:
+
+  - date: "2026-04-17"
+    source: "Chris Camillo × Mark Moss podcast"
+    lens: "FUNDAMENTAL"
+    direction: "BULLISH"
+    timeframe: "quarters"
+    signal_detail: "Neato squishy toy trend into Q4 2026 holiday season — 6.5% of unnamed holding co NAV, 20-40% potential stock impact if sales triple. Monitor Amazon ranking + sell-through data Q3/Q4 2026."
+    confidence: 0.50
+    speaker_tier: 2
+    transcript_hash: "fba58360"
+    catalyst_date: "Q4 2026"
+    monitor: "Amazon #1 tube toy ranking sustained through Sept 2026; earnings of unnamed holding co"
+
+  - date: "2026-04-17"
+    source: "Chris Camillo × Mark Moss podcast"
+    lens: "FUNDAMENTAL"
+    direction: "BULLISH"
+    timeframe: "years"
+    signal_detail: "2030 humanoid robotics: Camillo predicts 'universal recognition' (consensus, not full deployment) that scalable infinite labor machine exists. Timeline: 2030. Key signal to watch: commercial deployment announcements from Figure, 1X, Tesla Optimus in 2027-2028."
+    confidence: 0.45
+    speaker_tier: 2
+    transcript_hash: "fba58360"
+    catalyst_date: "2030"
+    monitor: "IFR annual robotics reports; Figure AI/1X funding rounds; Tesla Optimus production ramp; Jensen Huang/Elon Musk public statements on timeline"
+    red_team: "IFR World Robotics Report 2025 projects <50K units by 2030 — watch IFR 2026 update as first checkpoint"
+
+  - date: "2026-04-17"
+    source: "Chris Camillo × Mark Moss podcast"
+    lens: "SENTIMENT"
+    direction: "BULLISH"
+    timeframe: "months"
+    signal_detail: "AI solopreneur era: businesses requiring only one person now viable at $100K-$500K/yr revenue. Watch for micro-SaaS acquisition volume increase in PE/acqui-hire markets as leading indicator."
+    confidence: 0.50
+    speaker_tier: 2
+    transcript_hash: "fba58360"
+    catalyst_date: "2026-2028"
+    monitor: "MicroAcquire / Acquire.com deal volume; self-employed AI tools revenue data from Stripe/Paddle"
+
+  - date: "2026-04-17"
+    source: "Chris Camillo × Mark Moss podcast"
+    lens: "FUNDAMENTAL"
+    direction: "BULLISH"
+    timeframe: "years"
+    signal_detail: "BTC intergenerational wealth transfer: $80-100T transfer over 20-25yr horizon; 2-5% BTC allocation = $1.6-5T inflow. Signal to watch: generational survey data on crypto preference (lead indicator), not BTC price itself."
+    confidence: 0.55
+    speaker_tier: 2
+    transcript_hash: "fba58360"
+    catalyst_date: "2026-2051"
+    monitor: "Annual CFA/Gallup surveys on investor asset allocation preferences by age cohort; spot ETF flow data monthly"

@@ -1,0 +1,18 @@
+{
+  "processed": 3,
+  "errors": 0,
+  "skipped": 0,
+  "dry_run": false,
+  "model_flags": [
+    "TSLA"
+  ],
+  "wiki_updates": [],
+  "doctrine_evidence": [
+    "EQ_AI_SECULAR_THEME"
+  ],
+  "by_type": {
+    "MODEL_FLAG": 1,
+    "PRISM": 1,
+    "DOCTRINE_EVIDENCE": 1
+  }
+}

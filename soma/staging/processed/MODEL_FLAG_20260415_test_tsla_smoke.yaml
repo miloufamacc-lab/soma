@@ -1,0 +1,12 @@
+type: MODEL_FLAG
+schema_version: "1.0"
+date: "2026-04-15"
+source: "smoke-test"
+source_type: "manual"
+source_hash: "smoke001"
+ticker: TSLA
+flag: FRESH_INTEL
+claims_summary:
+  - "Q1 deliveries exceeded consensus by 12%"
+  - "FSD v13 rollout confirmed for June 2026"
+impact_on_valuation: "Revenue assumptions may need upward revision"

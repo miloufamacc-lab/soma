@@ -1,0 +1,18 @@
+type: PRISM
+schema_version: "1.0"
+date: "2026-04-19"
+source: "muskonomy-daily-sitrep"
+source_type: "scheduled_task"
+prism_intake:
+  - source_type: scheduled_task
+    source_url: ""
+    category: "equities"
+    target_pipeline: "TITAN"
+    relevance_score: 8
+    key_claims:
+      - "Austin unsupervised robotaxi fleet reached 13 units (+1 vs Apr 16 baseline); Cybercab mass-production ignited with 60 units staged at Giga Texas"
+      - "AI5 chip taped out Apr 15 at TSMC + Samsung SF2T; Samsung Taylor TX equipment ceremony Apr 24; HVM mid-2027; 8-10x compute vs AI4"
+      - "Q1 earnings T-3 (Apr 22 4:30 PM CT); EPS consensus $0.36 vs buy-side skew $0.30; TSLA +14% WoW recovering from Q1-delivery-miss trough"
+    tags: ["musk-ecosystem", "tsla", "daily-sitrep", "pre-earnings", "cybercab", "ai5", "robotaxi"]
+    processed_date: "2026-04-19"
+    skill_version: "muskonomy-v1"

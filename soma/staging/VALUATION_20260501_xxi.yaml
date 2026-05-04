@@ -1,0 +1,70 @@
+type: VALUATION
+schema_version: "1.0"
+date: "2026-05-01T13:00:00Z"
+source: "equity-valuation"
+source_type: "valuation_model"
+ticker: "XXI"
+wiki_slug: "xxi-valuation"
+build_version: 2
+
+valuation_summary:
+  current_price: 7.93
+  blended_fv: 14.65
+  implied_upside_pct: 84.7
+  recommendation: "BUY"
+  conviction: "MEDIUM-HIGH"
+  scenario_weights: {bear: 0.10, neutral: 0.35, bull: 0.55}
+  scenario_fv: {bear: 0.90, neutral: 6.58, bull: 22.29}
+  wacc: 0.13
+  horizon_years: 5
+  btc_holdings: 43514
+  btc_price_used: 76800
+  diluted_shares: 684841164
+
+key_catalyst:
+  date: "2026-04-29"
+  type: "M&A_PROPOSAL"
+  description: "Tether-backed 3-way merger XXI + Strike (Mallers' Bitcoin payments/lending fintech, 100+ countries) + Elektron Energy (50 EH/s miner, all-in cost <$60K/BTC). Mallers stays CEO; Zagury becomes President."
+  status: "ANNOUNCED — pending SEC review and shareholder approval"
+  probability_close: 0.65
+
+doctrine_evidence:
+  - belief_id: EQ_VALUATION_MEAN_REVERT
+    source_detail: "XXI model: DCF blended FV $14.65 vs market $7.93 (+84.7% upside). Driven by BTC stack growth + Strike/Elektron merger optionality."
+    supports: true
+    weight: 1.0
+  - belief_id: BTC_TREASURY_STACK_THESIS
+    source_detail: "XXI is 3rd-largest public BTC holder (43,514 BTC). Tether-backed full-stack Bitcoin company emerging via Strike+Elektron merger."
+    supports: true
+    weight: 1.0
+  - belief_id: MERGER_OPTIONALITY_PRICED
+    source_detail: "Market underprices Tether-driven merger (XXI +18.9% post-announcement vs blended-FV +85% upside implies further re-rating)."
+    supports: true
+    weight: 0.7
+
+risks:
+  - "BTC price volatility (HIGH severity, HIGH likelihood)"
+  - "M&A execution / SEC review (HIGH severity, MEDIUM likelihood)"
+  - "Convertible debt $464M overhang (MEDIUM/LOW)"
+  - "Class A non-voting governance concentration (MEDIUM/HIGH structural)"
+  - "Custody concentration at Anchorage (MEDIUM/MEDIUM)"
+
+deliverables:
+  - "XXI_VAL_MOD_01MAY26.xlsx (6 sheets: Dashboard, Assumptions, DCF Bear/Neutral/Bull, SOTP)"
+  - "XXI_Valuation_Presentation.pptx (25 slides)"
+  - "XXI_Model_User_Guide.pptx (16 slides)"
+  - "XXI_Valuation_Audit_Report.pptx (12 slides)"
+  - "XXI_CFA_Deep_Dive.pptx (35-36 slides)"
+
+cross_ai_status:
+  grok_prompt: "saved to qa/CROSSAI_PROMPTS_2026-05-01.md"
+  gemini_prompt: "saved to qa/CROSSAI_PROMPTS_2026-05-01.md"
+  paste_back_received: false
+
+methodology_notes:
+  - "Three-tier SOTP: Tier 1 BTC Treasury + Cash with NAV premium; Tier 2 Strike (post-merger); Tier 3 Elektron mining"
+  - "Synergy +12% on Tier 2+3; Tail haircut -5% on Tier 2+3+Synergy"
+  - "Bear assumes merger fails + BTC $50K; Neutral/Bull assume merger closes"
+  - "WACC 13% via MSTR-proxy beta 2.5; Cost of Equity 14.87%"
+  - "+25% extra dilution in Neutral/Bull for merger consideration"
+  - "5-year DCF horizon; values discounted to today via (1.13)^5 = 1.842 factor"

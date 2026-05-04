@@ -1,0 +1,76 @@
+prism_intake:
+  - source_type: transcript
+    source_url: ""
+    language: "en"
+    category: "equities"
+    target_pipeline: "TITAN"
+    relevance_score: 9
+    key_claims:
+      - "STRC at $3B AUM today, digital credit at $7.5B; speakers see scale path to $300B at 11.5% yield"
+      - "MSTR's only relevant KPI is BTC-per-share (74% 2024 / 22.8% 2025); GAAP framing produces persistent mispricing"
+      - "Dilution narrative is short-seller/convertible-arb hedging artifact; one in 20-50 transactions short-term dilutive"
+      - "STRC + Strike + Strife + Stride + Stream all designed using AI; engineering team 4x productive"
+      - "Tokenization in 10y disrupts private credit's distribution moat (2/20 fees, 4y lockups)"
+    tags: ["mstr","strc","strategy-inc","preferred-shares","btc-treasury","ai-finance"]
+    processed_date: "2026-04-26"
+    skill_version: "V3.0"
+    transcript_hash: "a33f474c"
+  - source_type: transcript
+    source_url: ""
+    language: "en"
+    category: "macro"
+    target_pipeline: "TITAN"
+    relevance_score: 9
+    key_claims:
+      - "$300T global credit market is 'return-free risk' — sovereign 50-350bps, IG 77bps, HY 288bps don't cover credit risk"
+      - "Digital credit will squeeze HY (5y), IG corporate (10y), then mortgage/IG (20y)"
+      - "Digital credit competes with private credit and junk bonds, NOT sovereign debt"
+      - "First two duration buckets (<3mo + 3mo-4y) = $300-400T global TAM (Jesse Meyers asset map)"
+      - "Banking adoption arrives 2026 (Basel + FASB ASU 2023-08 unlock insurance/pension)"
+    tags: ["credit-market","spreads","tam","banking-adoption","basel","yield-compression"]
+    processed_date: "2026-04-26"
+    skill_version: "V3.0"
+    transcript_hash: "a33f474c"
+  - source_type: transcript
+    source_url: ""
+    language: "en"
+    category: "crypto"
+    target_pipeline: "COBALT"
+    relevance_score: 7
+    key_claims:
+      - "Bitcoin Layer 1 protocol is the only critical defense priority; $100T economy can be built on top"
+      - "Lightning is one of multiple Layer 2 protocols; Solana/Ethereum/Hype may compete to be BTC L2/L3"
+      - "Three-layer duration stack: L1 BTC (>4y) | L2 STRC (3mo-4y) | L3 digital money (<3mo)"
+      - "Year 2060: 20% of capital will be digital vs ~0.1% today (200x growth, ~16% CAGR)"
+    tags: ["bitcoin","lightning","layer-2","layer-3","ossification","duration-stack"]
+    processed_date: "2026-04-26"
+    skill_version: "V3.0"
+    transcript_hash: "a33f474c"
+  - source_type: transcript
+    source_url: ""
+    language: "en"
+    category: "geopolitical"
+    target_pipeline: "SPECTRE"
+    relevance_score: 8
+    key_claims:
+      - "All five US financial-policy heads (Bessant=Treasury, Walsh=Fed, Atkins=SEC, Sullig=CFTC, Trump=POTUS) back digital assets"
+      - "OCC issued favorable stablecoin guidance; UAE second-most progressive"
+      - "Saylor claims rest of world (EU, Singapore, HK, China, Russia) will defer to US"
+    tags: ["us-regulators","stablecoin-guidance","occ","sec","cftc","mica-divergence"]
+    processed_date: "2026-04-26"
+    skill_version: "V3.0"
+    transcript_hash: "a33f474c"
+  - source_type: transcript
+    source_url: ""
+    language: "en"
+    category: "philosophy"
+    target_pipeline: "DOCTRINE"
+    relevance_score: 6
+    key_claims:
+      - "Capital ↔ Credit dichotomy: BTC = digital capital, STRC = digital credit (future claims on capital)"
+      - "Team structure collapsing to 'domain expert + business exec + AI'; mid-tier compressed"
+      - "AI demonetizes human capital; physical labor → digital labor; physical education → digital education"
+    tags: ["future-of-work","ai-deflation","digital-capital","org-structure"]
+    processed_date: "2026-04-26"
+    skill_version: "V3.0"
+    transcript_hash: "a33f474c"

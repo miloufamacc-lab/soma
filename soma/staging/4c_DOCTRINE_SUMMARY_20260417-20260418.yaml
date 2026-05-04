@@ -1,0 +1,151 @@
+# PHASE 4C SUMMARY: DOCTRINE BELIEF MATCHING (April 17-18, 2026)
+# Processed transcripts: 2 (Saylor digital credit + Camillo social arbitrage)
+# Total beliefs extracted: 13 candidate rules
+# Status: DATABASE_UNAVAILABLE — soma.db not queried. All outputs are candidates pending manual review.
+
+---
+
+OVERVIEW:
+
+Phase 4c executed for two high-conviction, high-impact transcripts:
+1. **Saylor (Michael) — Digital Credit Monologue** (April 18): 7 beliefs extracted from 12 impact-8+ claims
+2. **Camillo (Chris) & Moss (Mark) — Social Arbitrage Interview** (April 17): 7 beliefs extracted from 4 impact-8+ claims
+
+Primary finding: **Confidence gap cluster** — 5 beliefs show HIGH conviction but LOW confidence (0.45-0.60), requiring either:
+  - Red-team validation (already done for Saylor via Phase 2.5)
+  - Additional empirical evidence (Camillo AI-winners claim)
+  - Timeline/regime specification (AI abundance, inaction-risk)
+  - Theoretical validation (stochastic duration framework, pattern-recognition innateness)
+
+---
+
+BELIEF MATRIX (all 13 candidates):
+
+| Belief ID | Speaker | Domain | Conviction | Confidence | Status | Action |
+|-----------|---------|--------|------------|------------|--------|--------|
+| BEHAV-001-SAYLOR-CREDIT-EQUITY | Saylor | BEHAVIORAL | HIGH | 0.45 | CANDIDATE | RED-TEAM_PENDING (2022 margin call risk, Luna parallel) |
+| BEHAV-002-REFLEXIVITY | Saylor | BEHAVIORAL | HIGH | 0.55 | CANDIDATE | HOLD_FOR_RED_TEAM (Luna/UST strong counter) |
+| BEHAV-003-TAX-ARBITRAGE | Saylor | BEHAVIORAL | MEDIUM | 0.60 | CANDIDATE | PROMOTABLE (confidence meets floor, annual audit needed) |
+| RISK-001-ICA1940 | Saylor | RISK | HIGH | 0.70 | CANDIDATE | PROMOTABLE (legal/structural, single regulatory bridge risk) |
+| RISK-002-DURATION-MISMATCH | Saylor | RISK | MEDIUM | 0.60 | CANDIDATE | HOLD_FOR_ACADEMIC_VALIDATION (non-standard framework) |
+| EQUITIES-001-STRC-TAM | Saylor | EQUITIES | MEDIUM | 0.50 | CANDIDATE | PROMOTABLE_WITH_DEFLATION ($10-15T realistic vs $300T claimed) |
+| BEHAVIORAL-004-VOLATILITY-OI | Saylor | BEHAVIORAL | MEDIUM | 0.65 | CANDIDATE | PROMOTABLE (market structure fact, not predictive) |
+| MACRO-001-CAMILLO-AI-ABUNDANCE | Camillo | MACRO | HIGH | 0.50 | CANDIDATE | HOLD_PENDING_TIMELINE (specify 2030? 2050?) |
+| BEHAVIORAL-001-CAMILLO-PATTERN-REC-INNATE | Camillo | BEHAVIORAL | MEDIUM_HIGH | 0.55 | CANDIDATE | HOLD_PENDING_INNATENESS_VALIDATION (disproven by deep learning) |
+| RISK-001-CAMILLO-CONVICTION-VS-PROB | Camillo | RISK | HIGH | 0.85 | CANDIDATE | PROMOTABLE_WITH_PORTFOLIO_VALIDATION (QSR case strong) |
+| EQUITIES-001-CAMILLO-PUBLIC-VS-PRIVATE | Camillo | EQUITIES | HIGH | 0.75 | CANDIDATE | PROMOTABLE_WITH_SURVIVORSHIP_CAVEAT (top 1-2% trader only) |
+| EQUITIES-002-CAMILLO-AI-WINNERS-OBVIOUS | Camillo | EQUITIES | MEDIUM | 0.45 | CANDIDATE | HOLD_FOR_EMPIRICAL_VALIDATION (1999 Dot-com, 2017 ICO historical warnings) |
+| CRYPTO-001-CAMILLO-BITCOIN-REFLEXIVE | Camillo | CRYPTO | MEDIUM | 0.55 | CANDIDATE | PROMOTABLE_IF_STANCE_DRIFT_NEGATIVE (validate vs prior wiki entry) |
+
+---
+
+PRIORITIZED PROMOTION QUEUE (by recommendation):
+
+**TIER 1 — READY TO PROMOTE (confidence >= 0.70, minimal caveats)**
+1. RISK-001-ICA1940 (Saylor) — Confidence 0.70, legal/structural, single regulatory risk well-understood
+2. EQUITIES-001-CAMILLO-PUBLIC-VS-PRIVATE — Confidence 0.75, strong empirical (Camillo's track record), survivorship caveat applied
+3. RISK-001-CAMILLO-CONVICTION-VS-PROB — Confidence 0.85, factual history, QSR case provides concrete evidence
+
+**TIER 2 — PROMOTABLE WITH CAVEATS (confidence 0.60-0.75, actionable scopes)**
+1. BEHAV-003-TAX-ARBITRAGE (Saylor) — Confidence 0.60, regulatory risk (FASB ASU 2023-08, IRS Notice 2023-2), annual audit loop
+2. BEHAVIORAL-004-VOLATILITY-OI (Saylor) — Confidence 0.65, market structure fact (MSTR liquidity/OI observation)
+3. EQUITIES-001-STRC-TAM (Saylor) — Confidence 0.50 → 0.65 if deflated to $10-15T from $300T
+
+**TIER 3 — HOLD FOR VALIDATION (confidence < 0.60, missing inputs)**
+1. MACRO-001-CAMILLO-AI-ABUNDANCE — Requires timeline specification
+2. BEHAVIORAL-001-CAMILLO-PATTERN-REC-INNATE — Requires reframing (innateness disproven by deep learning)
+3. EQUITIES-002-CAMILLO-AI-WINNERS-OBVIOUS — Requires backtest of Camillo's AI picks vs Mag 7
+
+**TIER 4 — RED-TEAM DEPENDENT (HIGH conviction, evidence gaps)**
+1. BEHAV-001-SAYLOR-CREDIT-EQUITY — Conviction HIGH, confidence 0.45, red-team complete (2022 margin call, Luna parallel)
+2. BEHAV-002-REFLEXIVITY — Conviction HIGH, confidence 0.55, red-team complete (Luna/UST collapse case)
+3. RISK-002-DURATION-MISMATCH — Medium conviction, confidence 0.60, requires academic validation
+
+---
+
+CONFIDENCE GAPS (HIGH conviction + LOW confidence):
+
+| Belief | Conviction | Confidence | Gap | Root Cause | Red-Team Result |
+|--------|------------|-----------|-----|-----------|-----------------|
+| BEHAV-001-SAYLOR-CREDIT-EQUITY | HIGH | 0.45 | 0.55 | PROMOTER bias, principal-protection claim contradicted by 2022 near-insolvency | STRONG counter (2022 margin call), STRONG counter (Luna), MODERATE counter (45% window cherry-pick) |
+| MACRO-001-CAMILLO-AI-ABUNDANCE | HIGH | 0.50 | 0.50 | No timeline, AI productivity S-curve assumption | Incomplete |
+| BEHAV-002-REFLEXIVITY | HIGH | 0.55 | 0.45 | Reflexivity is powerful but also breaks suddenly | STRONG counter (Luna/UST $40B→$0 in 5 days) |
+
+Recommendation: Do NOT promote tier-4 beliefs to soma.db without addressing confidence gaps. Consider:
+  - BEHAV-001-SAYLOR: Run independent STRC backtest through 2022 stress scenarios. If principal protection held 45% BTC drawdown, confidence → 0.65. If failed, mark as DISPROVEN.
+  - MACRO-001-CAMILLO: Require timeline input from Camillo (2030? 2050?) before promotion. Until then, confidence floor 0.40.
+  - BEHAV-002-REFLEXIVITY: Confidence 0.55 is defensible given Luna case. Do not elevate. Use as directional thesis only.
+
+---
+
+NEXT ACTIONS (Sequential):
+
+**Immediate (today)**:
+1. Review this summary with DABEIBA user — confirm promotion recommendations
+2. Tier 1 beliefs → prepare soma.db INSERT statements (3 beliefs ready)
+3. Tier 2 beliefs → prepare caveats/audit loops (3 beliefs ready with conditions)
+
+**This week**:
+1. Tier 3 validation — contact Camillo (if possible) for: (a) AI stock picks list, (b) timeline for $1→$100 thesis
+2. Tier 4 red-team analysis — document BEHAV-001/BEHAV-002 red-team findings in soma.db comments
+3. RISK-002 (stochastic duration) — flag for future academic paper monitoring (novel framework, low immediate priority)
+
+**Next sprint**:
+1. Create soma.db INSERT batch for Tier 1+2 (6 beliefs, ~30 mins)
+2. Run MANTIS validation on RISK-001-CAMILLO (bucket allocation) and EQUITIES-001 (public vs private capital deployment)
+3. Backtest EQUITIES-002-CAMILLO-AI-WINNERS against Mag 7 and Russell 2000 AI exposure (2-3 days execution)
+
+---
+
+FILES GENERATED:
+
+1. `4c_doctrine_20260418_saylor-digital-credit.yaml` — 7 beliefs + confidence gaps + red-team results
+2. `4c_doctrine_20260417_camillo-moss-social-arb-v22.yaml` — 7 beliefs + confidence gaps + validation requirements
+3. `4c_DOCTRINE_SUMMARY_20260417-20260418.yaml` — This file (coordination + next actions)
+
+---
+
+SOMA.DB INTEGRATION STATUS:
+
+DATABASE_UNAVAILABLE during Phase 4c execution (workspace timeout). All beliefs are candidates.
+When database becomes available, execute:
+
+```sql
+-- INSERT Tier 1 beliefs (confidence >= 0.70)
+INSERT INTO kb_rules VALUES
+  ('RISK-ICA1940-MOAT', 'RISK', 'ICA1940 prevents public-company securities portfolios; BTC classification makes STRC uniquely viable', 0.70, 'SAYLOR-2026-04-18', 'CANDIDATE_PROMOTABLE'),
+  ('RISK-CONVICTION-VS-PROBABILITY', 'RISK', 'Conviction ≠ Probability; Camillo QSR case proof; bucket allocation required', 0.85, 'CAMILLO-2026-04-17', 'CANDIDATE_PROMOTABLE'),
+  ('EQUITIES-PUBLIC-VS-PRIVATE-SKILLED', 'EQUITIES', 'Skilled liquid traders exceed private returns (survivorship caveat: top 1-2% only)', 0.75, 'CAMILLO-2026-04-17', 'CANDIDATE_PROMOTABLE');
+
+-- INSERT Tier 2 beliefs (confidence 0.60-0.75, caveated)
+INSERT INTO kb_rules VALUES
+  ('BEHAV-TAX-ARBITRAGE-ROC', 'BEHAVIORAL', 'STRC ROC treatment = 18-23% TEY; regulatory risk (FASB ASU 2023-08, IRS 2023-2)', 0.60, 'SAYLOR-2026-04-18', 'CANDIDATE_CAVEATED'),
+  ('BEHAVIORAL-VOLATILITY-MICROSTRUCTURE', 'BEHAVIORAL', 'MSTR #3 volatility + #1 OI/mktcap = deep liquidity for gamma strategies', 0.65, 'SAYLOR-2026-04-18', 'CANDIDATE_PROMOTABLE'),
+  ('EQUITIES-DIGITAL-CREDIT-TAM-DEFLATED', 'EQUITIES', 'STRC TAM = $10-15T realistic (not $300T); 1% capture = $100-150B upside', 0.65, 'SAYLOR-2026-04-18', 'CANDIDATE_PROMOTABLE');
+```
+
+---
+
+OBSERVATION: Cross-Transcript Pattern (Saylor + Camillo)
+
+Both speakers share **reflexivity framework** independently:
+- Saylor: "issuing credit, buying bitcoin, creates more bitcoin" → Soros reflexivity
+- Camillo: "what matters is what others think about Bitcoin" → Soros reflexivity (unnamed)
+
+Suggests reflexivity is becoming embedded pattern in alternative investor cohort. Could be elevated to **SOMA-level meta-belief** if 3+ independent sources cite reflexivity as core mechanism.
+
+---
+
+meta:
+  phase: "4c_DOCTRINE_BELIEF_MATCHING"
+  batch_processed_dates: ["2026-04-17", "2026-04-18"]
+  speakers: ["Michael Saylor", "Chris Camillo", "Mark Moss"]
+  total_beliefs_extracted: 13
+  soma_db_status: "DATABASE_UNAVAILABLE"
+  confidence_range: "0.45-0.85"
+  conviction_distribution: {"HIGH": 6, "MEDIUM_HIGH": 1, "MEDIUM": 6}
+  ready_to_promote: 3
+  caveated_ready: 3
+  validation_pending: 4
+  red_team_dependent: 3
+  next_review: "manual_soma_db_promotion_decision"

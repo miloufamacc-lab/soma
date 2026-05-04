@@ -39,9 +39,15 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .soma_bridge import SomaBridge
+from .pipeline_registry import get_category_routing, resolve
 
 
 # ── Category keywords for classification ─────────────────────────────
+# NOTE: These PRISM categories (macro, crypto, equities, geopolitical, philosophy, risk)
+# are SEPARATE from CIPHER's Advisory categories (Macro, Holdings, Geopolitics,
+# Monetary_Policy, Thematic, Musk Ecosystem, Bitcoin). PRISM routes raw intelligence
+# to Research/Synthesis pipelines. CIPHER categorizes client-facing notes.
+# The two taxonomies are intentionally different by design (April 15, 2026).
 
 CATEGORY_KEYWORDS = {
     "crypto": [
@@ -86,15 +92,13 @@ CATEGORY_KEYWORDS = {
 }
 
 # ── Category → target pipeline routing ───────────────────────────────
+# Loaded from pipeline_registry.py — single source of truth.
+# To change routing, edit the "categories" field in pipeline_registry.py.
 
-CATEGORY_TO_PIPELINE = {
-    "crypto": "COBALT",
-    "macro": "TITAN",
-    "equities": "TITAN",
-    "geopolitical": "SPECTRE",
-    "philosophy": "DOCTRINE",
-    "risk": "FORGE",
-}
+CATEGORY_TO_PIPELINE = get_category_routing()
+
+# Default fallback pipeline when category is unknown
+_DEFAULT_PIPELINE = resolve("TITAN") or "TITAN"
 
 # ── Source type detection patterns ────────────────────────────────────
 
@@ -380,7 +384,7 @@ class PrismEngine:
 
         source_type = self._detect_source_type(content, metadata)
         category, relevance = self._classify_category(content)
-        target_pipeline = CATEGORY_TO_PIPELINE.get(category, "TITAN")
+        target_pipeline = CATEGORY_TO_PIPELINE.get(category, _DEFAULT_PIPELINE)
         title = self._extract_title(content, metadata)
         claims = self._extract_claims(content)
         tags = self._generate_tags(content, category)
@@ -443,7 +447,7 @@ class PrismEngine:
         else:
             relevance = 7
 
-        target_pipeline = CATEGORY_TO_PIPELINE.get(category, "TITAN")
+        target_pipeline = CATEGORY_TO_PIPELINE.get(category, _DEFAULT_PIPELINE)
         title = title or self._extract_title(text, {})
         claims = self._extract_claims(text)
         tags = self._generate_tags(text, category)

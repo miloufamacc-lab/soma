@@ -1,0 +1,204 @@
+================================================================================
+PHASE 4D: SOMA KB_RULES INTEGRATION MAPPING
+================================================================================
+Date: 2026-04-17
+Purpose: Maps Phase 4d extracted rules to SOMA database integration points
+
+================================================================================
+DATABASE TABLE: kb_rules
+================================================================================
+
+Expected INSERT statements for soma.db:
+
+INSERT INTO kb_rules
+(rule_id, name, framework_type, description, rule_statement, domains,
+ confidence, evidence_strength, falsifiability_metric, implementation_readiness,
+ applicable_modules, created_by, created_at)
+VALUES
+(
+  'RULE-0401',
+  'Bucketing Capital for Asymmetric Bets',
+  'RISK_ALLOCATION',
+  'Capital allocation model segmenting funds into distinct risk tiers (retirement, college, speculation). Enables 50/50 asymmetric bets without portfolio ruin.',
+  'Allocate into 3 tiers: (1) Retirement (zero volatility), (2) College (moderate), (3) Speculation (high). Execute 50/50 bets only on Tier 3 capital.',
+  'BEHAVIORAL,RISK,PORTFOLIO_MANAGEMENT',
+  0.82,
+  'strong',
+  'TESTABLE: Does bucketed portfolio outperform non-bucketed on Sharpe ratio over 10+ years?',
+  'PRODUCTION',
+  'MANTIS,RAPTOR',
+  'Phase4d-Extraction',
+  '2026-04-17'
+);
+
+INSERT INTO kb_rules
+(rule_id, name, framework_type, description, rule_statement, domains,
+ confidence, evidence_strength, falsifiability_metric, implementation_readiness,
+ applicable_modules, created_by, created_at)
+VALUES
+(
+  'RULE-0402',
+  'Social Arbitrage = Change Detection',
+  'PATTERN_RECOGNITION',
+  'Identify mispriced companies by detecting real-world change (consumer/tech/political) before market repricing. Information lag creates 2-4 week arbitrage window.',
+  'Observe tangible change → map to company → verify not yet repriced → enter position in 2-4 week window → exit on repricing. Moat: retail sees change first, institutional trapped in noise.',
+  'BEHAVIORAL,EQUITIES,MACRO,PATTERN_RECOGNITION',
+  0.75,
+  'strong',
+  'TESTABLE: Do change observations predict >5% outperformance in 2-4 week window 70%+ of the time?',
+  'PRODUCTION',
+  'ORACLE,SOMA,MANTIS',
+  'Phase4d-Extraction',
+  '2026-04-17'
+);
+
+INSERT INTO kb_rules
+(rule_id, name, framework_type, description, rule_statement, domains,
+ confidence, evidence_strength, falsifiability_metric, implementation_readiness,
+ applicable_modules, created_by, created_at)
+VALUES
+(
+  'RULE-0403',
+  'Pattern Recognition as Durable Moat',
+  'COMPETITIVE_ADVANTAGE',
+  'Institutional investors trapped in noise/constraints (committee consensus, benchmark tracking, audit). Retail with pattern library + conviction exploits information lag. Moat = structural (information lag), not data access.',
+  'Moat = (Information Lag) - (Replication Cost). Erodes only if pattern becomes common knowledge AND replication cost falls.',
+  'BEHAVIORAL,META,COMPETITIVE_ADVANTAGE',
+  0.70,
+  'moderate',
+  'TESTABLE: Pre- vs. post-publication alpha: does moat erode >50% within 12 months after pattern published?',
+  'RESEARCH',
+  'ORACLE,SOMA,CIPHER',
+  'Phase4d-Extraction',
+  '2026-04-17'
+);
+
+INSERT INTO kb_rules
+(rule_id, name, framework_type, description, rule_statement, domains,
+ confidence, evidence_strength, falsifiability_metric, implementation_readiness,
+ applicable_modules, created_by, created_at)
+VALUES
+(
+  'RULE-0404',
+  'Philanthropic ROI Model',
+  'IMPACT_INVESTING',
+  'Treat charitable capital allocation with investment rigor. Require quantified impact, replication evidence, 10x+ leverage. Capital flows to highest measured impact per dollar.',
+  'Define measurable outcome → demand replication evidence → require 10x+ leverage → track via audit → reallocate to highest-ROI interventions. Reject: unquantifiable outcomes, single-trial evidence, <5x leverage.',
+  'PHILOSOPHY,RISK,IMPACT_INVESTING',
+  0.68,
+  'moderate',
+  'TESTABLE: Does ROI-optimized allocation outperform emotional allocation >1.5x on impact per dollar over 5 years?',
+  'RESEARCH',
+  'RAPTOR,CIPHER',
+  'Phase4d-Extraction',
+  '2026-04-17'
+);
+
+================================================================================
+VALIDATOR CONFIGURATION
+================================================================================
+
+KBValidator integration points (kb_validator.py):
+
+1. RULE-0401 validation method:
+   - Validate MANTIS position writes against Tier-3 hard caps
+   - Method: validate_position_sizing(weight, tier)
+   - Severity: WARNING if Tier 3 position > 20% of Tier 3 capital
+
+2. RULE-0402 validation method:
+   - Validate ORACLE change signals against repricing window
+   - Method: validate_change_detection(observation_date, repricing_date)
+   - Severity: INFO if lag > 4 weeks (pattern may be invalidated)
+
+3. RULE-0403 validation method:
+   - Validate pattern publication risk to CIPHER
+   - Method: validate_moat_durability(pattern_id, publication_planned)
+   - Severity: WARNING if pattern published without post-publication alpha study
+
+4. RULE-0404 validation method:
+   - Validate RAPTOR philanthropic allocations
+   - Method: validate_impact_roi(allocation_amount, expected_leverage)
+   - Severity: CRITICAL if leverage < 5x
+
+================================================================================
+CROSS-MODULE WIRING
+================================================================================
+
+MANTIS (Execution):
+  - Read: RULE-0401 (position sizing tiers)
+  - Use: validate_trade_write() calls validator against Tier-3 limits
+  - Action: Block trades that violate tier allocation rules
+
+ORACLE (Collection):
+  - Read: RULE-0402 (change detection criteria)
+  - Use: DELTA, SENTINEL pipelines output to staging/prism files
+  - Action: Flag observation_date for each change signal (repricing window calculation)
+
+SOMA (Synthesis):
+  - Read: RULE-0402, RULE-0403 (pattern recognition)
+  - Use: Aggregate multi-domain change signals, calculate information lag
+  - Action: Write to brief_log with confidence + lag estimates
+
+CIPHER (Communication):
+  - Read: RULE-0403 (moat durability), RULE-0404 (impact ROI)
+  - Use: Risk assessment for pattern publication, impact reporting
+  - Action: Flag client communications for pre-publication moat review
+
+RAPTOR (Acquisition):
+  - Read: RULE-0401 (capital bucketing), RULE-0404 (impact ROI)
+  - Use: Client segmentation + impact advisory positioning
+  - Action: Pre-compute target allocations by client profile
+
+================================================================================
+TESTING CHECKLIST
+================================================================================
+
+Pre-Integration (staging dispatcher):
+  [ ] YAML file schema validates (4d_soma_rules_2026_04_17_capital_allocation.yaml)
+  [ ] All rule_ids unique (RULE-0401 through RULE-0404)
+  [ ] Confidence values in [0.0, 1.0] range
+  [ ] Domains list non-empty for each rule
+  [ ] Applicable modules exist (ORACLE, SOMA, MANTIS, CIPHER, RAPTOR)
+
+Post-Integration (soma.db):
+  [ ] Run: SELECT COUNT(*) FROM kb_rules WHERE created_by='Phase4d-Extraction'
+  [ ] Expected result: 4 rows
+  [ ] Run: SELECT rule_id, confidence FROM kb_rules WHERE rule_id LIKE 'RULE-040%'
+  [ ] Expected: 4 rows with confidence [0.82, 0.75, 0.70, 0.68]
+
+Validator Wiring:
+  [ ] Test MANTIS position write against RULE-0401 hard cap (expect WARNING if cap exceeded)
+  [ ] Test ORACLE change detection against RULE-0402 window (expect INFO if lag > 4 weeks)
+  [ ] Test CIPHER publication against RULE-0403 moat review (expect WARNING if no pre-pub study)
+  [ ] Test RAPTOR allocation against RULE-0404 leverage (expect CRITICAL if leverage < 5x)
+
+================================================================================
+ROLLBACK PROCEDURE
+================================================================================
+
+If integration fails or rules need to be withdrawn:
+
+  DELETE FROM kb_rules WHERE rule_id IN ('RULE-0401', 'RULE-0402', 'RULE-0403', 'RULE-0404');
+
+  Archive YAML file:
+  mv /Users/jacobopaez/Desktop/DABEIBA/shared/soma/staging/4d_soma_rules_*.yaml \
+     /Users/jacobopaez/Desktop/DABEIBA/shared/soma/staging/archived/
+
+  Log withdrawal:
+  INSERT INTO soma_events (event_type, description, created_at)
+  VALUES ('RULE_WITHDRAWAL', 'Phase 4d rules withdrawn per rollback procedure', NOW());
+
+================================================================================
+NEXT OWNER
+================================================================================
+
+staging_dispatcher.py will automatically:
+  1. Detect 4d_soma_rules_2026_04_17_capital_allocation.yaml
+  2. Validate YAML schema
+  3. Route to kb_rules INSERT statements
+  4. Move file to processed/ directory with timestamp
+  5. Log to soma_events table
+
+No manual SQL required. Automation handles integration end-to-end.
+
+================================================================================

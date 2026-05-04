@@ -1,0 +1,64 @@
+doctrine_evidence:
+  # Supports MACRO_FISCAL_DOMINANCE
+  - belief_id: MACRO_FISCAL_DOMINANCE
+    source_module: PRISM
+    source_detail: "Saylor on AI deflation forcing inflationary monetary response (a33f474c)"
+    supports: true
+    weight: 1.0   # Saylor T1 base, downgraded to 1.0 effective for forward-looking
+    transcript_hash: "a33f474c"
+    note: "Argument: AI deflation crushes nominal GDP, debt burdens explode, govts forced to print/monetize → fiscal dominance reinforced"
+
+  # Supports CRYPTO_BTC_STORE_OF_VALUE
+  - belief_id: CRYPTO_BTC_STORE_OF_VALUE
+    source_module: PRISM
+    source_detail: "Saylor framing BTC as digital capital, L1 must be defended (a33f474c)"
+    supports: true
+    weight: 1.5
+    transcript_hash: "a33f474c"
+    note: "Reinforces ossification camp; $50B+ MSTR holdings amplify lobbying signal"
+
+  # Supports EQ_AI_SECULAR_THEME
+  - belief_id: EQ_AI_SECULAR_THEME
+    source_module: PRISM
+    source_detail: "Saylor + Le on STRC/Strike/Strife/Stride/Stream designed by AI (a33f474c)"
+    supports: true
+    weight: 1.5
+    transcript_hash: "a33f474c"
+    note: "Concrete corporate use case — capital-markets engineering AI-bottlenecked; legacy banks fall behind on product velocity"
+
+  # CANDIDATE — new thesis: Digital credit displaces private credit/HY first
+  - belief_id: EQ_DIGITAL_CREDIT_DISPLACES_HY_CANDIDATE
+    domain: equities
+    statement: "Digital credit instruments (STRC-style) will progressively displace high-yield, then IG corporate, then mortgage credit over 20 years; private-credit GPs face structural margin compression by 2035"
+    conviction: 5
+    source: "Saylor + Phong Le panel, 2026-04-26 (a33f474c)"
+    status: CANDIDATE
+    transcript_hash: "a33f474c"
+    notes: |
+      Speaker tier T1 with material conflict; forward-looking (capped 0.55 post red-team).
+      Red-team finding: HY market is bought by NAIC/ERISA-constrained pools that face 30%+ capital
+      charges on uncollateralized crypto-paper; Sharpe-and-capital-charge-adjusted, BB at 7-8%
+      with senior-secured covenants beats STRC at 11.5%. Decision: log as CANDIDATE for review,
+      do NOT auto-add to active beliefs.
+
+  # CANDIDATE — new thesis: BTC-per-share is the only relevant KPI for MSTR
+  - belief_id: EQ_BTC_PER_SHARE_KPI_CANDIDATE
+    domain: equities
+    statement: "MSTR's BTC-per-share metric is the only relevant valuation KPI; GAAP-framed analysis produces persistent mispricing"
+    conviction: 6
+    source: "Saylor + Phong Le panel, 2026-04-26 (a33f474c)"
+    status: CANDIDATE
+    transcript_hash: "a33f474c"
+    notes: |
+      Verified history: 74% (2024), 22.8% (2025) per Strategy Q4 2025 disclosures.
+      Forward target: double over 7y = ~10.4% CAGR. KPI framework consistent across 3 prior
+      Saylor appearances (2026-04-17, 2026-04-25). High consistency.
+
+  # Supports BEH_THESIS_DISCIPLINE (panel coordination as anti-pattern)
+  - belief_id: BEH_THESIS_DISCIPLINE
+    source_module: PRISM
+    source_detail: "Panel uniformity (Saylor/Le/Lavish all aligned, zero disagreement); audience challenges deflected"
+    supports: true
+    weight: 0.5
+    transcript_hash: "a33f474c"
+    note: "Caveat — uniform messaging reduces independent-opinion signal; high-conviction-low-diversity is itself a pattern flagged by BEH_THESIS_DISCIPLINE"

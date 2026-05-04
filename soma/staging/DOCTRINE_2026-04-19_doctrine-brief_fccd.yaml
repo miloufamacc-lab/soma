@@ -1,0 +1,10 @@
+type: DOCTRINE_EVIDENCE
+schema_version: "1.0"
+date: "2026-04-19"
+source: "dabeiba-doctrine-brief"
+source_type: "scheduled_task"
+source_hash: "1e6f1cf5"
+belief_id: "OIL_DISINFLATION_THESIS_V1"
+source_detail: "WTI -11% Friday to $84, Brent $86 on Hormuz reopening; Strait loadings normalizing; if sustained below $90, May CPI prints disinflation giving Fed cover for June cut signal."
+supports: true
+weight: 1.0

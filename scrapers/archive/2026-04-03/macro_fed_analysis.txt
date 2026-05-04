@@ -1,0 +1,15 @@
+Federal Reserve Rate Decision Analysis — April 2026
+
+The Federal Reserve held rates steady at 4.25% as expected. Chair Powell's press conference signaled a cautious approach, noting that inflation remains above the 2% target at 2.8% CPI.
+
+Key takeaways from the FOMC meeting:
+- The dot plot suggests 2 rate cuts in 2026, down from 3 projected in January
+- Powell emphasized "data dependency" and avoiding premature easing
+- Labor market shows early signs of softening with NFP at 142K vs 180K expected
+- Quantitative tightening continues at $60B/month pace
+
+Market implications: The yield curve remains inverted, though less so than Q4 2025. Treasury 10Y at 4.15% suggests the market is pricing in slower growth. GDP nowcast for Q2 is 1.9%, below the 2.3% consensus.
+
+The PMI data tells a mixed story — manufacturing ISM at 48.2 (contractionary) while services ISM remains expansionary at 52.1. This divergence has historically preceded regime transitions in 60% of cases.
+
+Our Global Liquidity Index reading of 58.87 places us firmly in NORMAL regime territory, but the momentum indicator has turned negative for the first time since November 2025.

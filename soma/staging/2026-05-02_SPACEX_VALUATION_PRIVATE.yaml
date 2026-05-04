@@ -1,0 +1,125 @@
+type: VALUATION_PRIVATE
+schema_version: "1.0"
+date: "2026-05-02T22:00:00Z"
+source: "private-valuation"
+source_type: "private_valuation_model"
+company_name: "Space Exploration Technologies Corp."
+private_id: "SPACEX"
+wiki_slug: "spacex-private-valuation"
+build_version: 1
+manifest_path: "models/SPACEX/manifest.json"
+framework_version: "v1.0 (private-valuation 2026-05-02)"
+deliverables:
+  - "models/SPACEX/latest/SPACEX_PRIV_VAL_MOD_02MAY26.xlsx"
+  - "models/SPACEX/latest/SPACEX_Valuation_Presentation.pptx"
+  - "models/SPACEX/latest/SPACEX_Model_User_Guide.pptx"
+  - "models/SPACEX/latest/SPACEX_Valuation_Audit_Report.pptx"
+  - "models/SPACEX/latest/SPACEX_CFA_Deep_Dive.pptx"
+
+valuation_summary:
+  diluted_shares_b: 1.90
+  diluted_shares_derivation: "$800B / $421 from Dec 2025 cleared tender"
+
+  latest_tender_per_share: 421.00
+  latest_tender_date: "2025-12-06"
+  latest_tender_post_money_b: 800.0
+
+  latest_secondary_mark_per_share: 621.20
+  latest_secondary_mark_date: "2026-04-27"
+  latest_secondary_mark_source: "Forge Global"
+  latest_secondary_mark_implied_b: 1480.0
+
+  blended_fv_per_share: 547.14
+  blended_fv_post_money_b: 1039.57
+  range_low_per_share: 465.07
+  range_high_per_share: 629.21
+
+  dcf_post_dlom_per_share: 75.35
+  sotp_post_dlom_per_share: 106.32
+
+  implied_upside_vs_tender_pct: 30.0
+  implied_upside_vs_secondary_pct: -11.9
+
+  recommendation_secondaries: "HOLD"
+  recommendation_tender: "PARTICIPATE"
+
+  illiquidity_discount_pct: 18.0
+  cost_of_equity_pct: 12.40
+  private_company_premium_bps: 200
+
+ipo_scenario_weights:
+  near_ipo_12_24m: 0.30
+  delayed_ipo_24_48m: 0.40
+  stay_private: 0.20
+  adverse: 0.10
+
+info_quality_blend:
+  pct_a_audited: 0.0
+  pct_b_mgmt_disclosed: 51.4
+  pct_c_press: 22.9
+  pct_d_trade_pub: 14.3
+  pct_e_inferred: 11.4
+  blended_score: 0.75
+  iq_penalty_applied_pct: 1.5
+
+triangulation:
+  primary_round:
+    date: "2025-07-15"
+    post_money_b: 400.0
+    per_share: 212.00
+    info_quality: "B"
+  four_oh_nine_a:
+    date: null
+    note: "Not publicly disclosed; estimated $250-315/sh by convention (25-40% below tender)"
+    info_quality: "E"
+  latest_tender:
+    date: "2025-12-06"
+    post_money_b: 800.0
+    per_share: 421.00
+    info_quality: "B"
+  latest_secondary_mark:
+    date: "2026-04-27"
+    per_share: 621.20
+    implied_valuation_b: 1480.0
+    source: "Forge Global"
+    info_quality: "C"
+  press_chatter:
+    ipo_target_b: 1500.0
+    info_quality: "E"
+  tender_to_secondary_spread_pct: 47.6
+  spread_interpretation: "Wide → secondary market is pricing IPO optionality the company has not yet validated via S-1 filing."
+
+doctrine_evidence:
+  - belief_id: PRIVATE_VALUATION_TENDER_ANCHOR
+    source_detail: "SpaceX private valuation: blended FV $547/sh implies $1.04T post-money. +30% vs latest tender $421 (Dec 2025) → PARTICIPATE on next tender. -12% vs Forge mark $621 → HOLD on secondaries."
+    supports: true
+    weight: 1.0
+  - belief_id: AI_INFRASTRUCTURE_CAPEX_CYCLE_DURABILITY
+    source_detail: "Starlink + Starship CapEx $10-13B/yr 2026-29 fund LEO + Mars optionality. Heavy CapEx makes DCF FCFF-negative early years; FCFF inflection 2027-28."
+    supports: true
+    weight: 0.6
+  - belief_id: IPO_PRICING_DISCIPLINE_PRIVATE_GROWTH
+    source_detail: "47.6% tender→secondary spread reflects market pricing IPO option not yet validated; press chatter $1.5T treated as E-grade upper bound. Disciplined valuation holds price < secondary mark."
+    supports: true
+    weight: 0.8
+
+key_research_priors:
+  starlink_subs_dec_2025_m: 9.0
+  starlink_subs_feb_2026_m: 10.0
+  starlink_subs_dec_2026e_m: 13.0
+  starlink_fy2025_revenue_b: 11.4
+  starlink_fy2025_ebitda_margin_pct: 63
+  starshield_fy2026e_revenue_b: 3.2
+  fy2025_revenue_consolidated_b: 15.5
+  fy2025_ebitda_consolidated_b: 8.0
+  fy2026e_revenue_consolidated_b: 23.0
+  fy2026e_ebitda_consolidated_b: 14.0
+  launch_market_share_2025_pct: 82
+  starship_test_flights_2025: 5
+  starship_test_flights_2025_target: 25
+  faa_starship_authorization_2026: "44/yr at LC-39A (2026-02)"
+  ceo: "Elon Musk"
+  ceo_voting_pct_estimate: 75
+  president_coo: "Gwynne Shotwell (since 2008; promoted 2015)"
+
+next_review_trigger: "Any of: (a) new tender announcement, (b) S-1 filing, (c) new Forge Global mark with >10% move, (d) 60-day calendar trigger (next: 2026-07-01). Quick-refresh on new Forge prints."

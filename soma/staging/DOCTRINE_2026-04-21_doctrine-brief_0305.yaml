@@ -1,0 +1,10 @@
+type: DOCTRINE_EVIDENCE
+schema_version: "1.0"
+date: "2026-04-21"
+source: dabeiba-doctrine-brief
+source_type: scheduled_task
+source_hash: "50a5d142"
+belief_id: oil_supply_shock_inflation_persistence
+source_detail: "Hormuz at 3.8mb/d vs 20mb/d pre-war; Brent 95/bbl; IEA projects 440mb April supply loss; IMF raises 2026 global inflation to 4.4pct; LNG down 20pct"
+supports: true
+weight: 1.0

@@ -1,0 +1,43 @@
+# HORIZON Timing Signals from Jack Mallers Show Ep. 113 (2026-04-15)
+# transcript_hash: 526802c1
+
+horizon_signals:
+  - date: "2026-04-15"
+    source: "Jack Mallers Show Ep. 113, Mallers citing Bloomberg"
+    lens: "MACRO"
+    direction: "BEARISH"
+    timeframe: "months"
+    signal_detail: "1973 parallel: S&P took 12 months to digest oil shock. 2026 markets may be similarly overoptimistic. Current rally could be bull trap."
+    confidence: 0.55
+    speaker_tier: 2
+    transcript_hash: "526802c1"
+
+  - date: "2026-04-15"
+    source: "Jack Mallers Show Ep. 113, Mallers citing Bloomberg"
+    lens: "CREDIT_LIQUIDITY"
+    direction: "BEARISH"
+    timeframe: "weeks"
+    signal_detail: "Private credit redemptions surging (Blue Owl 22%, Carlyle 16%). Fed probing bank exposure. Credit crisis could materialize in weeks to months."
+    confidence: 0.85
+    speaker_tier: 2
+    transcript_hash: "526802c1"
+
+  - date: "2026-04-15"
+    source: "Jack Mallers Show Ep. 113, Mallers citing Arthur Hayes"
+    lens: "MACRO"
+    direction: "BULLISH"
+    timeframe: "weeks"
+    signal_detail: "Hayes USD liquidity index trending up. Short-term liquidity injection supporting risk assets. But global liquidity (Howell) trending down — divergence."
+    confidence: 0.70
+    speaker_tier: 2
+    transcript_hash: "526802c1"
+
+  - date: "2026-04-15"
+    source: "Jack Mallers Show Ep. 113, Mallers"
+    lens: "GEOPOLITICAL"
+    direction: "BEARISH"
+    timeframe: "months"
+    signal_detail: "Strait of Hormuz remains closed. No realistic ceasefire in sight. Trump escalating with naval blockade. Oil supply disruption is structural, not transient."
+    confidence: 0.70
+    speaker_tier: 2
+    transcript_hash: "526802c1"

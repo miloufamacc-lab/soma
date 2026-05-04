@@ -1,5 +1,22 @@
 # SOMA — Changelog
 
+## Phase 2.5 — AI Registry & Prompt Coordinator — 2026-03-29
+- **AI Registry** (`ai_registry.md`): YAML profiles for Claude, Grok, Gemini, ChatGPT, Phi-4 Mini
+  - Each profile: model version, context window, capabilities (18 booleans), modes, specialty lens, DABEIBA role, past contributions, known limitations
+  - Staleness policy: cloud AIs 30 days, local models 90 days
+  - Future AI onboarding table (Llama, Mistral, DeepSeek, Qwen for hardware upgrades)
+- **Task Archetypes** (6 types): quant review, architecture review, compliance review, macro analysis, strategy review, valuation review
+  - Each archetype: preferred AIs, required/optional SOMA data, KB sections, prompt structure, output format, cross-AI history sources
+- **AI Prompt Builder** (`ai_prompt_builder.py`): engine that reads registry + SOMA data to generate tailored prompts
+  - Context-window-aware compression (uses 40% of window, leaves 60% for response)
+  - Cross-AI history injection (shows what other AIs found)
+  - AI recommendation engine (keyword → task type → preferred AI)
+  - Capability-check prompt generator (self-updating: AI reports its own capabilities in YAML)
+  - New AI onboarding prompt generator (capability check + DABEIBA context + specialty assignment)
+  - Prompts saved to `shared/soma/prompts/` directory
+- **soma_query.py extensions**: "ais", "ai [name]", "prompt [ai] [task]", "check capabilities [ai]", "recommend [description]"
+- **soma_status.py**: AI REGISTRY section showing all AIs with freshness status
+
 ## Schema v4 — 2026-03-22
 - **Active Intelligence Layer (Phase 2.4):** `kb_violations` table + KBValidator engine
 - KBValidator: validates every SOMA write against KB rules (fire-and-forget, never blocks)

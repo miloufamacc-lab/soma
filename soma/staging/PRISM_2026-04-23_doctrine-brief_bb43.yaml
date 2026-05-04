@@ -1,0 +1,45 @@
+type: PRISM
+schema_version: "1.0"
+date: "2026-04-23"
+source: "dabeiba-doctrine-brief"
+source_type: "scheduled_task"
+prism_intake:
+  - source_type: scheduled_task
+    category: "macro"
+    target_pipeline: "TITAN"
+    relevance_score: 9
+    key_claims:
+      - "Strait of Hormuz closure IEA-flagged as largest supply disruption in oil market history; Brent at ~5, WTI +7% to 9.61 on renewed attacks"
+      - "FOMC May hold consensus; Powell term expiry May 2026 adds policy uncertainty; CPI April print May 12 is key catalyst"
+      - "Q1 S&P 500 earnings: 88% beat rate (vs 78% 5yr avg), 13.2% blended growth — historically strong despite macro headwinds"
+    tags: ["doctrine-brief", "macro", "daily", "hormuz", "fomc"]
+    processed_date: "2026-04-23"
+  - source_type: scheduled_task
+    category: "crypto"
+    target_pipeline: "COBALT"
+    relevance_score: 8
+    key_claims:
+      - "Solana TVL contracted from B+ to ~.5-6B post-Drift exploit; RSI neutral 51.57; SOL range 5-90"
+      - "BTC dominance at 60.63%, firmly Bitcoin Season; ETF inflows 38M on Apr 21 (5 consecutive positive days); BTC targeting 8K-82K"
+      - "Jupiter DEX market share slipping to 82% from peak; Titan rising to 7.3%; Offerbook P2P lending launched"
+    tags: ["doctrine-brief", "crypto", "solana", "daily", "btc-dominance"]
+    processed_date: "2026-04-23"
+  - source_type: scheduled_task
+    category: "equities"
+    target_pipeline: "TITAN"
+    relevance_score: 7
+    key_claims:
+      - "ServiceNow -13% explicitly cited Iran war as subscription revenue headwind — geopolitical shock flowing through enterprise IT budgets"
+      - "Sector rotation YTD: Energy +21%, Materials +17%, Industrials +12%, Staples +15% vs flat S&P 500 — classic Hormuz/risk-off repositioning"
+      - "Tesla Q1: EPS beat (41c vs 37c), margins 19.2% (best 2026 quarter), but CapEx +67% and spending guide raised B above prior"
+    tags: ["doctrine-brief", "equities", "earnings", "daily", "sector-rotation"]
+    processed_date: "2026-04-23"
+  - source_type: scheduled_task
+    category: "geopolitical"
+    target_pipeline: "TITAN"
+    relevance_score: 10
+    key_claims:
+      - "Iran IRGC launched 21+ attacks on merchant ships; Hormuz has opened/closed 3 times in 50 days; Gulf OPEC+ output down 10M+ bpd"
+      - "US-China tariffs at 145% blocking trade effectively; April Chinese imports -28% YoY; tariff reduction extends through Nov 2026"
+    tags: ["doctrine-brief", "geopolitical", "hormuz", "iran", "tariffs", "daily"]
+    processed_date: "2026-04-23"

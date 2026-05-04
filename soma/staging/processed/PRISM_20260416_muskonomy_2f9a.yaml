@@ -1,0 +1,18 @@
+type: PRISM
+schema_version: "1.0"
+date: "2026-04-16"
+source: "muskonomy-daily-sitrep"
+source_type: "scheduled_task"
+prism_intake:
+  - source_type: scheduled_task
+    source_url: ""
+    category: "equities"
+    target_pipeline: "TITAN"
+    relevance_score: 9
+    key_claims:
+      - "TSLA closed +7.62% at $391.95 on Musk's AI5 chip tape-out (8-10x HW4 compute, 192GB LPDDR5X, HVM 2027)"
+      - "JPMorgan escalated inventory warning to 164,000 unsold units (3.3x yesterday's 50K figure); Q1 358K deliveries missed consensus and Tesla internal by ~10K"
+      - "FSD v14.3 live in Netherlands Day 6; RDW provisional EU type approval enables DE/FR/BE/ES/IT cascade through summer 2026; NHTSA EA26002 on 3.2M vehicles one step from mandated recall"
+    tags: ["musk-ecosystem", "tsla", "daily-sitrep", "ai5-chip", "fsd-eu", "q1-earnings"]
+    processed_date: "2026-04-16"
+    skill_version: "muskonomy-v1"

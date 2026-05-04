@@ -1,0 +1,56 @@
+type: PRISM
+schema_version: "1.0"
+date: "2026-04-17"
+source: "dabeiba-doctrine-brief"
+source_type: "scheduled_task"
+prism_intake:
+  - source_type: scheduled_task
+    category: "equities"
+    target_pipeline: "TITAN"
+    relevance_score: 8
+    key_claims:
+      - "JPM Q1 26 beat EPS $5.94 vs $5.45; FY26 NII guide trimmed $1.5B to $103B - margin pressure signal across US banks."
+      - "META confirmed multi-year AVGO AI accelerator deal, 30-40% cost-per-compute savings, into Apr 29 Q1 print."
+      - "Q1 S&P 500 earnings tracking +12.5% growth; Info Tech leading upward revisions at +4.1%."
+    tags: ["doctrine-brief", "equities", "daily", "Q1-earnings"]
+    processed_date: "2026-04-17"
+  - source_type: scheduled_task
+    category: "macro"
+    target_pipeline: "TITAN"
+    relevance_score: 9
+    key_claims:
+      - "March CPI +0.9% m/m / +3.3% y/y; energy +10.9% (gasoline +21.2%) - first print fully capturing Iran-war oil shock."
+      - "Yield curve un-inverted after 27 months: 10Y 4.29% / 2Y 3.75% / spread +54bps via long-end sell-off not Fed cuts."
+      - "Fed at 3.50-3.75% with 1 cut forecast for 2026; Apr 28-29 FOMC live risk for zero-cut signal."
+    tags: ["doctrine-brief", "macro", "daily", "CPI", "FOMC"]
+    processed_date: "2026-04-17"
+  - source_type: scheduled_task
+    category: "crypto"
+    target_pipeline: "COBALT"
+    relevance_score: 7
+    key_claims:
+      - "Drift Protocol exploit drained $280-285M; Solana aggregate TVL fell to $5.5-6B from $9B peak."
+      - "SOL testing $87 resistance; April forecast $100-110; 7+ asset managers filed updated spot Solana ETF S-1s."
+      - "SEC Regulation Crypto at OIRA - final step before publication; CLARITY Act stablecoin compromise reached for late-April Senate markup."
+    tags: ["doctrine-brief", "crypto", "daily", "solana", "ETF"]
+    processed_date: "2026-04-17"
+  - source_type: scheduled_task
+    category: "geopolitical"
+    target_pipeline: "SPECTRE"
+    relevance_score: 10
+    key_claims:
+      - "IEA: Iran war supply disruption now 4.5-5 MMbpd, doubling by mid-April - largest in history; sanctions waivers expiring Apr 11 (Russia) / Apr 19 (Iran)."
+      - "Trump threatened 50% China tariff Apr 13 over alleged Iran weapons shipment; Trump-Xi summit Beijing May 14-15."
+      - "Goldman raised US 12-month recession probability to 30% on oil shock; unemployment forecast 4.6% by YE 2026."
+    tags: ["doctrine-brief", "geopolitical", "daily", "Iran", "tariffs"]
+    processed_date: "2026-04-17"
+  - source_type: scheduled_task
+    category: "tsla"
+    target_pipeline: "MUSKONOMY"
+    relevance_score: 7
+    key_claims:
+      - "TSLA $391.95, -16% YTD; Q1 Apr 22 shaping as pivotal capex-communication moment, narrative > EPS line."
+      - "Prediction markets give 53% probability of Q1 miss/match, only 47% beat."
+      - "TD Cowen cut TSLA target to $490 from $519; Barclays $360 Equal Weight."
+    tags: ["doctrine-brief", "tsla", "daily", "muskonomy"]
+    processed_date: "2026-04-17"

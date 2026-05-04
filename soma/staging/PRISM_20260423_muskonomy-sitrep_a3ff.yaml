@@ -1,0 +1,18 @@
+type: PRISM
+schema_version: "1.0"
+date: "2026-04-23"
+source: "muskonomy-daily-sitrep"
+source_type: "scheduled_task"
+prism_intake:
+  - source_type: scheduled_task
+    source_url: ""
+    category: "equities"
+    target_pipeline: "TITAN"
+    relevance_score: 9
+    key_claims:
+      - "Tesla Q1 2026: EPS $0.41 beat, Revenue $22.39B, Gross Margin 21.1% — capex shock $25B offset gains"
+      - "Musk confirmed ZERO unsupervised accidents; 12-state robotaxi by Y/E 2026; Dallas fleet +101% to 147"
+      - "Optimus Gen 3 production late Jul/Aug 2026; Musk: biggest product ever; Fremont Model S/X lines converting"
+    tags: ["musk-ecosystem", "tsla", "daily-sitrep", "q1-2026", "post-earnings"]
+    processed_date: "2026-04-23"
+    skill_version: "muskonomy-v1"

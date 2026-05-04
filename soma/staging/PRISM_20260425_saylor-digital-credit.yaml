@@ -1,0 +1,64 @@
+prism_intake:
+  - source_type: transcript
+    source_url: ""
+    language: en
+    category: equities
+    target_pipeline: TITAN
+    relevance_score: 9
+    key_claims:
+      - "STRC held par through a 45% Bitcoin drawdown, paid 4.5% YTD dividends in first 6 months"
+      - "STRC tax-equivalent yield 14.3% C-corp, 18% Miami, 23.3% NYC, 22.6% SF via return-of-capital classification"
+      - "Reflexive flywheel: credit issuance creates amplification, BTC-per-share growth, and equity premium that attracts new capital"
+      - "Saylor argues 35% corporate treasury allocation to STRC roughly doubles annual cash flow vs T-bills"
+      - "MSTR is #3 most volatile in S&P 500, #1 open-interest-to-market-cap, claimed most liquid equity in S&P universe"
+      - "Bitcoin-per-share can double or triple over 7 years via amplification mechanics"
+    tags: ["mstr", "strc", "digital-credit", "preferred-shares", "bitcoin-treasury", "saylor", "reflexivity"]
+    processed_date: "2026-04-25"
+    skill_version: "V3.0"
+    transcript_hash: "2e310387"
+
+  - source_type: transcript
+    source_url: ""
+    language: en
+    category: crypto
+    target_pipeline: COBALT
+    relevance_score: 8
+    key_claims:
+      - "Bitcoin = digital capital; STRC monetizes Bitcoin volatility into a yield instrument"
+      - "Bitcoin's non-security classification is the legal unlock under the 1940 Investment Company Act"
+      - "Layer 1 = Bitcoin, Layer 2 = Strategy issues credit, Layer 3 = ecosystem (Buck, Saturn, Apex, Hope) wraps STRC"
+      - "Saylor's base case is BTC at 30% ARR, used to underwrite all STRC dividend math"
+    tags: ["bitcoin", "digital-capital", "saylor", "strc", "layer-3"]
+    processed_date: "2026-04-25"
+    skill_version: "V3.0"
+    transcript_hash: "2e310387"
+
+  - source_type: transcript
+    source_url: ""
+    language: en
+    category: macro
+    target_pipeline: TITAN
+    relevance_score: 7
+    key_claims:
+      - "Saylor frames $300T global junk + private credit market doubling in 10 yrs as $50-60T TAM"
+      - "Hypothetical UAE bank pays 8% + takes 100bps spread on $10T = +50% to GNP"
+      - "Most credit instruments are tax-inefficient and illiquid; conventional credit issuers keep tax benefit"
+    tags: ["credit-market", "tam", "saylor", "tax-arbitrage"]
+    processed_date: "2026-04-25"
+    skill_version: "V3.0"
+    transcript_hash: "2e310387"
+
+  - source_type: transcript
+    source_url: ""
+    language: en
+    category: philosophy
+    target_pipeline: DOCTRINE
+    relevance_score: 8
+    key_claims:
+      - "Stochastic-duration ladder framework: rank capital sources by realistic time-of-use"
+      - "Conservation of volatility: vol must go somewhere — STRC strips it, MSTR equity absorbs it"
+      - "Reflexive flywheel — credit creates amplification creates equity premium creates capital"
+    tags: ["framework", "capital-theory", "reflexivity", "saylor"]
+    processed_date: "2026-04-25"
+    skill_version: "V3.0"
+    transcript_hash: "2e310387"

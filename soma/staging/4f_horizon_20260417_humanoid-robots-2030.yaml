@@ -1,0 +1,80 @@
+---
+# HORIZON Phase 4f: Humanoid Robots 2030
+# Catalyst Analysis — Timing Signals
+# Date: 2026-04-17
+# Signal Category: FUNDAMENTAL (Long-Duration Conviction)
+
+catalyst:
+  name: "Humanoid Robots 2030 Universal Recognition"
+  description: "Explicit 4-year milestone for consensus acceptance that scalable infinite-labor machines exist"
+  primary_conviction: 0.45
+
+timing_window:
+  label: "Accumulation Window"
+  opens: "2026-04-17"
+  closes: "2028-12-31"
+  peak_realization: "2029-2030"
+  rationale: "Investment thesis: buy before 2029 when realization phase triggers. 3-year runway to position."
+
+action_trigger:
+  primary: "Accumulate humanoid-robotics-exposed equities (TSLA, Figure AI, 1X, Boston Dynamics proxy) if production milestones hit before Q3 2027"
+  escalation: "Increase conviction by 0.15 if any Figure or 1X commercial deployment announcement with >100 units in field by Q2 2027"
+  de_escalation: "Reduce conviction by 0.20 if no material hand-dexterity or bipedal-walk breakthrough by end Q1 2027"
+
+monitor_metrics:
+  - metric: "Figure AI commercial deployment count"
+    frequency: "quarterly"
+    threshold: ">10 robots in commercial operations by Q2 2027"
+    source: "Figure press releases, Series funding updates, robotics publications"
+
+  - metric: "Tesla Optimus production ramp"
+    frequency: "quarterly"
+    threshold: ">1,000 units produced and demonstrated in warehouse environments by Q4 2026"
+    source: "TSLA earnings calls, Giga Texas updates, Elon public statements"
+
+  - metric: "1X Walker/Neo deployment breadth"
+    frequency: "quarterly"
+    threshold: "Commercial rollout to 3+ logistics companies with >50 units total by mid-2027"
+    source: "1X funding/press, industry reports"
+
+  - metric: "Boston Dynamics Atlas hand capability release"
+    frequency: "semi-annual"
+    threshold: "Public video demonstrating dexterous manipulation (grasping objects, tool use) by Q2 2027"
+    source: "Boston Dynamics YouTube channel, robotics forums"
+
+  - metric: "IFR World Robotics Report updates"
+    frequency: "annual"
+    threshold: "2026 edition projects >200K units cumulative by 2030 (vs 2025 edition <50K)"
+    source: "International Federation of Robotics"
+
+fallback_conditions:
+  - condition: "No significant hand-dexterity breakthrough by Q1 2027"
+    action: "Reduce conviction from 0.45 → 0.25"
+    rationale: "Indicates timeline slippage; realization may push to 2031-2032"
+
+  - condition: "No commercial deployment >100 units by Q2 2027"
+    action: "Reduce conviction by 0.10 → 0.35"
+    rationale: "Prototype → production transition stalling; watch for pivots to logistics-only (narrow TAM)"
+
+  - condition: "Negative regulatory signals (labor org resistance, safety restrictions, tariffs on Chinese robotics imports)"
+    action: "Reduce conviction by 0.15 → 0.30"
+    rationale: "Timing hazard; 2030 target becomes structurally harder"
+
+upside_triggers:
+  - "Tesla announces Optimus factory partnership with Magna or Foxconn (manufacturing scale signal)"
+  - "Figure or 1X raises >$500M at >$2B valuation with announced commercial runway"
+  - "Elon Musk commits public timeline for 1M Optimus units (removes ambiguity)"
+  - "Any frontier lab (DeepMind, Anthropic, OpenAI) releases humanoid control paper beating prior SOTA"
+
+risk_anchors:
+  - "2028 earnings season: TSLA/NVDA capex commentary on humanoid confidence (leading indicator for 2029 realization)"
+  - "2027 vs 2026 IFR Report: if forecast shrinks, push back timeline assumptions by 12-18 months"
+  - "China robotics export: watch BIS controls on compute and servo motors (supply bottleneck)"
+
+summary:
+  signal_confidence: 0.45
+  speaker_tier: 2
+  transcript_source: "Chris Camillo × Mark Moss (~78 min, 2026-04-17)"
+  transcript_hash: "fba58360"
+  update_frequency: "monthly during Q3 2026 - Q4 2027"
+  next_review: "2026-07-17 (post-earnings season checkpoint)"

@@ -1,0 +1,41 @@
+horizon_signals:
+  - date: "2026-04-25"
+    source: "Saylor — Digital Credit keynote"
+    lens: "FUNDAMENTAL"
+    direction: "BULLISH"
+    timeframe: "quarters"
+    signal_detail: "Saylor explicitly targets STRC AUM at $1B/day, $2B/day, $5B/day daily liquidity; ecosystem partner expansion (Buck, Saturn, Apex, Hope) suggests acceleration in 2026 H2"
+    confidence: 0.55
+    speaker_tier: 2
+    transcript_hash: "2e310387"
+
+  - date: "2026-04-25"
+    source: "Saylor — Digital Credit keynote"
+    lens: "FUNDAMENTAL"
+    direction: "BULLISH"
+    timeframe: "years"
+    signal_detail: "Bitcoin-per-share doubling target over 7-year horizon (by ~2033); explicit MSTR equity-investor pitch grounded in 30% BTC ARR assumption"
+    confidence: 0.50
+    speaker_tier: 2
+    transcript_hash: "2e310387"
+
+  - date: "2026-04-25"
+    source: "Saylor — Digital Credit keynote"
+    lens: "CREDIT_LIQUIDITY"
+    direction: "BULLISH"
+    timeframe: "decades"
+    signal_detail: "Saylor sizes $300T global junk-credit market doubling in 10 years (by 2036); Strategy + Layer-3 ecosystem targeting 5-10% capture (=$50-60T)"
+    confidence: 0.40
+    speaker_tier: 2
+    transcript_hash: "2e310387"
+
+  - date: "2026-04-25"
+    source: "Saylor — Digital Credit keynote"
+    lens: "FUNDAMENTAL"
+    direction: "BEARISH"
+    timeframe: "quarters"
+    signal_detail: "FASB ASU 2023-08 (Bitcoin fair-value through income, effective fiscal years after Dec 15 2024) is the largest near-term catalyst that could force STRC distributions to be reclassified from ROC to ordinary dividends, gutting tax-equivalent yield"
+    confidence: 0.65
+    speaker_tier: 2
+    transcript_hash: "2e310387"
+    notes: "Risk signal — opposite to Saylor's stated direction. Surface in next macro/credit review."

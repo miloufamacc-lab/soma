@@ -1,0 +1,15 @@
+type: DOCTRINE_EVIDENCE
+schema_version: "1.0"
+date: "2026-04-25"
+source: "dabeiba-doctrine-brief"
+source_type: "scheduled_task"
+source_hash: "0c0a96b3"
+belief_id: "GEOPOLITICAL_RISK_PREMIUM_COMPRESSION_V1"
+source_detail: "S&P 500 and Nasdaq hit all-time highs on April 21 and 23 directly following Iran ceasefire extension; oil premium compressing from 0-82 spike toward sub-00"
+supports: true
+weight: 1.0
+---
+belief_id: "AI_CAPEX_CYCLE_INTACT_V1"
+source_detail: "INTC Q1 data center +22%, AVGO AI chip rev .4B (+106% YoY), Q2 guide 0.7B; AMZN/META/MSFT/GOOGL all reporting this week — capex guidance critical"
+supports: true
+weight: 0.9

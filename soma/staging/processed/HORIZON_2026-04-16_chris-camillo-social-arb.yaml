@@ -1,0 +1,76 @@
+# HORIZON tactical timing signals for 2026-04-16 Chris Camillo / Sam Parr My First Million interview.
+# Transcript hash: 7b748cda | Skill version: V3.0
+
+horizon_signals:
+
+  - date: "2026-04-16T00:00:00Z"
+    source: "My First Million - Chris Camillo interview"
+    lens: FUNDAMENTAL
+    direction: BULLISH
+    timeframe: "years"
+    signal_detail: "Camillo calls Bloom Energy a top AI play: earnings to double YoY for next 3-4 years on solid-oxide-fuel-cell deployment at hyperscaler data centers. BE has already run 5-6x in 8-9 months per his own framing."
+    confidence: 0.55
+    speaker_tier: 2
+    speaker: "Chris Camillo"
+    transcript_hash: "7b748cda"
+    instrument_affinity: ["BE", "PLUG", "FCEL"]
+    coi_flag: false
+    red_team_note: "STRONG counter — 20yr fuel-cell false-dawn base rate; sell-side consensus ~30% revenue growth, not 100%+ earnings doubling; FY28 implied EPS $2.40 requires $5B+ revenue vs $1.6B current run-rate."
+
+  - date: "2026-04-16T00:00:00Z"
+    source: "My First Million - Chris Camillo interview"
+    lens: MACRO
+    direction: BULLISH
+    timeframe: "years"
+    signal_detail: "Private jet sector as multi-year bet on age-of-abundance thesis: AI + automation frees time and wealth -> more travel / hobby / experiential spend. Pandemic spending patterns as preview."
+    confidence: 0.50
+    speaker_tier: 2
+    speaker: "Chris Camillo"
+    transcript_hash: "7b748cda"
+    instrument_affinity: ["private-jet-sector", "luxury-experiential-spend"]
+    coi_flag: true
+    red_team_note: "Camillo opening Dallas private jet brokerage showroom -- material COI on this call. No specific ticker, no catalyst window."
+
+  - date: "2026-04-16T00:00:00Z"
+    source: "My First Million - Chris Camillo interview (historical verification)"
+    lens: FUNDAMENTAL
+    direction: NEUTRAL
+    timeframe: "trailing"
+    signal_detail: "Palantir $30 -> $160-180 case study (2024-2025): AIP commercial adoption signal + 12-month discovery window."
+    confidence: 0.70
+    speaker_tier: 2
+    speaker: "Chris Camillo"
+    transcript_hash: "7b748cda"
+    instrument_affinity: ["PLTR"]
+    note: "Historical trade — recorded for methodology validation, not forward signal."
+
+  - date: "2026-04-16T00:00:00Z"
+    source: "My First Million - Chris Camillo interview (historical verification)"
+    lens: FUNDAMENTAL
+    direction: NEUTRAL
+    timeframe: "trailing"
+    signal_detail: "Sphere Entertainment (SPHR) +114% YTD 2025 via user-comment + seat-sale signal on Wizard of Oz residency."
+    confidence: 0.75
+    speaker_tier: 2
+    speaker: "Chris Camillo"
+    transcript_hash: "7b748cda"
+    instrument_affinity: ["SPHR"]
+    note: "Historical trade — recorded for methodology validation, not forward signal."
+
+  - date: "2026-04-16T00:00:00Z"
+    source: "Red-team review: regime-dependence of social-arbitrage method"
+    lens: MACRO
+    direction: BEARISH
+    timeframe: "years"
+    signal_detail: "Camillo's 18-year track record was built in a secular decline in real rates (2007-2025). The 'valuation is irrelevant' implicit claim is regime-dependent. In a sustained high-real-rate regime, multiple compression can overwhelm correct-information trades."
+    confidence: 0.60
+    speaker_tier: 2
+    speaker: "red-team (external evidence)"
+    transcript_hash: "7b748cda"
+    instrument_affinity: ["high-multiple-growth-equities", "options-concentrated-strategies"]
+
+meta:
+  subject_slug: "chris-camillo-social-arb"
+  primary_category: philosophy
+  processed_date: "2026-04-16T00:00:00Z"
+  skill_version: V3.0

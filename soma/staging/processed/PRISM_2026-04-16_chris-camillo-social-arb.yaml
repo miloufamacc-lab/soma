@@ -1,0 +1,62 @@
+# PRISM multi-category routing for 2026-04-16 Chris Camillo / Sam Parr My First Million interview.
+# Transcript hash: 7b748cda | Skill version: V3.0 | Source: My First Million podcast (YouTube).
+
+prism_intake:
+
+  - source_type: youtube
+    source_url: ""
+    language: en
+    category: philosophy
+    target_pipeline: SOMA
+    relevance_score: 9
+    key_claims:
+      - "Information asymmetry -> parity: entry at asymmetry, exit at parity. Timing discipline for retail alt-data edge (conf 0.80)."
+      - "Risk-capital bucketing + big-money-account psychological framework: concentrated options exposure sized against pre-declared bucket, never topped up from other buckets (conf 0.80)."
+      - "Garage-sale principle applied to Wall Street: find the blind spot of the dominant demographic (older white northeastern male)."
+      - "Conversational data > transactional data for retail: TikTok comments as primary alpha source (conf 0.70, not scalable past ~$100M liquid)."
+    tags: ["social-arbitrage", "retail-investing", "alt-data", "risk-management", "philosophy", "methodology"]
+    processed_date: "2026-04-16T00:00:00Z"
+    skill_version: "V3.0"
+    transcript_hash: "7b748cda"
+
+  - source_type: youtube
+    source_url: ""
+    language: en
+    category: equities
+    target_pipeline: TITAN
+    relevance_score: 7
+    key_claims:
+      - "Palantir $30 -> $180 case study of social-arb working in AI regime (conf 0.70, red-team MODERATE: AI-adjacent tailwind)."
+      - "ELF Cosmetics $7 -> $170 via Jeffree Star YouTube signal + retail store observation (conf 0.75, verified directionally)."
+      - "Bloom Energy: earnings to double YoY for next 3-4 years (conf 0.55, forward cap; red-team STRONG: 5-6x run already priced, fuel-cell false-dawn base rate)."
+      - "Sphere / Wizard of Oz +114% YTD 2025 via user-comment + seat-sale alt-data (conf 0.75, verified directionally)."
+      - "QSR loss of 33% portfolio on single levered trade: methodology has systematic blind spot for low-conversation regional brands."
+    tags: ["pltr", "be", "sphr", "elf", "becn", "qsr", "options", "equities"]
+    processed_date: "2026-04-16T00:00:00Z"
+    skill_version: "V3.0"
+    transcript_hash: "7b748cda"
+
+  - source_type: youtube
+    source_url: ""
+    language: en
+    category: macro
+    target_pipeline: TITAN
+    relevance_score: 5
+    key_claims:
+      - "Age-of-abundance thesis: AI + automation frees time + wealth -> more travel + hobby + experiential spend. Forward speculative."
+      - "AI data center buildout creates 3-5 year on-site power demand that gas turbines cannot satisfy fast enough (Bloom thesis)."
+      - "Private jet sector as sector-level macro bet on abundance; no specific ticker, no catalyst window."
+    tags: ["age-of-abundance", "ai-data-center", "power-demand", "private-jets", "macro"]
+    processed_date: "2026-04-16T00:00:00Z"
+    skill_version: "V3.0"
+    transcript_hash: "7b748cda"
+
+meta:
+  subject_slug: "chris-camillo-social-arb"
+  primary_category: philosophy
+  secondary_categories: [equities, macro]
+  processed_date: "2026-04-16T00:00:00Z"
+  skill_version: V3.0
+  speaker_tier: 2
+  speaker_flags: ["PROMOTER", "CONFLICT"]
+  interview_archetype: "long-form promotional interview with modest pushback from host"

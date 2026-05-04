@@ -1,0 +1,46 @@
+prism_intake:
+  - source_type: transcript
+    source_url: ""
+    language: en
+    category: crypto
+    target_pipeline: COBALT
+    relevance_score: 9
+    key_claims:
+      - "STRC: 11% yield, 22% vol — displaces junk bonds on risk-adjusted basis. Bitcoin-backed digital credit for traditional allocators."
+      - "Three-layer digital asset stack: L3=digital money (0-3mo), L2=STRC (3-48mo), L1=Bitcoin (4yr+). $300-400T TAM."
+      - "Bitcoin L1 immutability is absolute red line — no smart contracts, no changes. L2/L3 built on top."
+      - "BTC/share yield growing 22%/yr dilution-adjusted — screamingly accretive vs traditional equity dilution."
+      - "Great Products Don't Require Understanding — STRC designed so allocators need zero Bitcoin knowledge."
+    tags: ["strc", "bitcoin", "digital-credit", "mstr", "strategy", "bitcoin-yield", "duration-buckets"]
+    processed_date: "2026-04-17"
+    skill_version: "V3.0"
+    transcript_hash: "8fe33607"
+  - source_type: transcript
+    source_url: ""
+    language: en
+    category: macro
+    target_pipeline: TITAN
+    relevance_score: 8
+    key_claims:
+      - "$300T global credit market structurally broken — sovereign (50-350bps), IG corporate (77bps), HY (288bps) all fail to cover actual default risk."
+      - "AI creating largest deflationary shock in history — $10T wealth shift from human capital to digital capital."
+      - "All 5 US financial regulators simultaneously pro-digital-assets: Treasury, Fed, President, SEC, CFTC. OCC stablecoin guidance Apr 2026."
+      - "Basel reclassification of BTC as Tier 1 capital could unlock institutional adoption in 2026."
+    tags: ["ai-deflation", "credit-market", "regulatory-alignment", "basel", "fiscal-dominance"]
+    processed_date: "2026-04-17"
+    skill_version: "V3.0"
+    transcript_hash: "8fe33607"
+  - source_type: transcript
+    source_url: ""
+    language: en
+    category: equities
+    target_pipeline: TITAN
+    relevance_score: 7
+    key_claims:
+      - "MSTR/Strategy: BTC yield 74% in 2024, 22%+ targeted 2025. Dilution is accretive when BTC/share grows faster than share count."
+      - "Workforce collapse to 2+AI teams — 10x productivity, 90% reduction in knowledge work headcount. Structural margin expansion for AI-first companies."
+      - "STRC $30B market cap target in 12-18mo (Saylor claim — promoter interest, conf 0.45)."
+    tags: ["mstr", "strategy", "ai-productivity", "btc-yield", "strc"]
+    processed_date: "2026-04-17"
+    skill_version: "V3.0"
+    transcript_hash: "8fe33607"

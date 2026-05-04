@@ -1,0 +1,10 @@
+type: DOCTRINE_EVIDENCE
+schema_version: "1.0"
+date: "2026-04-17"
+source: "dabeiba-doctrine-brief"
+source_type: "scheduled_task"
+source_hash: "9b96557a"
+belief_id: "AI_CAPEX_RESILIENCE_V1"
+source_detail: "META confirmed multi-year Broadcom custom silicon deal (30-40% cost-per-compute savings); NVDA upgraded to Buy on AI-trade resurgence; Info Tech leads S&P 500 2026 earnings upgrades at +4.1%."
+supports: true
+weight: 1.0

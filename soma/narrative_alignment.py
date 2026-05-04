@@ -5,9 +5,9 @@ Pipeline: SOMA/SENTINEL | Module: SOMA | Status: BUILT
 NarrativeAlignment — flags contradictions between CIPHER's outlook text
 and MANTIS's portfolio positions + ORACLE's regime state.
 
-Reads from SOMA:
-    - outlook_snapshots  (CIPHER writes)
-    - portfolio_state    (MANTIS writes)
+Reads from Synthesis (SOMA):
+    - outlook_snapshots  (Advisory writes)
+    - portfolio_state    (Decisions writes)
     - regime_history     (ORACLE writes)
 
 Output:

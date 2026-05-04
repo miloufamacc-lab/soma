@@ -1,0 +1,47 @@
+type: PRISM
+schema_version: "1.0"
+date: "2026-04-24"
+source: "dabeiba-doctrine-brief"
+source_type: "scheduled_task"
+prism_intake:
+  - source_type: scheduled_task
+    category: "macro"
+    target_pipeline: "TITAN"
+    relevance_score: 9
+    key_claims:
+      - "FOMC April 28-29 hold 99.4% priced at 3.50-3.75%; Powell final meeting before May 15 exit; March CPI 3.3% YoY blocks cuts"
+      - "Bank of Canada April 29 hold at 2.25% (96.5% priced); Monetary Policy Report with updated forecasts"
+      - "VIX 18.92; Brent $107.10 WTI $97.44; 10Y UST 4.29; curve spread 48bps positive"
+    tags: ["doctrine-brief", "macro", "daily", "fomc", "boc", "oil"]
+    processed_date: "2026-04-24"
+  - source_type: scheduled_task
+    category: "equities"
+    target_pipeline: "TITAN"
+    relevance_score: 9
+    key_claims:
+      - "INTC +27% premarket on Q1 data center beat; AMD +12% on Stifel upgrade to $320; NVDA 11-session streak at $201.68"
+      - "April 29 mega-cap: META $6.65e EPS (32% YoY growth), GOOG $243B cloud backlog, AMZN AWS 24% Q4, MSFT Azure CapEx read-through"
+      - "TSLA Q1 beat: EPS $0.41 vs $0.37e, GM 21.1% best since 2023; $25B capex guide negative FCF rest 2026"
+      - "S&P 500 Q1 beat rate 77%, aggregate surprise +14.3%; SU RBC target raised C$89 Outperform"
+    tags: ["doctrine-brief", "equities", "earnings", "daily", "mega-cap"]
+    processed_date: "2026-04-24"
+  - source_type: scheduled_task
+    category: "crypto"
+    target_pipeline: "COBALT"
+    relevance_score: 8
+    key_claims:
+      - "SOL at $85.41 (-1.12% 24h); BTC dominance 58.1% (recent high 60.63%) — altcoin de-leveraging active"
+      - "SOL spot ETF inflows collapsed to $34M April 2026 from $419M Nov 2025 (92% decline in 6 months)"
+      - "Jupiter TVL $2.6-3B; Solana 5-week consecutive dApp revenue lead vs. Ethereum; TPS 3,000+"
+    tags: ["doctrine-brief", "crypto", "solana", "daily", "mantis"]
+    processed_date: "2026-04-24"
+  - source_type: scheduled_task
+    category: "geopolitical"
+    target_pipeline: "TITAN"
+    relevance_score: 8
+    key_claims:
+      - "Iran ceasefire extended; Trump expects great deal; Israel-Lebanon ceasefire also extended 3 weeks April 24"
+      - "Brent $107 still elevated; Hormuz re-closure tail risk active; IEA: largest oil supply disruption in history"
+      - "Trump threatened 50% tariffs on China; USTR Section 301 hearing April 28 covering 15 countries"
+    tags: ["doctrine-brief", "geopolitical", "iran", "tariffs", "daily"]
+    processed_date: "2026-04-24"

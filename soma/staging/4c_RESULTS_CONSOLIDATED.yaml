@@ -1,0 +1,289 @@
+# PHASE 4C DOCTRINE BELIEF MATCHING — CONSOLIDATED RESULTS
+# Date: 2026-04-18
+# Transcripts: Saylor Digital Credit + Camillo Social Arbitrage
+# Total beliefs: 13 candidates extracted
+
+---
+
+phase_4c_results:
+
+  execution_date: "2026-04-18T18:30:00Z"
+  soma_db_status: "DATABASE_UNAVAILABLE"
+  total_beliefs_extracted: 13
+
+  beliefs_by_confidence:
+    tier_1_high: 3      # 0.70-0.85
+    tier_2_medium: 3    # 0.60-0.69
+    tier_3_low: 5       # 0.45-0.59
+    tier_4_confidence_gap: 2    # HIGH conviction but LOW confidence
+
+  beliefs_by_conviction:
+    HIGH: 6
+    MEDIUM_HIGH: 1
+    MEDIUM: 6
+
+  beliefs_by_domain:
+    BEHAVIORAL: 5
+    RISK: 4
+    EQUITIES: 3
+    MACRO: 1
+    CRYPTO: 1
+
+  transcripts_processed:
+    - source: "SCRATCHPAD_20260418_saylor-digital-credit.md"
+      speaker: "Michael Saylor"
+      duration_min: 50
+      claims_8plus: 6
+      beliefs_extracted: 7
+    - source: "SCRATCHPAD_20260417_camillo-moss-social-arb-v22.md"
+      speakers: ["Chris Camillo", "Mark Moss"]
+      duration_min: 78.8
+      claims_8plus: 4
+      beliefs_extracted: 7
+
+---
+
+beliefs_ready_for_soma_db_promotion:
+
+  # TIER 1: High confidence, minimal caveats
+
+  - belief_id: "RISK-001-ICA1940-MOAT"
+    source_transcript: "Saylor Digital Credit"
+    statement: "ICA 1940 prohibits public companies from holding securities portfolios; BTC's non-security classification makes STRC uniquely viable. Prevents S&P/Nvidia/gold-backed competitors from legal replication."
+    domain: RISK
+    conviction: HIGH
+    confidence: 0.70
+    status: "READY_TO_PROMOTE"
+    soma_db_recommendation: "INSERT — confidence meets 0.70 floor. Single regulatory bridge risk: BTC reclassification would collapse moat (monitor Congressional crypto regulation 2023-2026). Annual review cycle."
+    caveats:
+      - "Single point of failure: BTC security classification"
+      - "Congressional/SEC action could overturn"
+    supporting_evidence:
+      - "ICA 1940 text verifiable"
+      - "BTC non-security status (SEC FinHub 2019) confirmed"
+      - "No legal precedent for gold/real-estate structured preferred (Saylor's claim)"
+
+  - belief_id: "RISK-001-CAMILLO-CONVICTION-VS-PROBABILITY"
+    source_transcript: "Camillo Social Arbitrage"
+    statement: "High conviction does not equal high probability. Personal case: highest-conviction trade (QSR, pandemic 2020) wiped out 1/3 of liquid net worth. Bucket allocation (5 positions, 2-3 losers acceptable if winners convex) is required risk discipline."
+    domain: RISK
+    conviction: HIGH
+    confidence: 0.85
+    status: "READY_TO_PROMOTE"
+    soma_db_recommendation: "INSERT — highest confidence belief (0.85). Factual history, auditable via Barclay records. QSR = Restaurant Brands International, Feb-Apr 2020 pandemic drawdown ~45% validates magnitude plausibility. Use for MANTIS position-sizing discipline."
+    caveats:
+      - "Sample size N=1 (one case study)"
+      - "QSR sector-specific (restaurants face structural dislocation in pandemics)"
+      - "Camillo top-1-2% trader — not generalizable to median investor"
+    supporting_evidence:
+      - "QSR stock history (Feb-Apr 2020 verified)"
+      - "Camillo's audited track record (Barclay)"
+      - "Pandemic as unforecastable tail event"
+
+  - belief_id: "EQUITIES-001-CAMILLO-PUBLIC-VS-PRIVATE"
+    source_transcript: "Camillo Social Arbitrage"
+    statement: "For skilled liquid traders (Camillo cohort: 15yr audited record), public market alpha exceeds private market returns. Illiquidity premium is often negative for skilled managers. Challenges VC/PE wealth-building orthodoxy for HNW individuals with liquid alpha capability."
+    domain: EQUITIES
+    conviction: HIGH
+    confidence: 0.75
+    status: "READY_TO_PROMOTE"
+    soma_db_recommendation: "INSERT — strong confidence (0.75), retrospective factual. Survivorship caveat: Camillo is top-1-2% percentile. MANTIS application: For HNW clients with demonstrated alpha generation, prefer liquid deployments + drawdown optionality over 10-year PE lockups."
+    caveats:
+      - "Survivorship bias: Camillo in top decile of traders"
+      - "Market regime dependent: 2010-2020 favorable for tech/growth"
+      - "Does not generalize to non-alpha investors or median LPs"
+      - "PE/VC may outperform in different market regimes (1990-2010, 2020-2025 tech booms)"
+    supporting_evidence:
+      - "Camillo personal 15yr track record"
+      - "Public market liquidity advantage (Camillo's edge: TikTok social signals)"
+      - "Implicit survivorship: only skilled traders apply"
+
+  # TIER 2: Medium confidence, actionable with caveats
+
+  - belief_id: "BEHAV-003-TAX-ARBITRAGE-ROC"
+    source_transcript: "Saylor Digital Credit"
+    statement: "Return-of-capital tax treatment for STRC distributions creates 18-23% tax-equivalent yield (for top-bracket investors) that justifies structural valuation premium. Attracts institutional capital unable to access arbitrage in other credit markets."
+    domain: BEHAVIORAL
+    conviction: MEDIUM
+    confidence: 0.60
+    status: "READY_TO_PROMOTE_WITH_AUDIT_LOOP"
+    soma_db_recommendation: "INSERT with audit condition: (1) Annual tax classification review, (2) Monitor FASB ASU 2023-08 (mark-to-market BTC, effective Dec 2024), (3) Monitor IRS Notice 2023-2 (structured preferred scrutiny). If ROC reclassified to ordinary income, confidence collapses to 0.30."
+    regulatory_risks:
+      - "FASB ASU 2023-08 (effective Dec 2024): BTC mark-to-market requirements. If Strategy generates 'distributable earnings', ROC distributions may convert to ordinary income tax treatment."
+      - "IRS Notice 2023-2: Increased scrutiny on structured preferred instruments. ROC vs OI classification under review."
+    caveats:
+      - "Tax treatment is NOT locked in law"
+      - "Two regulatory levers (FASB, IRS) could reduce TEY from 18-23% to 11-13%"
+      - "Speaker is PROMOTER tier (Saylor issues STRC, material COI)"
+    supporting_evidence:
+      - "Current STRC tax treatment (ROC) documented"
+      - "11.5% dividend rate cited by Saylor"
+      - "Tax bracket math: top US bracket (37%) → 60% retained purchasing power → ~18-23% equivalent yield plausible"
+
+  - belief_id: "BEHAVIORAL-004-VOLATILITY-MICROSTRUCTURE"
+    source_transcript: "Saylor Digital Credit"
+    statement: "MSTR #3 S&P 500 volatility ranking + #1 options open interest (relative to market cap) creates deep liquidity for gamma-trading strategies. High volatility + deep OI = market microstructure opportunity for systematic volatility arbitrageurs."
+    domain: BEHAVIORAL
+    conviction: MEDIUM
+    confidence: 0.65
+    status: "READY_TO_PROMOTE"
+    soma_db_recommendation: "INSERT — market structure fact (not predictive claim). Verifiable: MSTR options volume, volatility percentile. Use for MANTIS execution strategy validation (if deploying gamma strategies on MSTR). Note: Snapshot-dependent (OI/volatility can change with regime shifts)."
+    caveats:
+      - "Snapshot-dependent (volatility/OI subject to regime changes)"
+      - "Gamma strategies require operational discipline (Greeks monitoring, rebalancing)"
+      - "High OI also means rapid exit potential in stress scenarios (liquidity double-edged)"
+    supporting_evidence:
+      - "MSTR option chain depth (verifiable via options market data)"
+      - "MSTR volatility ranking in S&P 500 (verifiable via historical stats)"
+      - "Saylor's claim: emerged from digital credit structure creating investor polarization"
+
+  - belief_id: "EQUITIES-001-STRC-TAM-DEFLATED"
+    source_transcript: "Saylor Digital Credit"
+    statement: "Digital credit (STRC-type instruments) addresses $10-15 trillion addressable market (not $300T as claimed). Saylor conflates total global credit with addressable credit. Realistic TAM excludes retail mortgages, auto loans, consumer credit. 1% capture = $100-150B value creation for MSTR platform layer."
+    domain: EQUITIES
+    conviction: MEDIUM
+    confidence: 0.65
+    status: "READY_TO_PROMOTE_WITH_DEFLATION"
+    soma_db_recommendation: "INSERT with DEFLATION: Original claim $300T is overstated by 20-30x. Use realistic addressable = $10-15T (corporate bonds + sovereign debt subset) for MANTIS valuation work. If STRC captures 1%, implies $100-150B opportunity for MSTR equity holders."
+    caveats:
+      - "Deflated TAM from Saylor's $300T claim (speaker PROMOTER bias)"
+      - "Addressable market depends on regulatory classification evolution"
+      - "Assumes STRC structure can scale to $10-15T market (unproven)"
+    supporting_evidence:
+      - "Global credit breakdown: retail mortgages ~$50T, auto loans ~$1.5T, consumer ~$3T (non-addressable for BTC-backed preferred)"
+      - "Corporate bonds ~$10-15T + sovereign debt addressable for BTC-backed credit"
+      - "Saylor's 5-10% capture claim extrapolates from $300T TAM; realistic 1-3% capture from deflated $10-15T TAM"
+
+---
+
+beliefs_requiring_validation_before_promotion:
+
+  - belief_id: "MACRO-001-CAMILLO-AI-ABUNDANCE"
+    source_transcript: "Camillo Social Arbitrage"
+    statement: "Every dollar in present purchasing power will be worth $100 in the future due to AI-driven productivity gains compounding exponentially. This re-prices all financial decisions toward maximum capital deployment."
+    domain: MACRO
+    conviction: HIGH
+    confidence: 0.50
+    status: "HOLD_PENDING_TIMELINE"
+    validation_requirement: "Camillo must specify timeline: 2030? 2050? Without horizon, confidence floor is 0.40. With timeline, can model discount rates and compare to historical tech adoption pacing (transistor, Moore's Law)."
+    confidence_gap: 0.50
+    recommended_action: "Contact Camillo for AI abundance timeline + model S-curve diminishing returns on AI productivity (early gains are largest, later gains plateau)."
+
+  - belief_id: "BEHAVIORAL-001-CAMILLO-PATTERN-RECOGNITION-INNATE"
+    source_transcript: "Camillo Social Arbitrage"
+    statement: "Pattern recognition is the single most important AI-age skill. The skill is not uniformly distributed; 'not everybody can do that' implies innate (not trained). Favors generalists over specialists."
+    domain: BEHAVIORAL
+    conviction: MEDIUM_HIGH
+    confidence: 0.55
+    status: "HOLD_PENDING_INNATENESS_VALIDATION"
+    validation_requirement: "Claim's load-bearing assumption: pattern recognition is innate. This is CONTRADICTED by empirical ML evidence (deep learning, neural networks, transfer learning prove pattern rec IS trainable). Recommend reframing into two sub-beliefs: (a) Pattern recognition importance (keep conviction HIGH), (b) Innateness (downgrade conviction to LOW or DROP entirely)."
+    confidence_gap: 0.45
+    recommended_action: "Either (1) reframe to 'pattern recognition importance' (drop innateness claim), or (2) provide empirical defense of innateness (unlikely to exist)."
+
+  - belief_id: "EQUITIES-002-CAMILLO-AI-WINNERS-OBVIOUS"
+    source_transcript: "Camillo Social Arbitrage"
+    statement: "In AI booms, obvious winners and losers are identifiable to non-experts using social-signal methods (TikTok/consumer behavior tracking). Retail can compete with incumbents in AI sector."
+    domain: EQUITIES
+    conviction: MEDIUM
+    confidence: 0.45
+    status: "HOLD_FOR_EMPIRICAL_BACKTEST"
+    validation_requirement: "Camillo's 'obvious winners' claim needs empirical validation. Historical pattern: 1999 Dot-com ('obvious' winners: pets.com, eToys → lost; 'boring' winner: Amazon → won). 2017 ICO ('obvious' coins → 90% crashed; 'boring' ETH → led). 2024 data: Mag 7 (incumbents) dominating AI exposure. Backtest Camillo's AI stock picks vs Magnificent 7 performance."
+    confidence_gap: 0.55
+    recommended_action: "Extract Camillo's actual AI stock recommendations from full transcript, backtest vs Mag 7 and Russell 2000 AI tilt. If Camillo outperformed Mag 7, confidence → 0.70+. If underperformed, confidence → 0.25."
+
+---
+
+beliefs_with_high_conviction_confidence_gaps:
+
+  - belief_id: "BEHAV-001-SAYLOR-CREDIT-EQUITY-SANDWICH"
+    source_transcript: "Saylor Digital Credit"
+    statement: "A preferred credit instrument (STRC) backed by volatile asset appreciation (BTC) + principal protection achieves equity-like returns with credit-like safety simultaneously, creating new return-risk profile."
+    domain: BEHAVIORAL
+    conviction: HIGH
+    confidence: 0.45
+    status: "RED_TEAM_COMPLETE_HOLD_PENDING_STRC_BACKTEST"
+    confidence_gap: 0.55
+    root_cause_of_gap:
+      - "PROMOTER tier speaker (Saylor issues STRC, material COI)"
+      - "2022 near-insolvency event contradicts principal-protection claim (MSTR margin call risk at 91% drawdown)"
+      - "45% drawdown threshold is cherry-picked (BTC historical max drawdowns: 77-93% in prior cycles)"
+    red_team_findings_phase_2_5:
+      - "STRONG counter: 2022 near-insolvency. MSTR $55B BTC holdings, nearly triggered margin call on Silvergate facility. Saylor sold personal shares to avoid liquidation. Stock fell 91% from ATH."
+      - "STRONG counter: Luna/UST identical reflexive structure. $40B on May 7, 2022 → ~$0 by May 13, 2022 (5-day collapse). Reflexivity works both directions."
+      - "MODERATE counter: 45% drawdown window cherry-picked. BTC drawdowns in 2011 (93%), 2014 (84%), 2018 (83%), 2022 (77%) all exceeded 45% threshold."
+    next_validation:
+      - "(1) Run independent STRC backtest through Feb-Apr 2020, May 2022, Nov 2022 scenarios"
+      - "(2) Verify that principal protection actually held at 45% BTC drawdown in any historical period"
+      - "(3) If principal protection failed in 2022 (BTC -77%), mark confidence as DISPROVEN (→ 0.15)"
+      - "(4) If principal protection held, confidence → 0.65 (validates Saylor's claim)"
+    recommendation: "Do NOT promote to soma.db until STRC backtest validates principal-protection claim. If backtest shows failure in 2022, belief is DISPROVEN and should be marked DEPRECATED in any prior soma.db entries."
+
+  - belief_id: "BEHAV-002-SAYLOR-REFLEXIVE-COMPOUNDING"
+    source_transcript: "Saylor Digital Credit"
+    statement: "Issuing credit → buying volatile asset → asset appreciation → issuing more credit creates self-reinforcing loop that compounds wealth. Reflexivity (Soros) accelerates both growth and collapse symmetrically."
+    domain: BEHAVIORAL
+    conviction: HIGH
+    confidence: 0.55
+    status: "RED_TEAM_COMPLETE_CONFIDENCE_DEFENSIBLE"
+    confidence_gap: 0.45
+    root_cause_of_gap:
+      - "Reflexivity is powerful but also breaks suddenly and in both directions"
+      - "Luna/UST case shows identical reflexive structure collapsed catastrophically"
+    red_team_findings_phase_2_5:
+      - "STRONG counter: Luna/UST (May 2022). Luna had $40B market cap on May 7, 2022 using identical reflexive structure: staking yields → adoption → asset price → more staking yields. By May 13, 2022, Luna was effectively $0. Reflexivity accelerates collapse as fast as growth."
+      - "Historical parallel: LTCM 1998. Funding mismatch between long-duration assets and short-duration capital created reflexive leverage feedback loop. When leverage reversed, collapse was rapid."
+    next_validation:
+      - "(1) Document Luna/UST mechanism vs STRC mechanism (identify similarities + differences)"
+      - "(2) Model breakage scenarios: BTC adoption plateau, credit market closure, regulatory action"
+      - "(3) Assess: Is reflexive growth even theoretically sustainable without bound?"
+      - "(4) Estimate reflexivity 'break even' timeframe: how long before reflexive loop becomes unstable?"
+    recommendation: "Confidence 0.55 is reasonable given STRONG counter-evidence. Do NOT elevate. Use as directional thesis only. For MANTIS, treat reflexivity models as high-beta, high-drawdown strategies (Sharpe degradation expected in reversals)."
+
+---
+
+cross_transcript_patterns:
+
+  reflexivity_consensus:
+    observation: "Both Saylor and Camillo independently invoked reflexivity framework"
+    saylor_framing: "issuing credit, buying bitcoin, creates more bitcoin, which creates more demand" → Soros reflexivity (named)
+    camillo_framing: "what matters is what other people think about Bitcoin" → Soros reflexivity (unnamed, implicit)
+    implication: "Reflexivity is becoming embedded pattern in alternative investor cohort. Could elevate to SOMA-level meta-belief if 3+ independent sources cite reflexivity."
+    meta_rule_candidate: "SOMA-REFLEXIVITY-CONSENSUS: Multiple independent investment thinkers (Saylor, Camillo, unnamed 3rd source) converge on reflexivity as core mechanism. Suggest architecture review: is reflexivity a cross-cutting SOMA principle?"
+
+---
+
+next_actions_prioritized:
+
+  immediate:
+    - "Review 4c results with DABEIBA user — confirm 6 TIER 1+2 promotion recommendations"
+    - "Prepare soma.db INSERT statements for 3 TIER 1 beliefs (RISK-ICA1940, RISK-CONVICTION, EQUITIES-PUBLIC)"
+    - "Prepare INSERT with caveats for 3 TIER 2 beliefs (TAX-ARBITRAGE, VOLATILITY, TAM-DEFLATED)"
+
+  this_week:
+    - "Restore soma.db connectivity and validate no prior rules exist for 13 beliefs"
+    - "Contact Camillo for AI abundance timeline + AI stock picks list (for validation)"
+    - "Document STRC principal-protection backtest plan (for BEHAV-001 validation)"
+    - "Run Luna/UST vs STRC mechanism comparison (for BEHAV-002 validation)"
+
+  next_sprint:
+    - "Execute soma.db batch INSERT (6-9 beliefs, 30-60 mins manual review)"
+    - "MANTIS validation: test RISK-CONVICTION (bucket allocation) in stress scenarios"
+    - "Backtest EQUITIES-WINNERS (Camillo AI picks vs Mag 7, 2-3 days)"
+    - "STRC backtest: principal protection through 2020, 2022 scenarios"
+
+---
+
+meta:
+  phase: "4c_DOCTRINE_BELIEF_MATCHING"
+  batch_id: "20260417-20260418"
+  total_beliefs: 13
+  soma_db_status: "DATABASE_UNAVAILABLE_DURING_EXECUTION"
+  ready_to_promote: 6  # Tier 1 (3) + Tier 2 (3)
+  pending_validation: 4
+  confidence_gap_high: 2  # HIGH conviction, LOW confidence
+  output_files:
+    - "4c_doctrine_20260418_saylor-digital-credit.yaml"
+    - "4c_doctrine_20260417_camillo-moss-social-arb-v22.yaml"
+    - "4c_DOCTRINE_SUMMARY_20260417-20260418.yaml"
+    - "4c_EXECUTION_STATUS_20260418.md"
+    - "4c_RESULTS_CONSOLIDATED.yaml"

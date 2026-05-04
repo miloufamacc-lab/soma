@@ -1,0 +1,16 @@
+type: PRISM
+schema_version: "1.0"
+date: "2026-04-15"
+source: "smoke-test"
+source_type: "manual"
+source_hash: "smoke003"
+prism_intake:
+  - source_type: manual
+    source_url: ""
+    category: "equities"
+    target_pipeline: "TITAN"
+    relevance_score: 8
+    key_claims:
+      - "TSLA Q1 deliveries beat consensus"
+    tags: ["smoke-test", "tsla"]
+    processed_date: "2026-04-15"

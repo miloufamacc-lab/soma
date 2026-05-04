@@ -1,0 +1,14 @@
+Bitcoin MVRV Z-Score Analysis — April 2026
+
+The Bitcoin MVRV Z-Score has risen to 2.8, approaching the historically significant 3.5 level that has marked previous cycle tops. Key observations:
+
+1. NUPL at 0.62 — entering "belief" zone, not yet euphoria (>0.75)
+2. SOPR reset to 1.02 after brief dip below 1.0 — healthy consolidation
+3. Long-term holder supply ratio declining: LTH selling into strength
+4. Exchange outflows accelerating: 15,000 BTC left exchanges this week
+5. Mempool fees elevated but not extreme (25 sat/vB average)
+
+The on-chain data suggests we are in mid-to-late bull cycle. The MVRV approaching 3.5 warrants caution but the NUPL not yet in euphoria territory means there could be further upside.
+
+$BTC $SOL $ETH
+Source: Glassnode, CryptoQuant

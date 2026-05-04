@@ -1,0 +1,71 @@
+# HORIZON tactical timing signals for 2026-04-16 Jensen Huang / Lex Fridman interview.
+# Transcript hash: d9ec164c | Skill version: V3.0
+
+horizon_signals:
+
+  - date: "2026-04-16T00:00:00Z"
+    source: "Lex Fridman Podcast - Jensen Huang interview"
+    lens: FUNDAMENTAL
+    direction: BULLISH
+    timeframe: "quarters-to-years"
+    signal_detail: "Jensen targets $3T NVDA annual revenue; against FY26 actual $215.9B this implies ~14x expansion supporting extended AI capex thesis."
+    confidence: 0.50
+    speaker_tier: 2
+    speaker: "Jensen Huang"
+    transcript_hash: "d9ec164c"
+    instrument_affinity: ["NVDA", "TSM", "AVGO", "SMH"]
+    coi_flag: true
+
+  - date: "2026-04-16T00:00:00Z"
+    source: "Lex Fridman Podcast - Jensen Huang interview"
+    lens: MACRO
+    direction: BULLISH
+    timeframe: "quarters"
+    signal_detail: "Rack-scale AI factory capex extends beyond 2028; gigawatt-class deployments + hyperscaler buildout sustain semi + power + HVAC + gas demand."
+    confidence: 0.65
+    speaker_tier: 2
+    speaker: "Jensen Huang"
+    transcript_hash: "d9ec164c"
+    instrument_affinity: ["SMH", "XLU", "power-sector-equities", "natural-gas"]
+
+  - date: "2026-04-16T00:00:00Z"
+    source: "Red-team review of Jensen Huang transcript (CRS R48642, DOJ 2024 probe, SAMR Sept 2025)"
+    lens: GEOPOLITICAL
+    direction: BEARISH
+    timeframe: "months"
+    signal_detail: "China H20 export-ban regime plus 15% revenue-share tax plus SAMR anti-monopoly ruling structurally cap NVDA China segment, historically ~13% of revenue."
+    confidence: 0.70
+    speaker_tier: 2
+    speaker: "red-team (external evidence)"
+    transcript_hash: "d9ec164c"
+    instrument_affinity: ["NVDA", "AI-hardware-exporters"]
+
+  - date: "2026-04-16T00:00:00Z"
+    source: "Red-team review: CNBC / analyst consensus on 2026 ASIC vs GPU growth"
+    lens: FUNDAMENTAL
+    direction: BEARISH
+    timeframe: "quarters"
+    signal_detail: "Hyperscaler ASIC shipments forecast to grow 44.6% in 2026 vs GPU 16.1%; Google TPU + AWS Trainium3 + MSFT Maia erode NVDA mix at the inference margin."
+    confidence: 0.72
+    speaker_tier: 2
+    speaker: "red-team (external evidence)"
+    transcript_hash: "d9ec164c"
+    instrument_affinity: ["NVDA", "GOOGL", "AMZN", "MSFT", "AVGO"]
+
+  - date: "2026-04-16T00:00:00Z"
+    source: "Red-team review: Sutskever (Dwarkesh podcast, Nov 2025), arxiv 2502.12215"
+    lens: FUNDAMENTAL
+    direction: BEARISH
+    timeframe: "quarters"
+    signal_detail: "Scaling-law ceilings (Sutskever 'age of scaling over', Orion miss, o3 $350K/task, DeepSeek $5.58M) cap training capex growth relative to Jensen's 4-laws-live framing."
+    confidence: 0.60
+    speaker_tier: 2
+    speaker: "red-team (external evidence)"
+    transcript_hash: "d9ec164c"
+    instrument_affinity: ["NVDA", "SMH", "training-capex-proxies"]
+
+meta:
+  subject_slug: "jensen-huang-lex-fridman-nvidia"
+  primary_category: equities
+  processed_date: "2026-04-16T00:00:00Z"
+  skill_version: V3.0

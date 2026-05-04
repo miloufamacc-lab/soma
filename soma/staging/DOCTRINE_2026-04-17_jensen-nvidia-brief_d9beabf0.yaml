@@ -1,0 +1,482 @@
+---
+# DOCTRINE Evidence — Dwarkesh x Jensen Huang NVIDIA Interview
+# Date: 2026-04-17
+# Subject: jensen-huang-nvidia-ai-compute
+# Transcript hash: d9beabf0
+# Source: Dwarkesh Patel podcast (YouTube)
+# Skill version: V3.0
+
+evidence_entries:
+
+  # ============= EXPLICIT CLAIMS (23) =============
+
+  - id: claim_01_electrons_to_tokens
+    claim: "Nvidia's transformation of electrons to tokens is insanely hard and cross-layer co-designed — not commoditizable by software-layer commoditization."
+    speaker: "Jensen Huang"
+    confidence_before: 0.55
+    confidence_after_redteam: 0.55
+    impact: 7
+    PRISM_tags: [equities, technology-platforms]
+    sources: ["transcript 0:42"]
+    contested_flag: false
+    coi_flag: true
+    belief_id: EQ_AI_SECULAR_THEME
+    supports: true
+    weight: 1.0
+    source_module: PRISM
+    source_detail: "Jensen Huang (Dwarkesh): electrons-to-tokens as irreducible transformation"
+
+  - id: claim_02_purchase_commitments
+    claim: "NVDA has $100B+ in explicit multi-year purchase commitments to foundries/memory/packaging; SemiAnalysis estimates $250B including implicit supplier investments."
+    speaker: "Jensen Huang + Dwarkesh Patel"
+    confidence_before: 0.80
+    confidence_after_redteam: 0.80
+    impact: 8
+    PRISM_tags: [equities, technology-platforms]
+    sources: ["transcript 4:32-5:07", "SemiAnalysis"]
+    contested_flag: false
+    coi_flag: true
+    belief_id: EQ_AI_SECULAR_THEME
+    supports: true
+    weight: 1.0
+    source_module: PRISM
+    source_detail: "Jensen confirms $100B+ NVDA filings, $250B SemiAnalysis tertiary"
+
+  - id: claim_03_trillion_scale
+    claim: "Next several years are a trillion dollars in scale — forward revenue/AI-factory scope for NVDA (scope ambiguous)."
+    speaker: "Jensen Huang"
+    confidence_before: 0.50
+    confidence_after_redteam: 0.45
+    impact: 10
+    PRISM_tags: [equities, macro, technology-platforms]
+    sources: ["transcript 7:56"]
+    contested_flag: true
+    coi_flag: true
+    belief_id: EQ_AI_SECULAR_THEME
+    supports: true
+    weight: 1.5
+    source_module: PRISM
+    source_detail: "Jensen forward-framing: trillion-dollar scale over next several years"
+    redteam_notes: "-0.05 book-talk compounding; scope ambiguous (NVDA revenue vs industry capex vs AI-factory cumulative); every prior semi super-cycle had digestion phase"
+
+  - id: claim_04_bottlenecks_2_3yr
+    claim: "Physical supply bottlenecks (EUV, CoWoS, HBM, packaging) are 2-3 year problems; energy policy is the real long-term constraint."
+    speaker: "Jensen Huang"
+    confidence_before: 0.55
+    confidence_after_redteam: 0.55
+    impact: 8
+    PRISM_tags: [macro, technology-platforms, risk]
+    sources: ["transcript 14:17-15:45"]
+    contested_flag: true
+    coi_flag: false
+    belief_id: MACRO_ENERGY_STRUCTURAL
+    supports: true
+    weight: 1.0
+    source_module: PRISM
+    source_detail: "Jensen: once-one-then-ten scaling; energy is binding constraint; Dwarkesh flags expert disagreement"
+
+  - id: claim_05_accelerated_computing_tam
+    claim: "Accelerated computing TAM (molecular dynamics, QCD, fluid dynamics, graphics, data processing) is broader than AI; TPUs are matrix-multiply specialists while CUDA is programmable across every workload."
+    speaker: "Jensen Huang"
+    confidence_before: 0.72
+    confidence_after_redteam: 0.72
+    impact: 7
+    PRISM_tags: [equities, technology-platforms]
+    sources: ["transcript 16:47-19:28"]
+    contested_flag: true
+    coi_flag: false
+    belief_id: EQ_AI_SECULAR_THEME
+    supports: true
+    weight: 1.0
+    source_module: PRISM
+
+  - id: claim_06_programmability_moat
+    claim: "Programmability enables algorithm innovation (MoE, SSM, diffusion fusion) that delivers 10-100x leaps vs Moore's Law ~25%/yr — Nvidia's fundamental moat."
+    speaker: "Jensen Huang"
+    confidence_before: 0.75
+    confidence_after_redteam: 0.75
+    impact: 8
+    PRISM_tags: [equities, technology-platforms]
+    sources: ["transcript 22:00-23:36"]
+    contested_flag: true
+    coi_flag: true
+    belief_id: EQ_AI_SECULAR_THEME
+    supports: true
+    weight: 1.0
+    source_module: PRISM
+
+  - id: claim_07_cuda_flywheel
+    claim: "CUDA moat = install-base flywheel: several-hundred-million GPUs (verified 500M+), ecosystem richness, every-cloud ubiquity, developer gravitational pull."
+    speaker: "Jensen Huang"
+    confidence_before: 0.80
+    confidence_after_redteam: 0.80
+    impact: 9
+    PRISM_tags: [equities, technology-platforms]
+    sources: ["transcript 26:04-29:17", "https://nvidianews.nvidia.com/news/generative-ai-microservices-for-developers"]
+    contested_flag: false
+    coi_flag: false
+    belief_id: EQ_CUDA_MOAT_DURABLE_CANDIDATE
+    supports: true
+    weight: 1.5
+    source_module: PRISM
+    source_detail: "Jensen CUDA flywheel framing — SURVIVED red-team at 0.80 (500M+ figure verified)"
+
+  - id: claim_08_tpu_100pct_anthropic
+    claim: "TPU/Trainium growth is 100% Anthropic — no broader ASIC adoption trend. Anthropic is unique, not trend-signal."
+    speaker: "Jensen Huang"
+    confidence_before: 0.45
+    confidence_after_redteam: 0.40
+    impact: 9
+    PRISM_tags: [equities, technology-platforms]
+    sources: ["transcript 37:09-37:27"]
+    contested_flag: true
+    coi_flag: true
+    belief_id: EQ_AI_SECULAR_THEME
+    supports: false
+    weight: 1.5
+    source_module: PRISM
+    source_detail: "Jensen dismisses TPU/Trainium competitive threat — CONTRADICTED by Google Cloud TPU disclosure"
+    redteam_notes: "Google Cloud docs: TPU powers Gemini + Search + YouTube + Maps at billions-of-queries. Industry estimate 80% of 2025 TPU shipments are INTERNAL Google. Floor-clamped to 0.40."
+
+  - id: claim_09_annual_roadmap_cadence
+    claim: "Annual architecture cadence: Vera Rubin (2026), Vera Rubin Ultra (2027), Feynman (2028); token cost -10x/year."
+    speaker: "Jensen Huang"
+    confidence_before: 0.65
+    confidence_after_redteam: 0.65
+    impact: 8
+    PRISM_tags: [equities, technology-platforms]
+    sources: ["transcript 55:37-55:57"]
+    contested_flag: false
+    coi_flag: true
+    belief_id: EQ_AI_SECULAR_THEME
+    supports: true
+    weight: 1.0
+    source_module: PRISM
+
+  - id: claim_10_as_much_as_needed_doctrine
+    claim: "'Do as much as needed, as little as possible' — Nvidia won't become a hyperscaler/foundation lab/financier. Only builds what wouldn't get built otherwise."
+    speaker: "Jensen Huang"
+    confidence_before: 0.70
+    confidence_after_redteam: 0.70
+    impact: 8
+    PRISM_tags: [equities, technology-platforms, risk]
+    sources: ["transcript 44:24-47:03"]
+    contested_flag: true
+    coi_flag: false
+    belief_id: EQ_CONCENTRATION_ALPHA
+    supports: true
+    weight: 1.0
+    source_module: PRISM
+    redteam_notes: "Contradicted partially by Anthropic-regret + CoreWeave $6.3B backstop + Groq acquisition — doctrine is flexible."
+
+  - id: claim_11_fifo_allocation
+    claim: "GPU allocation is first-in-first-out by PO + data-center readiness, not highest bidder. Larry-Elon dinner story denied."
+    speaker: "Jensen Huang"
+    confidence_before: 0.70
+    confidence_after_redteam: 0.70
+    impact: 7
+    PRISM_tags: [equities, technology-platforms]
+    sources: ["transcript 51:59-54:47"]
+    contested_flag: true
+    coi_flag: false
+    belief_id: EQ_CONCENTRATION_ALPHA
+    supports: true
+    weight: 0.5
+    source_module: PRISM
+
+  - id: claim_12_supplier_reflexivity
+    claim: "Nvidia's moat extends upstream because Jensen personally educates CoWoS/HBM/EUV suppliers about scale → suppliers pre-invest capacity only NVDA can absorb. Self-fulfilling prophecy mechanics."
+    speaker: "Jensen Huang"
+    confidence_before: 0.72
+    confidence_after_redteam: 0.72
+    impact: 8
+    PRISM_tags: [equities, technology-platforms, macro]
+    sources: ["transcript 5:14-6:48", "transcript 11:56-12:57"]
+    contested_flag: false
+    coi_flag: false
+    belief_id: EQ_AI_SECULAR_THEME
+    supports: true
+    weight: 1.0
+    source_module: PRISM
+
+  - id: claim_13_china_chip_researcher_share
+    claim: "China manufactures 60%+ of world mainstream chips; 50% of AI researchers are Chinese; 50% of AI developers are in China."
+    speaker: "Jensen Huang"
+    confidence_before: 0.45
+    confidence_after_redteam: 0.40
+    impact: 9
+    PRISM_tags: [geopolitical, equities, macro]
+    sources: ["transcript 59:14", "transcript 59:28", "transcript 1:19:40"]
+    contested_flag: true
+    coi_flag: true
+    belief_id: EQ_AI_SECULAR_THEME
+    supports: false
+    weight: 1.5
+    source_module: PRISM
+    source_detail: "Jensen China-share claims — CONTRADICTED by SEMI + MacroPolo primary data"
+    redteam_notes: "SEMI ~30% wafer capacity; MacroPolo 47% Chinese-origin researchers, 28% working in Chinese institutions. Floor-clamped 0.40."
+
+  - id: claim_14_7nm_neutralizes_gap
+    claim: "7nm + energy abundance + 4x-10x chip-ganging neutralizes China chip-disadvantage; today's models trained on Hopper anyway."
+    speaker: "Jensen Huang"
+    confidence_before: 0.45
+    confidence_after_redteam: 0.40
+    impact: 9
+    PRISM_tags: [geopolitical, technology-platforms, risk]
+    sources: ["transcript 1:05:44-1:10:19"]
+    contested_flag: true
+    coi_flag: true
+    belief_id: RISK_REGIME_TIMING
+    supports: false
+    weight: 1.0
+    source_module: PRISM
+    redteam_notes: "HBM gap 3.2 vs 4.8 TB/s; CloudMatrix 384=5.3x chip count for parity; SMIC 7nm yield 15-30% on large die. Floor-clamped 0.40."
+
+  - id: claim_15_survivorship_humility
+    claim: "Nvidia invests in ALL foundation labs (doesn't pick winners) because 60 3D graphics companies existed in Nvidia's founding era and Nvidia's architecture was 'precisely wrong' early."
+    speaker: "Jensen Huang"
+    confidence_before: 0.75
+    confidence_after_redteam: 0.75
+    impact: 7
+    PRISM_tags: [equities, technology-platforms]
+    sources: ["transcript 47:29-48:31"]
+    contested_flag: false
+    coi_flag: false
+    belief_id: BEH_THESIS_DISCIPLINE
+    supports: true
+    weight: 0.5
+    source_module: PRISM
+
+  - id: claim_16_neocloud_scaffolding
+    claim: "CoreWeave/Nscale/Nebius are ecosystem scaffolding — not a new cloud strategy. Without NVDA, they wouldn't exist."
+    speaker: "Jensen Huang"
+    confidence_before: 0.65
+    confidence_after_redteam: 0.65
+    impact: 7
+    PRISM_tags: [equities, technology-platforms, geopolitical]
+    sources: ["transcript 46:04-50:14"]
+    contested_flag: true
+    coi_flag: false
+    belief_id: EQ_CONCENTRATION_ALPHA
+    supports: true
+    weight: 0.5
+    source_module: PRISM
+
+  - id: claim_17_premium_token_asp
+    claim: "Premium-token-ASP segment is emerging — Groq acquired + folded into CUDA for fast-response low-throughput inference premium."
+    speaker: "Jensen Huang"
+    confidence_before: 0.60
+    confidence_after_redteam: 0.60
+    impact: 7
+    PRISM_tags: [equities, technology-platforms]
+    sources: ["transcript 1:37:49-1:39:20"]
+    contested_flag: false
+    coi_flag: false
+    belief_id: EQ_AI_SECULAR_THEME
+    supports: true
+    weight: 0.5
+    source_module: PRISM
+
+  - id: claim_18_nvda_without_ai
+    claim: "Nvidia would still be very large without AI — accelerated computing has independent TAM (molecular dynamics, seismic, cuLitho, image gen, particle physics, fluid dynamics)."
+    speaker: "Jensen Huang"
+    confidence_before: 0.55
+    confidence_after_redteam: 0.55
+    impact: 6
+    PRISM_tags: [equities, technology-platforms]
+    sources: ["transcript 1:40:37-1:42:27"]
+    contested_flag: false
+    coi_flag: true
+    belief_id: EQ_AI_SECULAR_THEME
+    supports: true
+    weight: 0.5
+    source_module: PRISM
+
+  - id: claim_19_nvda_tsmc_30yr_trust
+    claim: "30-year NVDA-TSMC relationship has no legal contract — trust-based 'rough justice' bilateral model."
+    speaker: "Jensen Huang"
+    confidence_before: 0.70
+    confidence_after_redteam: 0.70
+    impact: 7
+    PRISM_tags: [equities, technology-platforms, risk]
+    sources: ["transcript 55:14-55:37"]
+    contested_flag: false
+    coi_flag: false
+    belief_id: RISK_DRAWDOWN_ASYMMETRY
+    supports: true
+    weight: 0.5
+    source_module: PRISM
+
+  - id: claim_20_external_customer_reach
+    claim: "60% of NVDA revenue from top-5 hyperscalers but 'most of that business is external' (AWS/Azure/OCI rental). Tens of thousands of AI companies."
+    speaker: "Jensen Huang"
+    confidence_before: 0.70
+    confidence_after_redteam: 0.70
+    impact: 8
+    PRISM_tags: [equities, technology-platforms]
+    sources: ["transcript 33:27-34:22"]
+    contested_flag: false
+    coi_flag: true
+    belief_id: EQ_CONCENTRATION_ALPHA
+    supports: true
+    weight: 1.0
+    source_module: PRISM
+
+  - id: claim_21_tsmc_scale_flexibility
+    claim: "NVDA + TSMC are the only two companies where a customer can place orders from $10M to $100B and get fulfilled. 2-decade achievement."
+    speaker: "Jensen Huang"
+    confidence_before: 0.65
+    confidence_after_redteam: 0.65
+    impact: 7
+    PRISM_tags: [equities, technology-platforms]
+    sources: ["transcript 56:26-57:12"]
+    contested_flag: false
+    coi_flag: false
+    belief_id: EQ_AI_SECULAR_THEME
+    supports: true
+    weight: 0.5
+    source_module: PRISM
+
+  - id: claim_22_losing_china_40pct
+    claim: "Conceding China = losing 40% of world tech industry + ceding future open-source ecosystem standard."
+    speaker: "Jensen Huang"
+    confidence_before: 0.50
+    confidence_after_redteam: 0.50
+    impact: 9
+    PRISM_tags: [geopolitical, equities, technology-platforms]
+    sources: ["transcript 1:24:01-1:29:00"]
+    contested_flag: true
+    coi_flag: true
+    belief_id: RISK_REGIME_TIMING
+    supports: false
+    weight: 1.5
+    source_module: PRISM
+    redteam_notes: "40% figure unsourced; internal contradiction flagged by Dwarkesh (argues both 'must compete' AND 'they'll do it anyway'); direct China-policy lobbying with COI."
+
+  - id: claim_23_moores_law_dead
+    claim: "Moore's Law is ~25%/yr (effectively dead); algorithm + computer-science lever is 10x/yr; Blackwell 50x Hopper at only 75% more transistors."
+    speaker: "Jensen Huang"
+    confidence_before: 0.75
+    confidence_after_redteam: 0.75
+    impact: 8
+    PRISM_tags: [technology-platforms, equities, macro]
+    sources: ["transcript 1:09:45", "transcript 1:32:40"]
+    contested_flag: false
+    coi_flag: false
+    belief_id: EQ_AI_SECULAR_THEME
+    supports: true
+    weight: 1.0
+    source_module: PRISM
+
+  # ============= IMPLICIT CLAIMS (6) =============
+
+  - id: implicit_A_ai_diffusion_inevitable
+    claim: "(Implicit) AI will diffuse globally to India/MENA/Africa/SEA on a specific timeline that makes current tech-stack choice decisive for long-run standards."
+    speaker: "Jensen Huang"
+    confidence_before: 0.50
+    confidence_after_redteam: 0.50
+    impact: 8
+    PRISM_tags: [geopolitical, equities, macro]
+    sources: ["transcript 1:27:12"]
+    contested_flag: true
+    coi_flag: true
+    belief_id: EQ_AI_SECULAR_THEME
+    supports: true
+    weight: 1.0
+    source_module: PRISM
+    implicit: true
+
+  - id: implicit_B_architecture_generalizes
+    claim: "(Implicit) Blackwell-over-Hopper 50x is generalizable — every future node transition yields similar architecture-driven gains."
+    speaker: "Jensen Huang"
+    confidence_before: 0.50
+    confidence_after_redteam: 0.50
+    impact: 7
+    PRISM_tags: [technology-platforms]
+    sources: ["transcript 1:32:54"]
+    contested_flag: true
+    coi_flag: true
+    belief_id: EQ_AI_SECULAR_THEME
+    supports: true
+    weight: 0.5
+    source_module: PRISM
+    implicit: true
+
+  - id: implicit_C_chinese_researchers_fungible
+    claim: "(Implicit) Chinese researchers' output is fungible with US research and accessible to US labs."
+    speaker: "Jensen Huang"
+    confidence_before: 0.50
+    confidence_after_redteam: 0.50
+    impact: 8
+    PRISM_tags: [geopolitical, technology-platforms]
+    sources: ["transcript 1:27:46"]
+    contested_flag: true
+    coi_flag: true
+    belief_id: RISK_REGIME_TIMING
+    supports: false
+    weight: 1.0
+    source_module: PRISM
+    implicit: true
+
+  - id: implicit_D_wrights_law_uniform
+    claim: "(Implicit) Wright's Law applies uniformly to EUV/HBM/CoWoS/silicon-photonics at 10x within 2-3 years."
+    speaker: "Jensen Huang"
+    confidence_before: 0.50
+    confidence_after_redteam: 0.50
+    impact: 8
+    PRISM_tags: [macro, technology-platforms, risk]
+    sources: ["transcript 14:23"]
+    contested_flag: true
+    coi_flag: false
+    belief_id: MACRO_ENERGY_STRUCTURAL
+    supports: false
+    weight: 1.0
+    source_module: PRISM
+    implicit: true
+    redteam_notes: "ASML produces ~50-60 High-NA units/yr with multi-year lead times; 10x in 2-3y empirically unsupported."
+
+  - id: implicit_E_radiology_generalizes
+    claim: "(Implicit) Task-vs-job distinction generalizes from radiology to all white-collar work."
+    speaker: "Jensen Huang"
+    confidence_before: 0.40
+    confidence_after_redteam: 0.40
+    impact: 6
+    PRISM_tags: [macro, technology-platforms]
+    sources: ["transcript 1:29:14"]
+    contested_flag: true
+    coi_flag: false
+    belief_id: BEH_THESIS_DISCIPLINE
+    supports: false
+    weight: 0.5
+    source_module: PRISM
+    implicit: true
+    redteam_notes: "Radiology is a specific case (regulatory + liability constraints). Generalization to all white-collar is an implicit leap — capped 0.40."
+
+  - id: implicit_F_flywheel_no_digestion
+    claim: "(Implicit) Semiconductor demand cycles do not apply to AI compute — demand is secular for foreseeable future."
+    speaker: "Jensen Huang"
+    confidence_before: 0.45
+    confidence_after_redteam: 0.45
+    impact: 9
+    PRISM_tags: [equities, macro]
+    sources: ["transcript sustained framing throughout"]
+    contested_flag: true
+    coi_flag: true
+    belief_id: EQ_VALUATION_MEAN_REVERT
+    supports: false
+    weight: 1.5
+    source_module: PRISM
+    implicit: true
+    redteam_notes: "Every prior super-cycle (Cisco 2000, Intel 2001, NVDA 2018 crypto, PC 2000-2002) ended in digestion. 'This time is different' IS the pattern."
+
+meta:
+  total_explicit_claims: 23
+  total_implicit_claims: 6
+  total_entries: 29
+  top_impact_10: [claim_03]
+  top_impact_9: [claim_07, claim_08, claim_13, claim_14, claim_22, implicit_F]
+  floor_clamped_0_40: [claim_08, claim_13, claim_14]
+  book_talk_adjusted: [claim_03]
+  candidate_beliefs_raised: []
+  target_file: "shared/soma/staging/DOCTRINE_2026-04-17_jensen-nvidia-brief_d9beabf0.yaml"
+  transcript_hash: "d9beabf0"

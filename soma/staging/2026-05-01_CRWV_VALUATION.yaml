@@ -1,0 +1,95 @@
+type: VALUATION
+schema_version: "1.0"
+date: "2026-05-01"
+source: "equity-valuation"
+source_type: "valuation_model"
+ticker: "CRWV"
+company_name: "CoreWeave, Inc."
+sector: "Information Technology / AI Cloud Infrastructure"
+wiki_slug: "crwv-valuation"
+build_version: 1
+prompt_version: "v13"
+
+valuation_summary:
+  current_price: 124.80
+  blended_fv: 156.98
+  implied_upside_pct: 25.78
+  recommendation: "BUY"
+  conviction: "MEDIUM-HIGH"
+  horizon_years: 5
+  bear_fv: 0.00
+  neutral_fv: 73.51
+  bull_fv: 238.64
+  sotp_fv: 175.02
+  wacc_neutral_pct: 13.06
+  beta_5y_peer_implied: 2.10
+  terminal_g_pct: 3.5
+  fy26e_revenue_b: 12.50
+  fy30e_revenue_b: 43.13
+
+doctrine_evidence:
+  - belief_id: EQ_VALUATION_MEAN_REVERT
+    source_detail: "CRWV model: DCF blended fair value $156.98 vs market $124.80 (+25.78% upside)"
+    supports: true
+    weight: 1.0
+  - belief_id: AI_INFRASTRUCTURE_CYCLE_BULLISH
+    source_detail: "CRWV backlog $66.8B (Q4 2025) → ~$88B forward; FY26 mgmt guide $12-13B revenue"
+    supports: true
+    weight: 0.8
+  - belief_id: HYPERSCALER_CUSTOMER_CONCENTRATION_RISK
+    source_detail: "CRWV top 4 customers (MSFT, OpenAI, META, NVDA) account for >80% of contracted backlog"
+    supports: true
+    weight: 1.0
+
+internal_screen_view:
+  method: "GM (Growth Model)"
+  exp_revenue_growth_pct: 88.7
+  gf_disc_prem_pct: 16
+  gf_score: 0.63
+  altman_z: 4.0
+  piotroski_f: 0.72
+  qc_verdict: "AVOID"
+  qc_list: "Watch"
+  qc_risk_grades: "F:0 I:0 C:0 M:0 (no data populated yet)"
+  bucket: "WATCH"
+  note: "AVOID verdict reflects null Profile/Checklist data, not quantitative signal"
+
+screen_disagreement:
+  in_house_screen_view: "AVOID (null-data default)"
+  in_house_dcf_verdict: "BUY (+25.78%)"
+  reconciliation_note: "Internal screen Profile + Checklist data not yet populated for CRWV (post-IPO Mar 2025). DCF/SOTP carries valuation signal until next monthly screen refresh (June 1, 2026)."
+
+key_catalysts:
+  - date: "2026-05-20"
+    event: "Q1 2026 earnings (after close)"
+    significance: "Validates $1.9-2.0B revenue + Adj OI $0-40M guide; first margin-trough confirmation"
+  - date: "Q3 2026 (est)"
+    event: "Mission Control standalone monetization"
+    significance: "Tier 2 platform revenue line item — first software-multiple credit"
+  - date: "2027 H1"
+    event: "Anthropic capacity ramp"
+    significance: "5th anchor account materializes"
+
+key_risks:
+  - category: "Customer Concentration / Take-or-Pay Counterparty"
+    severity: "HIGH"
+  - category: "AI Capex Cycle / Demand Inflection"
+    severity: "MEDIUM-HIGH"
+  - category: "Capital-Structure Refinancing"
+    severity: "MEDIUM"
+  - category: "Technology Obsolescence (NVIDIA cadence)"
+    severity: "MEDIUM"
+  - category: "Hyperscaler In-Sourcing"
+    severity: "MEDIUM"
+
+deliverables:
+  - "CRWV_VAL_MOD_01MAY26.xlsx"
+  - "CRWV_Valuation_Presentation.pptx"
+  - "CRWV_Model_User_Guide.pptx"
+  - "CRWV_Valuation_Audit_Report.pptx"
+  - "CRWV_CFA_Deep_Dive.pptx"
+
+action_items:
+  - "Backfill in-house screen Profile Summary + Quality Checklist for CRWV at next monthly refresh (target 2026-06-01)"
+  - "Re-evaluate Bull case weight if Q1 2026 earnings (May 20) miss revenue guide $1.9B floor"
+  - "Monitor backlog growth — flag if falls below $66.8B baseline"

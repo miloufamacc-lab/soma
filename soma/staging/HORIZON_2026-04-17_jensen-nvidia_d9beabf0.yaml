@@ -1,0 +1,144 @@
+---
+# HORIZON Signals — Dwarkesh x Jensen Huang NVIDIA Interview
+# Date: 2026-04-17
+# Transcript hash: d9beabf0
+# Subject: jensen-huang-nvidia-ai-compute
+# Skill version: V3.0
+
+horizon_signals:
+
+  - signal_id: vera-rubin-2026-ship
+    date: "2026-04-17"
+    source: "Dwarkesh x Jensen Huang, NVIDIA CEO interview, 55:37-55:57"
+    lens: "FUNDAMENTAL"
+    direction: "BULLISH"
+    timeframe: "months"
+    signal_detail: "Vera Rubin architecture ships 'this year' per Jensen. Annual cadence commitment. Resolution end-2026."
+    confidence: 0.75
+    speaker_tier: 1
+    transcript_hash: "d9beabf0"
+    ticker: "NVDA"
+    resolution_date: "2026-12-31"
+
+  - signal_id: vera-rubin-ultra-2027-ship
+    date: "2026-04-17"
+    source: "Dwarkesh x Jensen Huang, 55:37-55:57"
+    lens: "FUNDAMENTAL"
+    direction: "BULLISH"
+    timeframe: "quarters"
+    signal_detail: "Vera Rubin Ultra ships 2027. Architecture generation += 1. Watch: HBM4 ramp, CoWoS capacity, TSMC N2 yield."
+    confidence: 0.65
+    speaker_tier: 1
+    transcript_hash: "d9beabf0"
+    ticker: "NVDA"
+    resolution_date: "2027-12-31"
+
+  - signal_id: feynman-2028-ship
+    date: "2026-04-17"
+    source: "Dwarkesh x Jensen Huang, 55:37-55:57"
+    lens: "FUNDAMENTAL"
+    direction: "BULLISH"
+    timeframe: "quarters"
+    signal_detail: "Feynman ships 2028 per annual-cadence commitment. Public roadmap consistency with NVDA investor materials."
+    confidence: 0.60
+    speaker_tier: 1
+    transcript_hash: "d9beabf0"
+    ticker: "NVDA"
+    resolution_date: "2028-12-31"
+
+  - signal_id: four-scaling-laws-stall-watch
+    date: "2026-04-17"
+    source: "Dwarkesh x Jensen Huang, 22:00-23:36 + 1:09:45"
+    lens: "FUNDAMENTAL"
+    direction: "BEARISH"
+    timeframe: "quarters"
+    signal_detail: "TRIGGER: any one of {pre-train frontier loss plateaus, RL benchmarks plateau, test-time compute returns diminish, post-train data exhaustion}. Sutskever Nov-2025 'age of scaling is over' is a live counter."
+    confidence: 0.55
+    speaker_tier: 2
+    transcript_hash: "d9beabf0"
+    ticker: "NVDA"
+    resolution_date: "2026-12-31"
+    watchlist:
+      - "Anthropic Claude 5 pre-train metrics vs Claude 4"
+      - "OpenAI GPT-5 vs GPT-4.5 scaling efficiency"
+      - "DeepMind frontier benchmark progression"
+      - "Meta Llama 5 data-scale saturation"
+
+  - signal_id: deepseek-style-efficiency-shock
+    date: "2026-04-17"
+    source: "Dwarkesh x Jensen Huang, 1:10:40 (Jensen acknowledges 'DeepSeek is not an inconsequential advance')"
+    lens: "TECHNICAL"
+    direction: "BEARISH"
+    timeframe: "months"
+    signal_detail: "Precedent Jan 2025: DeepSeek R1 triggered $600B NVDA market-cap drop in 48h when algorithmic efficiency challenged compute-is-binding-constraint premise. Watch for recurrence: any open-source release showing 5-10x efficiency at frontier-class capability."
+    confidence: 0.60
+    speaker_tier: 2
+    transcript_hash: "d9beabf0"
+    ticker: "NVDA"
+    resolution_date: "2026-10-31"
+    watchlist:
+      - "DeepSeek V4 release"
+      - "Qwen 3 / 4 frontier benchmarks"
+      - "Mistral efficiency-frontier releases"
+      - "Algorithmic-efficiency arXiv acceleration"
+
+  - signal_id: china-policy-inflection-h20-b30a
+    date: "2026-04-17"
+    source: "Dwarkesh x Jensen Huang, China segment 57:44-1:35:00"
+    lens: "GEOPOLITICAL"
+    direction: "BULLISH"  # for NVDA, if controls loosen
+    timeframe: "months"
+    signal_detail: "Policy-inflection watch: Jensen is actively lobbying for China-export-control relaxation. Triggers: H200-derivative 'B30A' chip approval, BIS list modifications, US election-cycle trade-stance shift. $10-15B/yr NVDA China DC GPU opportunity. BEARISH counter-trigger: further restrictions (e.g., HBM export blockade, foundry-access tightening)."
+    confidence: 0.50
+    speaker_tier: 2
+    transcript_hash: "d9beabf0"
+    ticker: "NVDA"
+    resolution_date: "2026-11-30"
+    watchlist:
+      - "BIS export-control announcements"
+      - "US-China 2+2 dialogue outcomes"
+      - "NVDA quarterly China-revenue disclosure"
+      - "H200/B30A approval status"
+
+  - signal_id: trillion-dollar-scale-resolution
+    date: "2026-04-17"
+    source: "Dwarkesh x Jensen Huang, 7:56"
+    lens: "FUNDAMENTAL"
+    direction: "BULLISH"
+    timeframe: "quarters"
+    signal_detail: "Forward-guidance-adjacent claim: 'next several years are a trillion dollars in scale'. Scope ambiguous (NVDA revenue vs industry capex vs cumulative AI-factory). Resolution via cumulative NVDA revenue CAGR through 2028 vs sell-side bull case ($500-600B/yr 2028 implied by Jensen's anchor if NVDA holds 50-60% share)."
+    confidence: 0.45
+    speaker_tier: 2
+    transcript_hash: "d9beabf0"
+    ticker: "NVDA"
+    resolution_date: "2028-12-31"
+    watchlist:
+      - "NVDA quarterly revenue prints"
+      - "Industry AI-infra capex (top-5 hyperscalers)"
+      - "Semi super-cycle digestion indicators"
+
+  - signal_id: capex-digestion-watch
+    date: "2026-04-17"
+    source: "Red-team base rate check, cross-reference to Cisco 2000 / Intel 2001 / NVDA 2018"
+    lens: "TECHNICAL"
+    direction: "BEARISH"
+    timeframe: "quarters"
+    signal_detail: "Every prior semi super-cycle ended in 2-4 quarters of double-digit revenue declines. Jensen's framing (implicit F) specifically denies digestion. Watchlist: top-5 hyperscaler capex QoQ, NVDA data-center revenue QoQ, enterprise AI-server order deceleration."
+    confidence: 0.55
+    speaker_tier: 3
+    transcript_hash: "d9beabf0"
+    ticker: "NVDA"
+    resolution_date: "2027-06-30"
+
+summary:
+  total_signals: 8
+  bullish: 4
+  bearish: 3
+  mixed_or_neutral: 1
+  primary_ticker: "NVDA"
+  vault_covered_tickers_in_scope: ["AMD", "ASML"]
+  resolution_horizons:
+    months: 3
+    quarters: 4
+    years: 1
+  transcript_hash: "d9beabf0"

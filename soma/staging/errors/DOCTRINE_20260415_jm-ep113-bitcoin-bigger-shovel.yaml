@@ -1,0 +1,44 @@
+# DOCTRINE Evidence from Jack Mallers Show Ep. 113 (2026-04-15)
+# transcript_hash: 526802c1
+
+doctrine_evidence:
+  - belief_id: MACRO_ENERGY_STRUCTURAL
+    source_module: PRISM
+    source_detail: "Mallers in JM Ep.113: traffic has fallen off a cliff"
+    supports: true
+    weight: 1.0  # Tier 2
+    transcript_hash: "526802c1"
+    notes: "Strait of Hormuz closure validates structural energy disruption thesis. 20% of global oil offline. Oil at ~$100 vs -$40 during last QE cycle."
+
+  - belief_id: MACRO_FISCAL_DOMINANCE
+    source_module: PRISM
+    source_detail: "Mallers in JM Ep.113: they have to devalue the dollar"
+    supports: true
+    weight: 1.0  # Tier 2
+    transcript_hash: "526802c1"
+    notes: "Fed trapped between oil inflation and AI deflation. Dollar debasement framed as only exit. Private credit crisis may force the hand."
+
+  - belief_id: CRYPTO_BTC_STORE_OF_VALUE
+    source_module: PRISM
+    source_detail: "Mallers/FT in JM Ep.113: vessels pay in Bitcoin"
+    supports: true
+    weight: 1.0  # Tier 2 (FT source boosts, but Mallers conflict lowers)
+    transcript_hash: "526802c1"
+    notes: "Iran sovereign-level BTC settlement validates store-of-value + medium-of-exchange thesis simultaneously. First hostile-state use case reported by mainstream financial press."
+
+  - belief_id: RISK_DRAWDOWN_ASYMMETRY
+    source_module: PRISM
+    source_detail: "Mallers in JM Ep.113: 1973 parallel, 12 months"
+    supports: true
+    weight: 1.0  # Tier 2
+    transcript_hash: "526802c1"
+    notes: "1973 oil shock took S&P 12 months to fully reprice. Current market rally may be false confidence. Asymmetric downside risk if strait stays closed and credit crisis materializes."
+
+  # CANDIDATE — new thesis not matching existing beliefs
+  - belief_id: GEOPOLITICAL_PETRODOLLAR_COLLAPSE_CANDIDATE
+    domain: geopolitical
+    statement: "The petrodollar system is actively failing — Iran, China using gold and Bitcoin to settle energy trade, bypassing dollar enforcement"
+    conviction: 6
+    source: "Jack Mallers Show Ep. 113, April 15, 2026"
+    status: CANDIDATE
+    transcript_hash: "526802c1"

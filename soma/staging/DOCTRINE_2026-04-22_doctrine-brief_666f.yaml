@@ -1,0 +1,12 @@
+type: DOCTRINE_EVIDENCE
+schema_version: '1.0'
+date: '2026-04-22'
+source: dabeiba-doctrine-brief
+source_type: scheduled_task
+source_hash: '15012951'
+belief_id: MACRO_REGIME_NORMAL_SUSTAINED
+source_detail: Iran ceasefire expires today; Brent $98.48; Hormuz closed; IMF cuts
+  global growth to 3.1%; CPI 3.3%; US-China 145% tariffs active. SOMA NORMAL regime
+  faces significant contradicting signals.
+supports: false
+weight: 1.0

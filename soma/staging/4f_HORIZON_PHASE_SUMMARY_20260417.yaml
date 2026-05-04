@@ -1,0 +1,172 @@
+---
+# HORIZON Phase 4f: Timing Notes Summary Index
+# Execution Date: 2026-04-17
+# Source: Chris Camillo × Mark Moss podcast transcript (transcript_hash: fba58360)
+# Analyst Framework: Extended tactical + strategic timing windows
+
+phase_summary:
+  title: "Phase 4f HORIZON Timing Notes — Five Catalyst Analysis"
+  scope: "Scan scratchpad for claims with specific tactical or strategic timeframes. Extract timing signals, create structured monitoring frameworks with action triggers and fallback conditions."
+  status: "COMPLETE — All 5 catalysts documented with full monitor metrics, fallback conditions, and review schedules"
+  output_format: "Individual YAML files per catalyst + this summary index"
+
+catalysts_processed:
+
+  1_humanoid_robots_2030:
+    file: "4f_horizon_20260417_humanoid-robots-2030.yaml"
+    category: "FUNDAMENTAL (Long-Duration Conviction)"
+    window: "Accumulation 2026-2028; Realization 2029-2030"
+    confidence: 0.45
+    key_trigger: "Production >1,000 units by Q4 2026; commercial deployment >100 units by Q2 2027"
+    monitor_count: 5
+    fallback_count: 3
+    upside_triggers: 4
+    risk_anchors: 3
+    update_frequency: "monthly"
+    next_review: "2026-07-17 (post-earnings checkpoint)"
+
+  2_neato_holiday_trend:
+    file: "4f_horizon_20260417_neato-holiday-trend.yaml"
+    category: "FUNDAMENTAL (Short-Duration Tactical)"
+    window: "Trade window 2026-07-01 to 2026-12-31"
+    confidence: 0.50
+    position_nav: "6.5% of unnamed holding co"
+    key_trigger: "Amazon #1 tube-toy ranking sustained Sept 2026; >2,000 reviews/month July-Aug"
+    monitor_count: 6
+    fallback_count: 4
+    upside_triggers: 4
+    risk_anchors: 4
+    update_frequency: "weekly (July-Oct); monthly (Nov-Dec)"
+    next_review: "2026-06-30 (pre-launch verification)"
+
+  3_bitcoin_wealth_transfer:
+    file: "4f_horizon_20260417_bitcoin-wealth-transfer.yaml"
+    category: "FUNDAMENTAL (Multi-Decade Conviction)"
+    window: "Setup 2026-2030; Realization 2028-2035; Tail 2035-2051"
+    confidence: 0.55
+    allocation_thesis: "80-100T intergenerational transfer; 2-5% BTC = 1.6-5T inflow"
+    key_trigger: "Gen X crypto allocation >5% by 2028 (vs 1-2% in 2025); estate attorney adoption >20% by 2028"
+    monitor_count: 7
+    fallback_count: 4
+    upside_triggers: 4
+    risk_anchors: 4
+    update_frequency: "annual survey; quarterly flows; monthly narrative"
+    next_review: "2027-01-31 (post-holiday ETF flows + early survey signals)"
+
+  4_private_jet_adoption:
+    file: "4f_horizon_20260417_private-jet-adoption.yaml"
+    category: "FUNDAMENTAL (No Explicit Endpoint)"
+    window: "Continuous 2026-ongoing; Inflection watch 2027-2030"
+    confidence: 0.50
+    thesis: "Secular trend (no endpoint); monitor for ACCELERATION inflection"
+    key_trigger: "Adoption growth >15% YoY OR eVTOL certification 2027-2028 OR membership >20% penetration by 2028"
+    monitor_count: 7
+    fallback_count: 4
+    upside_triggers: 5
+    risk_anchors: 5
+    update_frequency: "quarterly fleet; annual eVTOL; semi-annual wealth reports"
+    next_review: "2026-09-30 (Q2 earnings + GAMA data release)"
+
+  5_ai_startup_moat_erosion:
+    file: "4f_horizon_20260417_ai-startup-moat-erosion.yaml"
+    category: "FUNDAMENTAL (Ongoing Competitive Dynamics)"
+    window: "Continuous 2026-ongoing; Critical window 2027-2029"
+    confidence: 0.45
+    thesis: "Structural moat loss as open-source closes capability gap; monitor ACCELERATION of erosion"
+    key_trigger: "Open-source reaches <10% capability gap to frontier by 2027; Time-to-parity <6 months; Valuation compression <20x revenue by 2028"
+    monitor_count: 8
+    fallback_count: 4
+    upside_triggers_inverse: 5
+    risk_anchors: 5
+    update_frequency: "monthly benchmarks; quarterly valuations; semi-annual strategy"
+    next_review: "2026-09-30 (summer paper releases; Llama 4 / qwen 3 announcements)"
+
+consolidated_metrics:
+  total_catalysts: 5
+  total_monitor_metrics: 33
+  total_fallback_conditions: 19
+  total_upside_triggers: 22
+  total_risk_anchors: 21
+  unique_review_dates: 4
+
+monitoring_schedule:
+  immediate_weekly: ["Neato holiday trend (July-Oct 2026)"]
+  immediate_monthly: ["Humanoid robots 2030", "Bitcoin wealth transfer", "AI startup moat erosion"]
+  quarterly_baseline: ["Private jet adoption", "Humanoid robots 2030", "Bitcoin wealth transfer"]
+  annual_checks: ["Bitcoin wealth transfer (CFA/Gallup survey)", "Private jet adoption (fleet data)", "AI startup valuations"]
+  event_driven: ["eVTOL FAA certifications", "Open-source model releases", "AI startup funding rounds"]
+
+critical_review_windows:
+  2026_Q3:
+    date: "2026-09-30"
+    focus: ["Neato Amazon ranking sustained Sept", "Private jet adoption Q2 fleet growth", "AI moat erosion summer papers"]
+    catalysts: [2, 4, 5]
+
+  2026_Q4:
+    date: "2026-12-31"
+    focus: ["Neato holiday Q4 earnings impact", "Tesla Optimus Q4 production target"]
+    catalysts: [1, 2]
+
+  2027_Q1:
+    date: "2027-01-31"
+    focus: ["Bitcoin wealth transfer post-holiday ETF flows", "Humanoid robots 2027 roadmap progress", "Neato trade exit (post-earnings)"]
+    catalysts: [1, 2, 3]
+
+  2027_Q2:
+    date: "2027-06-30"
+    focus: ["Humanoid robots commercial deployment >100 units", "eVTOL FAA certification progress", "Open-source model parity checks"]
+    catalysts: [1, 4, 5]
+
+  2028_Q1:
+    date: "2028-01-31"
+    focus: ["Bitcoin wealth transfer: CFA survey 2027 results published", "Estate attorney adoption survey >20%", "AI startup valuation compression tracking"]
+    catalysts: [3, 5]
+
+cross_catalyst_themes:
+  technological_inflection: ["Humanoid robots 2030", "eVTOL adoption in private jets", "Open-source AI model parity"]
+  generational_shift: ["Bitcoin wealth transfer (boomer→gen-X)", "Private jet adoption (mass affluent penetration)", "AI solopreneur era viability"]
+  regulatory_watch: ["Bitcoin self-custody rights (2027-2028)", "eVTOL certification (FAA/EASA 2027)", "US-China trade policy on AI compute"]
+  valuation_compression: ["AI startup moats eroding", "Private jet adoption (if membership >20%)", "Neato's holding company (if trend disappoints)"]
+
+execution_notes:
+  - "All timing windows are RELATIVE to 2026-04-17 (today). Dates calculated forward from this baseline."
+  - "Confidence scores (0.45-0.55) reflect speaker tier 2 (Chris Camillo) + tactical/strategic nature of claims. Speaker tier not adjusted for credentials (both Camillo and Moss are experienced investors)."
+  - "Fallback conditions are MANDATORY: if ANY fallback condition triggers, reduce conviction immediately and re-evaluate thesis (do not wait for next scheduled review)."
+  - "Upside triggers are OPTIONAL examples of acceleration; additional signals may emerge during monitoring period."
+  - "Three catalysts (humanoid robots, Bitcoin, AI moat) have NO EXIT DATE — these are strategic convictions. Two catalysts (Neato, private jets in inflection mode) require active tactical management."
+  - "Weekly monitoring (Neato only) is HIGH TOUCH due to short window and tactical alpha. All other catalysts follow quarterly or annual cycles."
+
+next_actions:
+  - "Wire all 5 catalyst YAML files into SOMA database (soma.db table: horizon_catalysts)"
+  - "Create daily dispatch alerts for NEATO critical dates (June 30 verification, August 1 peak season ramp, September 30 exit window)"
+  - "Schedule recurring calendar reminders for review dates (2026-07-17, 2026-09-30, 2026-12-31, 2027-01-31, 2027-06-30, 2028-01-31)"
+  - "Create WATCHLIST in wiki: link all 5 catalysts to relevant existing articles (robotics, bitcoin, aviation, AI moats)"
+  - "Tag transcript (Chris Camillo × Mark Moss, hash: fba58360) as SOURCE for all 5 signals in PRISM/ORACLE systems"
+
+summary_statistics:
+  timeframe_distribution:
+    months: 1 signal (Neato)
+    quarters: 3 signals (Humanoid robots, Private jets, AI moat)
+    years: 2 signals (Bitcoin 25yr, Private jets ongoing)
+
+  conviction_distribution:
+    0.45: 2 signals (Humanoid robots, AI moat)
+    0.50: 2 signals (Neato, Private jets)
+    0.55: 1 signal (Bitcoin)
+
+  monitoring_intensity:
+    high: 1 signal (Neato weekly)
+    medium: 4 signals (monthly to quarterly)
+    low: 0 signals
+
+output_files_generated:
+  - 4f_horizon_20260417_humanoid-robots-2030.yaml (1,847 characters)
+  - 4f_horizon_20260417_neato-holiday-trend.yaml (3,421 characters)
+  - 4f_horizon_20260417_bitcoin-wealth-transfer.yaml (5,342 characters)
+  - 4f_horizon_20260417_private-jet-adoption.yaml (5,156 characters)
+  - 4f_horizon_20260417_ai-startup-moat-erosion.yaml (6,234 characters)
+  - 4f_HORIZON_PHASE_SUMMARY_20260417.yaml (this file)
+
+delivery_date: "2026-04-17"
+analyst_task: "Phase 4f HORIZON Timing Notes — Complete"
+status: "READY FOR SOMA INTEGRATION"

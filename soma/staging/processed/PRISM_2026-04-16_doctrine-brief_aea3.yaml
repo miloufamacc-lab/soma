@@ -1,0 +1,25 @@
+type: PRISM
+schema_version: '1.0'
+date: '2026-04-16'
+source: dabeiba-doctrine-brief
+source_type: scheduled_task
+prism_intake:
+- source_type: scheduled_task
+  category: geopolitical
+  target_pipeline: SPECTRE
+  relevance_score: 9
+  key_claims:
+  - 'Strait of Hormuz active: shipments 3.8 mb/d vs 20 mb/d Feb; 360M bbls lost Mar, 440M projected Apr'
+  - Brent $100+ for second month (first sustained in 4 years); peak $126; Q2 peak projected $115
+  - Trump threatened 50% China tariff tied to alleged Chinese arms shipments to Iran; Xi summit May 14-15
+  - Ukrainian drone strikes halted ~40% of Russian Baltic oil export capacity; Moscow wins India back
+  - 'WEF Global Risks Report 2026: geoeconomic confrontation = #1 near-term global risk'
+  tags:
+  - doctrine-brief
+  - geopolitical
+  - daily
+  - hormuz
+  - oil-shock
+  - tariffs
+  - imf
+  processed_date: '2026-04-16'

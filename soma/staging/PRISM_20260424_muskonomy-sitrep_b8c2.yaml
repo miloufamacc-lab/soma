@@ -1,0 +1,18 @@
+type: PRISM
+schema_version: "1.0"
+date: "2026-04-24"
+source: "muskonomy-daily-sitrep"
+source_type: "scheduled_task"
+prism_intake:
+  - source_type: scheduled_task
+    source_url: ""
+    category: "equities"
+    target_pipeline: "TITAN"
+    relevance_score: 9
+    key_claims:
+      - "Cybercab FMVSS self-cert confirmed — no NHTSA 2,500-unit cap; production-finish Gold units spotted Giga TX Apr 24"
+      - "Optimus Gen 3 mid-year debut officially confirmed Apr 23 via Tesla Weibo; mass production Jul-Aug 2026"
+      - "TSLA ~$375.91 (-3.3% from $388.67); post-Q1 capex overhang; analyst consensus $405 PT"
+    tags: ["musk-ecosystem", "tsla", "daily-sitrep", "cybercab", "optimus", "robotaxi"]
+    processed_date: "2026-04-24"
+    skill_version: "muskonomy-v1"

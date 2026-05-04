@@ -1,0 +1,32 @@
+{
+  "timestamp": "2026-04-03T09:58:34.983522+00:00",
+  "files_found": 3,
+  "files_processed": 3,
+  "files_failed": 0,
+  "records_written": 3,
+  "details": [
+    {
+      "file": "geopolitical_taiwan_update.txt",
+      "category": "geopolitical",
+      "target_module": "ORACLE",
+      "relevance": 10,
+      "claims": 0
+    },
+    {
+      "file": "macro_fed_analysis.txt",
+      "category": "macro",
+      "target_module": "ORACLE",
+      "relevance": 10,
+      "claims": 2
+    },
+    {
+      "file": "sol_defi_research.md",
+      "category": "crypto",
+      "target_module": "ORACLE",
+      "relevance": 10,
+      "claims": 0
+    }
+  ],
+  "failures": [],
+  "summary": "PRISM ingested 3 file(s): 1 crypto, 1 geopolitical, 1 macro. Routed to: ORACLE."
+}

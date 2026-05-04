@@ -1,0 +1,143 @@
+---
+# Ticker Context Cross-Annotations — Dwarkesh x Jensen Huang NVIDIA Interview
+# Date: 2026-04-17
+# Transcript hash: d9beabf0
+# Subject: jensen-huang-nvidia-ai-compute
+# VAULT as of: 2026-04-17
+
+ticker_annotations:
+
+  # ============ VAULT-COVERED TICKERS ============
+
+  - ticker: "AMD"
+    vault_covered: true
+    vault_snapshot:
+      date: "2026-04-17"
+      price_usd: 201.99
+      dcf_fair_value: null
+      dcf_verdict: null
+      implied_upside: null
+      gf_score: 94.0
+      beta: 2.01
+      mktcap_b: 329.33
+      piotroski: 7.0
+      altman_z: 15.22
+      sector: "Information Technology"
+      company: "ADVANCED MICRO DEVICES"
+    jensen_context:
+      - mention_type: "indirect (via ASIC / hyperscaler custom silicon references)"
+      - timestamp: "33:04, 37:09"
+      - jensen_framing: "Competitive ASIC threat minimized — 'TPU/Trainium growth = 100% Anthropic' framing dismisses broader ASIC adoption (Claim 8). Jensen does NOT mention AMD by name in this transcript."
+      - transcript_treatment: "AMD MI-series is NOT explicitly discussed; Jensen's '100% Anthropic' framing implicitly dismisses AMD's hyperscaler AI-DC wins (OpenAI-AMD deal, Oracle, others)."
+    thesis_alignment: "CHALLENGES_CURRENT_DABEIBA_THESIS"
+    thesis_notes: |
+      AMD VAULT shows GF 94, Altman-Z 15.22, Piotroski 7 — strong fundamentals. DABEIBA thesis (from nvda-valuation wiki + consensus) recognizes AMD as a material AI-DC GPU competitor with credible MI-series traction.
+      Jensen's framing in this interview IMPLICITLY dismisses AMD by asserting TPU/Trainium growth = 100% Anthropic (leaving no room for AMD in the ASIC adoption narrative).
+      Asymmetric risk: if Jensen's framing is correct (unlikely per red-team), AMD AI-DC TAM is narrower than sell-side consensus — AMD at $201.99 mktcap $329B may be over-valued relative to that narrower AI-DC opportunity.
+      If Jensen's framing is WRONG (much more likely per red-team Claim 8 contradicting Google's own TPU disclosure), AMD forward AI-DC revenue path remains intact and VAULT GF 94 score is appropriate.
+    recommended_action: "No VAULT update triggered. Flag for next AMD valuation refresh: re-check Q1 2026 AMD AI-DC revenue disclosure against Jensen's dismissal."
+
+  - ticker: "ASML"
+    vault_covered: true
+    vault_snapshot:
+      date: "2026-04-17"
+      price_usd: 1410.83
+      dcf_fair_value: null
+      dcf_verdict: null
+      implied_upside: null
+      gf_score: 96.0
+      beta: 1.5072
+      mktcap_b: 543.76
+      piotroski: 7.0
+      altman_z: 12.17
+      sector: "Information Technology"
+      company: "ASML HOLDING NV"
+    jensen_context:
+      - mention_type: "explicit (EUV bottleneck framing)"
+      - timestamp: "14:17-15:45 (Claim 4, bottlenecks 2-3yr); Implicit D"
+      - jensen_framing: "EUV is a '2-3 year problem'; supplier reflexivity — 'ASML will be convinced if TSMC is convinced'. Implicit claim: Wright's Law applies uniformly ('once you can build one, you can build ten, and once ten, then a million')."
+    thesis_alignment: "SUPPORTS_CURRENT_DABEIBA_THESIS"
+    thesis_notes: |
+      ASML VAULT shows GF 96, Altman-Z 12.17, Piotroski 7 — best-in-sector fundamentals.
+      Jensen's framing supports ASML long thesis REGARDLESS of whether he's right on EUV timeline:
+      - If EUV IS a 2-3yr problem (Jensen right), ASML earnings ramp through 2028 as node migration + capacity additions continue.
+      - If EUV is STRUCTURAL 5+yr bottleneck (Jensen wrong), AI compute becomes bid-up / rationed and ASML ASPs hold higher longer even if unit volumes plateau.
+      Implicit Claim D (Wright's Law uniform) is CONTESTED — ASML produces ~50-60 High-NA units/yr with multi-year lead times. The 10x-in-2-3yr framing is NOT supported empirically; but this doesn't change the ASML bull case; it changes what drives the bull case (ASP vs volume).
+    recommended_action: "No VAULT update triggered. ASML GF 96 remains appropriate. Consider explicit HORIZON signal: EUV-timeline-dispute resolution watch."
+
+  # ============ NON-VAULT-COVERED TICKERS (GAPS) ============
+
+  - ticker: "NVDA"
+    vault_covered: false
+    vault_gap_flag: true
+    wiki_coverage: true
+    wiki_articles:
+      - "wiki/compiled/finance/companies/nvda-valuation.md"
+      - "wiki/compiled/ai_research/nvidia-gpu-market.md"
+      - "wiki/compiled/ai_research/concepts/cuda-install-base-moat.md"
+    jensen_context:
+      - mention_type: "primary subject of interview"
+      - jensen_framing: "Forward-bullish throughout; every forward-looking claim capped 0.60 + COI dampening per DABEIBA calibration."
+    thesis_alignment: "NOT_CROSS_CHECKABLE_AGAINST_VAULT"
+    thesis_notes: |
+      CRITICAL GAP: NVDA is NOT covered in the VAULT 76-ticker run. Wiki article exists (nvda-valuation) but no DCF fair-value / implied-upside / verdict is available for cross-check against Jensen's 'trillion-dollar scale' forward framing (Claim 3, 0.45 post-redteam).
+      Deck implication: Jensen's $1T scale claim cannot be anchored against DABEIBA's own DCF.
+      Attribution to SemiAnalysis for N3 60%/86% figures IS explicit in transcript — treated as tertiary source, not Jensen's own.
+    recommended_action: "Add NVDA to VAULT next run. Priority flag. Target: DCF fair value + implied upside + verdict available by 2026-04-24 for deck re-anchoring."
+
+  - ticker: "TSM"
+    vault_covered: false
+    vault_gap_flag: true
+    wiki_coverage: true
+    wiki_articles:
+      - "wiki/compiled/finance/companies/tsm-valuation.md"
+    jensen_context:
+      - mention_type: "explicit (primary supply-chain partner)"
+      - timestamp: "8:57-9:03 (N3 AI share), 55:14-55:37 (30yr relationship), 56:26-57:12 (scale flexibility)"
+      - jensen_framing: "30-year trust-based relationship; no legal contract; TSMC is 'the only other foundry where you can place a commit at any size'. 60% of N3 is AI this year, 86% next (attribution: SemiAnalysis)."
+    thesis_alignment: "SUPPORTS_CURRENT_DABEIBA_THESIS"
+    thesis_notes: |
+      TSMC (TSM) wiki article exists but not in current VAULT run.
+      Jensen's supply-chain-moat framing is directly load-bearing for TSM long thesis:
+      - 60%/86% of N3 being AI = structural demand absorption.
+      - 'Rough justice' trust-based relationship = pricing discipline on both sides.
+      - Scale-flexibility $10M to $100B = competitive moat for TSM against Intel Foundry + Samsung Foundry.
+    recommended_action: "Add TSM to next VAULT run. Consider higher-priority vs NVDA given cleaner DCF (less COI interference in fundamentals)."
+
+  - ticker: "AVGO"
+    vault_covered: false
+    vault_gap_flag: true
+    jensen_context:
+      - mention_type: "implicit (via ASIC / custom-silicon discussion)"
+      - timestamp: "38:51 (65% ASIC margins)"
+      - jensen_framing: "Implicit: Broadcom/AVGO custom-silicon ASIC business is competitive but operates at 65% margins vs NVDA 70%+ and has 18-24 month cycles vs NVDA annual cadence."
+    thesis_alignment: "THESIS_NEEDS_UPDATE"
+    thesis_notes: |
+      AVGO not in VAULT + no wiki article found.
+      Jensen's framing implies AVGO AI-DC revenue growth decelerates from 2026 onward relative to NVDA unless AVGO shortens ASIC refresh cycles.
+      Gap: no DABEIBA coverage of AVGO despite it being a named AI-DC custom-silicon competitor.
+    recommended_action: "Consider adding AVGO to VAULT + wiki article. Lower priority than NVDA / TSM but material for AI-DC competitive map."
+
+  - ticker: "GOOGL"
+    vault_covered: false
+    vault_gap_flag: true
+    jensen_context:
+      - mention_type: "explicit (TPU competitive threat, floor-clamped claim)"
+      - timestamp: "37:09-37:27 (Claim 8)"
+      - jensen_framing: "Minimized — 'TPU growth = 100% Anthropic'. Directly contradicted by Google Cloud TPU disclosure (Gemini + Search + YouTube + Maps)."
+    thesis_alignment: "THESIS_NEEDS_UPDATE"
+    thesis_notes: |
+      Google TPU competitive dynamic is load-bearing for NVDA bear case.
+      Jensen's dismissal at 0.40 floor means the competitive-silicon thesis is NOT being priced in via this source — need independent Google Cloud / Alphabet 10-K data.
+      Gap: GOOGL not in VAULT + no wiki article on Google TPU competitive position.
+    recommended_action: "Consider adding GOOGL to VAULT. Cross-check TPU deployment scale via Alphabet segment disclosure."
+
+summary:
+  vault_covered_tickers_mentioned: 2  # AMD, ASML
+  vault_gaps_identified: 4  # NVDA, TSM, AVGO, GOOGL
+  critical_gap: "NVDA not in VAULT — primary subject of interview, no DCF anchor for Jensen's forward claims"
+  thesis_supports: 1  # ASML
+  thesis_challenges: 1  # AMD (asymmetric, Jensen likely wrong)
+  thesis_not_cross_checkable: 1  # NVDA
+  thesis_needs_update: 2  # AVGO, GOOGL
+  transcript_hash: "d9beabf0"

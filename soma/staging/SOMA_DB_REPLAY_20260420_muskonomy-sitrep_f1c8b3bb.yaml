@@ -1,0 +1,21 @@
+---
+action: REPLAY_DB_INSERT
+target_db: shared/soma/soma.db
+target_table: raw_intelligence
+reason: "soma.db currently 0 bytes with orphaned WAL — disk I/O error on read. Queued for replay after DB recovery."
+date: 2026-04-20
+serial: MUSKONOMY-021
+uuid: f1c8b3bb
+timestamp: 2026-04-20T11:20:54.904865
+row:
+  ticker: TSLA
+  source: muskonomy_sitrep
+  date: "2026-04-20"
+  timestamp: "2026-04-20T11:20:54.904865"
+  significance_score: 0.9
+  pipeline: MUSKONOMY
+  module: ORACLE
+  type: daily_sitrep
+  serial: MUSKONOMY-021
+  content_ref: shared/soma/intelligence/brief_log.jsonl#MUSKONOMY-021
+---

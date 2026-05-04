@@ -1,0 +1,20 @@
+Taiwan Strait Tensions — Weekly Update
+
+China's PLA conducted naval exercises in the Taiwan Strait for the third consecutive week, with 47 aircraft and 12 vessels detected in the median line area. This represents a significant escalation from the baseline of 15-20 aircraft per week observed in January.
+
+The US responded by deploying the USS Ronald Reagan carrier group to the Philippine Sea, while Japan announced increased surveillance flights over the East China Sea.
+
+Semiconductor supply chain implications:
+- TSMC advanced node production (3nm, 5nm) remains concentrated in Taiwan
+- US CHIPS Act facilities in Arizona are 18 months from production readiness
+- Samsung's Pyeongtaek expansion targets 2027 for advanced GAA nodes
+- Any disruption to TSMC would create a 6-12 month global chip shortage
+
+Transmission channels to markets:
+- Energy: minimal direct impact (Taiwan not a major oil route)
+- Semiconductors: CRITICAL — 65% of global advanced logic chips
+- Risk-off: VIX likely to spike 15-25% on any kinetic escalation
+- Safe havens: Gold, USD, JGBs would benefit
+
+Current severity assessment: 3/5 (elevated monitoring, no immediate threat)
+Previous severity: 2/5 (baseline monitoring)

@@ -288,6 +288,25 @@ def print_status(db_path: str | None = None) -> None:
     except Exception as e:
         print(f"  {DIM}Alignment unavailable: {e}{RESET}")
 
+    # ── AI REGISTRY ──────────────────────────────────────────────
+    print(f"\n{_bar('AI REGISTRY')}")
+    try:
+        from ai_prompt_builder import AIPromptBuilder
+        builder = AIPromptBuilder(db_path)
+        freshness = builder.check_freshness()
+        builder.close()
+        if not freshness:
+            print(f"  {DIM}No AI profiles indexed — rebuild KB index{RESET}")
+        else:
+            for f in freshness:
+                if f["is_stale"]:
+                    st = f"{RED}STALE ({f['days_ago']}d){RESET}"
+                else:
+                    st = f"{GREEN}FRESH ({f['days_ago']}d){RESET}"
+                print(f"  {f['name']:<12} {f['model']:<20} {st}")
+    except Exception as e:
+        print(f"  {DIM}AI Registry unavailable: {e}{RESET}")
+
     # ── KB VIOLATIONS ────────────────────────────────────────────
     print(f"\n{_bar('KB VIOLATIONS')}")
     try:

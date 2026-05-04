@@ -1,0 +1,254 @@
+---
+extraction_phase: "4d"
+extraction_date: "2026-04-17"
+extraction_subject: "Capital Allocation & Asymmetric Betting"
+transcript_source: "Camillo/Tony Robbins Interview Series"
+total_rules_extracted: 4
+confidence_floor: 0.68
+
+rules:
+
+  - rule_id: "RULE-0401"
+    name: "Bucketing Capital for Asymmetric Bets"
+    framework_type: "RISK_ALLOCATION"
+
+    description: |
+      Capital allocation model that segments funds into distinct risk tiers
+      (retirement security, college education, 'big money' for speculative plays).
+      Enables execution of 50/50 asymmetric bets without portfolio ruin or
+      emotional paralysis.
+
+    rule_statement: |
+      Allocate capital into risk tiers with explicit loss tolerance per tier.
+      Bucket assignments: (1) Retirement (zero volatility), (2) College (moderate),
+      (3) Speculation (high volatility). Execute 50/50 bets only on Tier 3 capital.
+      Prevents catastrophic loss of essential capital while enabling aggressive upside.
+
+    domains:
+      - BEHAVIORAL
+      - RISK
+      - PORTFOLIO_MANAGEMENT
+
+    confidence: 0.82
+    evidence_strength: "strong"
+    evidence_sources:
+      - "Camillo 18-year track record (live execution)"
+      - "Tony Robbins validation via 5:1 odds framework"
+      - "Behavioral finance literature (Kahneman/Tversky)"
+
+    falsifiability_metric: |
+      TESTABLE: Does a bucketed portfolio (with Tier 3 asymmetric bets)
+      outperform equivalent non-bucketed portfolio over 10+ year horizon?
+      Control: same total capital, same underlying assets, vary allocation structure only.
+      Success threshold: Bucketed > Non-bucketed on risk-adjusted returns (Sharpe).
+
+    implementation_readiness: "PRODUCTION"
+    applicable_modules:
+      - MANTIS (Execution constraints)
+      - RAPTOR (Client acquisition sizing)
+
+    related_rules:
+      - RULE-0402 (Social Arbitrage detection)
+
+    notes: |
+      Foundation rule for asymmetric bet execution. Enables psychological
+      permission for 50/50 trades that would otherwise trigger loss aversion.
+      Key insight: compartmentalization removes "ruin risk" perception.
+
+---
+
+  - rule_id: "RULE-0402"
+    name: "Social Arbitrage = Change Detection"
+    framework_type: "PATTERN_RECOGNITION"
+
+    description: |
+      Identify mispriced companies by detecting real-world consumer/tech/political
+      change before institutional capital reprices it. Information lag between
+      ground truth and market consensus creates 2-4 week arbitrage window.
+
+    rule_statement: |
+      (1) Observe tangible change in consumer behavior, technology adoption,
+      or political landscape. (2) Map change to publicly traded company(ies).
+      (3) Verify company not yet repriced (stock still flat while change is live).
+      (4) Enter position in 2-4 week window before repricing. (5) Exit on repricing.
+      Moat: Institutional investors trapped in noise; retail with pattern library
+      sees change first.
+
+    domains:
+      - BEHAVIORAL
+      - EQUITIES
+      - MACRO
+      - PATTERN_RECOGNITION
+
+    confidence: 0.75
+    evidence_strength: "strong"
+    evidence_sources:
+      - "Snapple acquisition ($300 trade gain)"
+      - "Neato robotics adoption trend pre-repricing"
+      - "Amazon/Nvidia timing on cloud/AI inflection"
+
+    falsifiability_metric: |
+      TESTABLE: Does change detection (measured by documented observation date
+      vs. stock repricing date) predict outperformance in 2-4 week window?
+      Control: match change events to ticker list, measure lag, compare to
+      market-neutral returns. Success: >70% of changes show >2 week lag, >5% outperformance.
+
+    implementation_readiness: "PRODUCTION"
+    applicable_modules:
+      - ORACLE (Change detection signal aggregation)
+      - SOMA (Multi-domain synthesis of change signals)
+      - MANTIS (Entry/exit execution on repricing)
+
+    related_rules:
+      - RULE-0403 (Pattern Recognition moat)
+      - RULE-0401 (Asymmetric bet sizing)
+
+    notes: |
+      Core alpha generation mechanism. Requires structured observation of
+      real-world change across multiple domains (consumer, tech, macro, policy).
+      Advantage erodes if 'everyone learns patterns' but moat persists via
+      information cost (real-world observation is labor-intensive).
+
+---
+
+  - rule_id: "RULE-0403"
+    name: "Pattern Recognition as Durable Moat"
+    framework_type: "COMPETITIVE_ADVANTAGE"
+
+    description: |
+      Retail investors with systematic pattern library outperform institutional
+      managers because institutional capital is trapped in noise and constraints.
+      Moat is not superior data access but superior information lag exploitation.
+      Durability depends on pattern complexity and labor cost of observation.
+
+    rule_statement: |
+      Moat = (Information Lag) - (Replication Cost).
+      Institutional investors constrained by: (a) committee consensus,
+      (b) benchmark tracking, (c) regulatory/audit overhead.
+      Retail with documented pattern library + conviction can act in lag window.
+      Moat erodes only if pattern becomes common knowledge AND replication cost falls.
+
+    domains:
+      - BEHAVIORAL
+      - META
+      - COMPETITIVE_ADVANTAGE
+
+    confidence: 0.70
+    evidence_strength: "moderate"
+    evidence_sources:
+      - "Snapple retail observation vs. Wall Street consensus lag"
+      - "Camillo pattern recognition track record"
+      - "Institutional constraints (Buffett/Berkshire thesis)"
+
+    falsifiability_metric: |
+      TESTABLE: If pattern becomes widely known (publish to institutional audience),
+      does moat erode? Measure: pre-publication edge (alpha), post-publication edge.
+      Success threshold: Alpha decays >50% post-publication within 12 months.
+      Alternative: moat persists because pattern adoption cost is >benefit gained.
+
+    implementation_readiness: "RESEARCH"
+    applicable_modules:
+      - ORACLE (Pattern documentation)
+      - SOMA (Pattern taxonomy)
+      - CIPHER (Pattern communication risk assessment)
+
+    related_rules:
+      - RULE-0402 (Social Arbitrage execution)
+
+    notes: |
+      Meta-level insight: advantage is structural (information lag) not sustainable
+      if competitive moat is solely 'we know a pattern.' Need to test: does publishing
+      patterns destroy alpha or does moat persist due to execution/conviction gap?
+      KEY RISK: Over-confidence in moat durability.
+
+---
+
+  - rule_id: "RULE-0404"
+    name: "Philanthropic ROI Model"
+    framework_type: "IMPACT_INVESTING"
+
+    description: |
+      Treat charitable capital allocation with same rigor as investment portfolio.
+      Require quantified impact measurement, replication evidence, and 10x+ leverage
+      on capital deployed. Capital should flow to interventions with highest
+      measured impact per dollar, not to emotional/brand appeal.
+
+    rule_statement: |
+      Philanthropic capital allocation rule: (1) Define measurable outcome
+      (e.g., lives improved, cost per outcome). (2) Demand replication evidence
+      (intervention works in multiple geographies/populations). (3) Require
+      10x+ leverage: $1 philanthropic capital generates >$10 of social/economic value.
+      (4) Track outcome via audit/evaluation. (5) Reallocate to highest-ROI
+      interventions. Reject: unquantifiable outcomes, single-trial evidence,
+      <5x leverage.
+
+    domains:
+      - PHILOSOPHY
+      - RISK
+      - IMPACT_INVESTING
+
+    confidence: 0.68
+    evidence_strength: "moderate"
+    evidence_sources:
+      - "Beast Foundation (Ghana malaria nets; measurable outcomes)"
+      - "Effective Altruism literature (leverage calculations)"
+      - "Tony Robbins matching capital model"
+
+    falsifiability_metric: |
+      TESTABLE: Does ROI-optimized philanthropic portfolio (measured by
+      outcomes per dollar) outperform emotional/brand-driven allocation?
+      Control: historical allocation vs. ROI-optimized allocation, measure
+      impact per dollar over 5-year horizon. Success: ROI >1.5x alternative.
+
+    implementation_readiness: "RESEARCH"
+    applicable_modules:
+      - RAPTOR (Client acquisition via impact positioning)
+      - CIPHER (Impact reporting/communication)
+
+    related_rules: []
+
+    notes: |
+      Bridge between investment philosophy (asymmetric bets, pattern recognition)
+      and wealth deployment (philanthropy). Treats impact as measurable outcome,
+      not moral statement. Key question: are unmeasurable outcomes
+      (dignity, autonomy, justice) undervalued in ROI framework?
+      Potential risk: reductionism that ignores intrinsic value of outcomes.
+
+---
+
+metadata:
+  extraction_methodology: "Transcript analysis + corroborating evidence mapping"
+  domains_identified: 6
+    - BEHAVIORAL (4 rules)
+    - RISK (2 rules)
+    - EQUITIES (1 rule)
+    - MACRO (1 rule)
+    - PATTERN_RECOGNITION (1 rule)
+    - COMPETITIVE_ADVANTAGE (1 rule)
+    - META (1 rule)
+    - PHILOSOPHY (1 rule)
+    - PORTFOLIO_MANAGEMENT (1 rule)
+    - IMPACT_INVESTING (1 rule)
+
+  confidence_distribution:
+    high_confidence: 1   # RULE-0401: 0.82
+    medium_confidence: 2 # RULE-0402: 0.75, RULE-0403: 0.70
+    threshold_confidence: 1 # RULE-0404: 0.68
+
+  production_readiness:
+    production: 2        # RULE-0401, RULE-0402
+    research: 2         # RULE-0403, RULE-0404
+
+  cross_module_dependencies:
+    - "RULE-0401 → MANTIS execution constraints"
+    - "RULE-0402 → ORACLE + SOMA + MANTIS pipeline"
+    - "RULE-0403 → ORACLE + SOMA + CIPHER risk"
+    - "RULE-0404 → RAPTOR client acquisition"
+
+next_steps:
+  - "Integrate RULE-0401 into MANTIS position sizing logic"
+  - "Wire RULE-0402 into ORACLE change-detection pipelines (DELTA, SENTINEL)"
+  - "Document RULE-0403 moat durability test in research phase"
+  - "Assess RULE-0404 alignment with RAPTOR wealth advisory positioning"
+  - "Run cross-validation: do rules conflict with existing SOMA kb_rules? (check kb_rules.py)"
+  - "Schedule falsifiability experiments (1-2 quarters)"

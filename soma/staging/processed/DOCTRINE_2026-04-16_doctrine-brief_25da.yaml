@@ -1,0 +1,10 @@
+type: DOCTRINE_EVIDENCE
+schema_version: '1.0'
+date: '2026-04-16'
+source: dabeiba-doctrine-brief
+source_type: scheduled_task
+source_hash: 2e71fc77
+belief_id: BELIEF_OIL_INFLATION_HEADWIND
+source_detail: Brent $100+ for second straight month on Strait of Hormuz crisis; shipments 3.8 mb/d vs 20 mb/d Feb; peak $126. Direct headline-inflation hit.
+supports: true
+weight: 1.0

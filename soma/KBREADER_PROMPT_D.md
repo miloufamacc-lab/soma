@@ -19,7 +19,7 @@ These 5 rules have `source_module` containing "MANTIS":
 
 ## Architecture Pattern
 
-Same as ORACLE: try KB → fallback to hardcoded → log usage.
+Same as Research (ORACLE): try KB → fallback to hardcoded → log usage.
 
 ```python
 def _load_kb_rule(rule_id, fallback, context=None):

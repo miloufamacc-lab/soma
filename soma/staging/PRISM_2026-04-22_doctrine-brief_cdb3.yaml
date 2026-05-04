@@ -1,0 +1,59 @@
+type: PRISM
+schema_version: '1.0'
+date: '2026-04-22'
+source: dabeiba-doctrine-brief
+source_type: scheduled_task
+prism_intake:
+- source_type: scheduled_task
+  category: macro
+  target_pipeline: TITAN
+  relevance_score: 9
+  key_claims:
+  - Iran ceasefire expires April 22; Brent near $98.48; Hormuz functionally closed;
+    $200 oil tail risk if hostilities resume.
+  - US 145% tariffs on Chinese semiconductors/EVs active since April 10; FOMC hold
+    April 28-29; CPI 3.3% reacceleration; IMF cuts 2026 global growth to 3.1%.
+  tags:
+  - doctrine-brief
+  - macro
+  - daily
+  - iran
+  - oil
+  - fomc
+  - tariffs
+  processed_date: '2026-04-22'
+- source_type: scheduled_task
+  category: crypto
+  target_pipeline: COBALT
+  relevance_score: 8
+  key_claims:
+  - SOL at $85.38; bearish technicals (23 bearish signals); critical support $80 (break
+    -> $73 target); resistance $89.65.
+  - Solana DeFi TVL ATH 80M SOL (~$10B); Jupiter 95% DEX share; BTC dominance 57-60%
+    at 59.9% resistance — altseason trigger if rejected.
+  tags:
+  - doctrine-brief
+  - crypto
+  - daily
+  - solana
+  - mantis
+  - btc-dominance
+  processed_date: '2026-04-22'
+- source_type: scheduled_task
+  category: equities
+  target_pipeline: TITAN
+  relevance_score: 8
+  key_claims:
+  - 'TSLA Q1 earnings today: delivery miss 358K vs 365K expected; energy storage down
+    50% QoQ. NVDA 11-day streak at $201.68, PT $268.'
+  - S&P 500 at 7,064; Mag-7 all reporting within 2 weeks; UNH beat; TXN and NOW reporting
+    this week.
+  tags:
+  - doctrine-brief
+  - equities
+  - daily
+  - earnings
+  - tsla
+  - nvda
+  - mag7
+  processed_date: '2026-04-22'

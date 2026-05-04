@@ -1,0 +1,19 @@
+type: PRISM
+schema_version: "1.0"
+date: "2026-04-18"
+source: "muskonomy-daily-sitrep"
+source_type: "scheduled_task"
+prism_intake:
+  - source_type: scheduled_task
+    source_url: ""
+    category: "equities"
+    target_pipeline: "TITAN"
+    relevance_score: 8
+    key_claims:
+      - "TSLA +3.01% April 18 recovery; Austin unsupervised fleet 12 units; Cybercab production commenced Giga TX April 2026"
+      - "Q1 earnings T-4 April 22; EPS consensus $0.37 vs Smart skew $0.30; JPM 164K inventory overhang bear thesis"
+      - "FSD EU NL Day 9; AI5 taped out 8-10x HW4; NHTSA EA26002 3.2M still active"
+    tags: ["musk-ecosystem", "tsla", "daily-sitrep", "pre-earnings", "robotaxi", "fsd-eu"]
+    processed_date: "2026-04-18"
+    skill_version: "muskonomy-v1"
+    serial: "MUSKONOMY-019"

@@ -1,0 +1,26 @@
+{
+  "processed": 24,
+  "errors": 3,
+  "skipped": 0,
+  "dry_run": false,
+  "model_flags": [],
+  "wiki_updates": [
+    "musk-ecosystem-intelligence-log",
+    "musk-ecosystem-intelligence-log"
+  ],
+  "doctrine_evidence": [
+    "BELIEF_OIL_INFLATION_HEADWIND",
+    "BELIEF_SOL_ETF_PIPELINE",
+    "BELIEF_GEOECONOMIC_FRAGMENTATION",
+    "BELIEF_FED_HOLD_THROUGH_Q2",
+    "BELIEF_AI_CAPEX_INTACT",
+    "ENERGY_OVERWEIGHT_IRAN_SHOCK_V1",
+    "AI_CAPEX_RESILIENCE_V1"
+  ],
+  "by_type": {
+    "PRISM": 11,
+    "DOCTRINE_EVIDENCE": 7,
+    "WIKI_UPDATE": 2,
+    "HORIZON": 4
+  }
+}

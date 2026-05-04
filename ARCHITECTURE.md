@@ -1,7 +1,7 @@
 # DABEIBA — Data Resilience & Cache Architecture
 
 **Last updated:** 2026-03-21
-**Applies to:** All modules (ORACLE, CIPHER, MANTIS, SOMA)
+**Applies to:** All modules (Research, Advisory, Decisions, Synthesis)
 
 ---
 
@@ -25,7 +25,7 @@ TIER  LAYER              LOCATION                           RETENTION
 
 ---
 
-## T0: GuruFocus API Protection (ORACLE)
+## T0: GuruFocus API Protection (Research)
 
 Three independent locks prevent erroneous API calls:
 
@@ -41,13 +41,13 @@ Three independent locks prevent erroneous API calls:
 3. **Cache TTL = 744 hours** — Set in `config/settings.py`. Cache files never
    expire within a calendar month, so `_get_cached()` always hits the file cache.
 
-**Result:** After the monthly refresh, no code path in ORACLE can make a live
+**Result:** After the monthly refresh, no code path in Research can make a live
 GuruFocus API call. Not `main.py`, not `add_ticker.py`, not even `--refresh-cache`.
 The only way to make live calls is to manually edit `api_refresh_tracker.json`.
 
 ---
 
-## T1: API File Cache (ORACLE)
+## T1: API File Cache (Research)
 
 - **Location:** `oracle/cache/{TICKER}_{endpoint}.json`
 - **TTL:** 744 hours (configurable via `CACHE_TTL_HOURS` in settings.py)
@@ -57,14 +57,20 @@ The only way to make live calls is to manually edit `api_refresh_tracker.json`.
 
 ---
 
-## T2: Snapshot Fallback (ORACLE)
+## T2: Snapshot Fallback (Research)
 
 - **Location:** `oracle/output/last_good_snapshot.json`
 - **Trigger:** If API returns mostly empty data (<25% tickers have prices),
-  ORACLE automatically falls back to the last good snapshot
+  Research automatically falls back to the last good snapshot
 - **Content:** Full ticker data + DCF valuations from last successful run
 - **Redundancy:** 3 additional backup copies (.backup, .bak2, _backup.json)
 - **Email tag:** `[CACHED]` added to subject line when using snapshot data
+
+---
+
+## T3: SOMA Database (Synthesis)
+
+Note: SOMA (Synthesis) refers to the shared data layer and is referred to by its internal codename in most technical contexts.
 
 ---
 
@@ -77,12 +83,12 @@ The only way to make live calls is to manually edit `api_refresh_tracker.json`.
   portfolio_state, events, client_profiles, client_interactions
 - **Traceability:** Every row has `write_timestamp` (ISO-8601) + `module_version`
 - **Grouping:** `run_id` (UUID) links all writes from a single pipeline run
-- **Freshness:** `is_fresh()` function — MANTIS aborts if regime data >48h stale
+- **Freshness:** `is_fresh()` function — Decisions aborts if regime data >48h stale
 
 ### Module Write Paths:
-- **ORACLE → SOMA:** regime (GLI + VIX/UST10Y/DXY spot) + valuations (DCF)
-- **MANTIS → SOMA:** trade_log + portfolio_state
-- **CIPHER → SOMA:** outlook_snapshots (reads regime + valuations first)
+- **Research → SOMA:** regime (GLI + VIX/UST10Y/DXY spot) + valuations (DCF)
+- **Decisions → SOMA:** trade_log + portfolio_state
+- **Advisory → SOMA:** outlook_snapshots (reads regime + valuations first)
 - **add_ticker.py → SOMA:** UNIVERSE_ADD events
 
 ---

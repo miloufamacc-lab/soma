@@ -1,0 +1,112 @@
+---
+# HORIZON Phase 4f: Bitcoin Intergenerational Wealth Transfer
+# Catalyst Analysis — Timing Signals
+# Date: 2026-04-17
+# Signal Category: FUNDAMENTAL (Multi-Decade Conviction)
+
+catalyst:
+  name: "Bitcoin Intergenerational Wealth Transfer (2028-2051)"
+  description: "80-100T intergenerational transfer over 20-25yr window; 2-5% BTC allocation = 1.6-5T inflow. Longest-duration conviction signal."
+  primary_conviction: 0.55
+  allocation_window: "2026-2051 (25-year horizon)"
+
+timing_window:
+  label: "Wealth Transfer Realization Phases"
+  phase_1_setup: "2026-2030 (now → 5 years)"
+  phase_1_rationale: "Survey data on gen-X/millennial crypto preference; policy normalization (CBDC resistance, self-custody rights, ETF access)"
+  phase_2_realization: "2028-2035 (peak boomer estate settlements)"
+  phase_2_rationale: "Actual inheritance distributions; BTC foundation of estate plans; executor education ramp"
+  phase_3_tail: "2035-2051 (long consolidation)"
+  phase_3_rationale: "Generational wealth stability; BTC as legacy asset class"
+
+action_trigger:
+  phase_1_accumulate: "Begin position building now (2026-2027) on ANY crypto-adoption survey shift toward >5% BTC allocation (vs 2025 baseline 1-2%)"
+  phase_2_signal: "Increase allocation by 0.25 conviction if estate-planning attorney surveys show >20% of HNW clients (>$10M net worth) now mentioning BTC in long-term plans by 2028"
+  phase_3_monitoring: "Hold through 2035-2040; monitor flow data into BTC trusts and Grayscale-like vehicles (institutional inheritance intermediaries)"
+  fallback: "Reduce conviction by 0.20 if regulatory push against self-custody succeeds (e.g., mandatory custodian law in major jurisdictions by 2028)"
+
+monitor_metrics:
+  - metric: "Generational Asset Allocation Preference Survey"
+    frequency: "annual"
+    threshold: "CFA / Gallup / Charles Schwab survey: Gen X allocation to crypto grows from 2% (2025) to >5% target allocation by 2028"
+    source: "CFA Institute, Gallup Wealth Management Survey, Schwab Investor Outlook"
+    leading_indicator: "True leading indicator — preference precedes actual capital flows by 12-18 months"
+    checkpoint: "2027 survey results (published early 2028) will be first validation"
+
+  - metric: "Bitcoin Spot ETF Flow Tracking"
+    frequency: "monthly"
+    threshold: "Baseline: 500M/month (2026 trend). Watch for accelerations in Q2-Q3 of 2027-2028 as younger beneficiaries take control of inherited wealth"
+    source: "IBIT, FBTC, GBTC flows (SEC filings, financial databases)"
+    note: "Post-inheritance tax seasons (April 15, and six-month estate settlement windows) may show seasonal spikes"
+
+  - metric: "Estate Planning Attorney Client Mentions"
+    frequency: "bi-annual survey"
+    threshold: "National survey of estate attorneys: >10% of clients >$10M NW mention BTC in 2027; >25% by 2028; >40% by 2030"
+    source: "Estate Planners Council surveys, Bar Association continuing education"
+    timing: "Survey lag: 6-12 months to publish; 2028 survey results available by mid-2029"
+
+  - metric: "BTC Trust & Custody Vehicle Assets Under Management"
+    frequency: "quarterly"
+    threshold: "Grayscale Bitcoin Trust, iShares IBIT, Fidelity BTC offerings combined AUM: >150B by 2028, >500B by 2032"
+    source: "Grayscale SEC filings, iShares fact sheets, Fidelity reports"
+    leading_indicator: "Institutional inheritance intermediaries; indicates wealth advisor adoption"
+
+  - metric: "Inheritance Tax Planning Incorporation of Crypto"
+    frequency: "annual"
+    threshold: "Tax law blog posts, accountant CLE courses: >30% of HNW estate planning now explicitly addresses crypto allocation by 2027"
+    source: "Tax attorney publications, AICPA resources, law firm practice management trends"
+    note: "Signals shift from 'crypto is risky' to 'crypto is core portfolio asset' in professional advisory"
+
+  - metric: "Boomer Wealth Concentration in BTC Narratives"
+    frequency: "quarterly tracking"
+    threshold: "Watch for narrative shift in major financial media (WSJ, FT, Bloomberg) from 'crypto fad' to 'inheritance asset class' by Q4 2027"
+    source: "Media tracking, sentiment analysis on key search terms (Bitcoin inheritance, intergenerational wealth, boomer crypto)"
+    reflection: "Cultural shift precedes policy change; expect SEC/IRS guidance updates 12-18 months after narrative pivot"
+
+  - metric: "Self-Custody Rights Preservation"
+    frequency: "event-driven"
+    threshold: "Watch for legislative battles: EU Digital Finance Package, US Custody rules. PASS = bullish for BTC adoption; FAIL = reduce conviction by 0.30"
+    source: "Congressional voting records, EU regulatory tracker, FDIC custody guidance"
+    risk_anchor: "Mandatory custodian requirement would collapse intergenerational transfer thesis (inheritance requires self-custody estate clarity)"
+
+fallback_conditions:
+  - condition: "US / EU introduces 'mandatory custodian' law for crypto inheritance by 2028"
+    action: "Reduce conviction from 0.55 → 0.25"
+    rationale: "Removes simplicity advantage; legacy asset class status at risk"
+
+  - condition: "Gallup/CFA survey shows Gen X crypto allocation DECLINING (not growing) by 2027"
+    action: "Reduce conviction by 0.15 → 0.40"
+    rationale: "Demand thesis broken; re-evaluate 2030-2035 realizations"
+
+  - condition: "CBDC rollout in US/EU with regulatory push against BTC"
+    action: "Reduce conviction by 0.10 → 0.45; monitor for 12-24 months before full exit"
+    rationale: "Policy risk; adoption curve may flatten; long-term thesis survives but timing compressed"
+
+  - condition: "Spot ETF flows stall or reverse in 2027 (>3 consecutive months of negative net flows)"
+    action: "Reduce conviction by 0.10 → 0.45"
+    rationale: "Indicates demand cliff; wait for 2028 estate settlement season to re-evaluate"
+
+upside_triggers:
+  - "Any major bank (JPMorgan, Goldman, Morgan Stanley) announces 5%+ BTC allocation for HNW clients by 2027"
+  - "Federal Reserve or SEC issues guidance explicitly allowing self-custody BTC in retirement accounts (2027-2028)"
+  - "US Treasury publishes BTC intergenerational transfer guidance in tax code by 2028 (signals normalization)"
+  - "Estate planning software (LawDepot, Incfile) adds 'BTC allocation' as standard inheritance template by 2027"
+  - "First major estate settlement case (publicly disclosed) with >100M BTC inheritance by 2027"
+
+risk_anchors:
+  - "Regulatory risk: 2027-2028 is critical legislative window. Watch US midterms (Nov 2026) and EU digital rulebook finalization (2027)."
+  - "Generational preference: Surveys lag reality; Gen Z may adopt alternative L1s faster than BTC by 2030 (Solana, Ethereum — competitive dynamic)."
+  - "Tax treatment: IRS may introduce retroactive taxes on appreciated BTC (1987 style, rare but possible). Monitor tax policy blogs quarterly."
+  - "Boomer health: Peak demographic realization is 2028-2035, but earlier deaths (pandemic, healthcare crisis) could compress timeline."
+  - "BTC volatility: If BTC swings >60% in any 6-month window (2027-2028), wealth advisors may reduce allocation recommendations."
+
+summary:
+  signal_confidence: 0.55
+  speaker_tier: 2
+  transcript_source: "Chris Camillo × Mark Moss (~78 min, 2026-04-17)"
+  transcript_hash: "fba58360"
+  conviction_window: "2026-2051 (25-year strategic thesis)"
+  action_window: "2026-2030 (survey validation phase); 2028-2035 (realization phase)"
+  update_frequency: "annual survey check; quarterly flow monitoring; monthly narrative tracking"
+  next_review: "2027-01-31 (post-holiday 2026 ETF flow data + early 2027 survey signals)"
+  position_type: "strategic long-term conviction; not tactical (hold 5-10 year minimum)"

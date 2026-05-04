@@ -1,0 +1,56 @@
+# PRISM multi-category routing for 2026-04-16 Jensen Huang / Lex Fridman interview.
+# Transcript hash: d9ec164c | Skill version: V3.0 | Source: Lex Fridman Podcast (YouTube).
+
+prism_intake:
+
+  - source_type: youtube
+    source_url: ""
+    language: en
+    category: equities
+    target_pipeline: TITAN
+    relevance_score: 9
+    key_claims:
+      - "NVDA $3T annual revenue target is achievable; no physical limit, 200-company supply chain (Jensen T2 COI, conf 0.50)."
+      - "CUDA install base + 43K engineers + several million devs is the primary durable moat, not silicon (conf 0.85, cross-chunk +0.05)."
+      - "Rack-scale co-design (Vera Rubin NVLink-72, 1.3M components / 200 suppliers / 200 pods/wk) is the new system-level moat (conf 0.82)."
+    tags: ["nvda", "nvidia", "cuda", "rack-scale", "ai-hardware", "semiconductor", "equities"]
+    processed_date: "2026-04-16T00:00:00Z"
+    skill_version: "V3.0"
+    transcript_hash: "d9ec164c"
+
+  - source_type: youtube
+    source_url: ""
+    language: en
+    category: macro
+    target_pipeline: TITAN
+    relevance_score: 6
+    key_claims:
+      - "Compute's share of GDP rises 100x vs prior baseline — retrieval-warehouse to generation-factory framing (Jensen T2 COI, conf 0.50)."
+      - "Unit of compute shifted GPU -> cluster -> gigawatt AI factory -> planetary scale; TAM expands to utilities/grid/HVAC/gas (conf 0.55)."
+      - "US power grid at 60% peak 99% of time; AI bottleneck is contractual not physical (conf 0.65 — red-team STRONG counter on interconnection queues)."
+    tags: ["capex", "compute-demand", "ai-factory", "power-grid", "macro"]
+    processed_date: "2026-04-16T00:00:00Z"
+    skill_version: "V3.0"
+    transcript_hash: "d9ec164c"
+
+  - source_type: youtube
+    source_url: ""
+    language: en
+    category: geopolitical
+    target_pipeline: SPECTRE
+    relevance_score: 6
+    key_claims:
+      - "~50% of world AI researchers are Chinese (mostly in China) — MacroPolo-adjacent; 'mostly in China' partially disputed (conf 0.60)."
+      - "China open-source velocity driven by provincial competition and builder culture vs US 'lawyer leaders' (conf 0.50)."
+      - "TSMC has delivered tens/hundreds of billions over three decades without a written contract — single-point-of-failure implication for $3T thesis (conf 0.70)."
+    tags: ["china", "taiwan", "tsmc", "export-controls", "ai-talent", "geopolitical"]
+    processed_date: "2026-04-16T00:00:00Z"
+    skill_version: "V3.0"
+    transcript_hash: "d9ec164c"
+
+meta:
+  subject_slug: "jensen-huang-lex-fridman-nvidia"
+  primary_category: equities
+  secondary_categories: [macro, geopolitical]
+  processed_date: "2026-04-16T00:00:00Z"
+  skill_version: V3.0

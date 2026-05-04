@@ -854,3 +854,66 @@ The walk-forward framework revealed a critical gap between full-sample backtest 
 | Mean-variance optimization | KB §14 Portfolio Construction | Not implemented (6 assets too few for MVO) | ⚠️ N/A |
 | Behavioral bias mitigation | KB §18 Behavioral Finance | Mechanical system prevents disposition effect | ✅ ALIGNED |
 | Tax-aware investing | KB §22 Private Wealth | Post-tax CAGR computed, threshold rebalancing reduces trade count | ✅ ALIGNED |
+
+---
+
+## 21. HORIZON→MANTIS Sizing Contract (Added 2026-05-04)
+
+### 21.1 Purpose
+
+HORIZON produces a daily 7-lens tactical timing synthesis (composite direction + confidence). This section codifies how that signal is translated into a concrete **sizing multiplier** that MANTIS applies to target weights during each rebalance event.
+
+The contract has two motivations:
+1. **Signal consumption**: Without a contract layer, HORIZON's output is never consumed by MANTIS — they are isolated modules.
+2. **Ordering guarantee**: run_day.py must fire HORIZON before MANTIS so the signal is same-day fresh. The contract row in `horizon_signal` is the handshake.
+
+### 21.2 Gate Logic
+
+| Condition | regime_gate_pass | concordance_gate_pass | Multiplier |
+|---|---|---|---|
+| regime == CONTRACTION | 0 (blocked) | N/A | 1.0 |
+| concordance_passed == 0 | 1 | 0 (blocked) | 1.0 |
+| confidence < 0.40 (floor) | 1 | 1 | 1.0 |
+| direction == NEUTRAL | 1 | 1 | 1.0 |
+| BUY / STRONG_BUY (all gates pass) | 1 | 1 | [1.0, 1.5] |
+| SELL / STRONG_SELL (all gates pass) | 1 | 1 | [0.5, 1.0] |
+
+### 21.3 Sizing Order
+
+For any rebalance event, target weights are computed in this strict sequence:
+
+```
+w_base(a)    = inv_vol_weight OR equal_weight
+w_tier(a)    = w_base(a) × (1 - liquidated_frac)   [tier 2/3 liquidation]
+w_horizon(a) = w_tier(a) × horizon_multiplier
+w_final(a)   = min(w_horizon(a), asset_class_cap(a))
+```
+
+Then renormalize. **The asset_class_cap is always the last gate.**
+
+### 21.4 Staleness
+
+A `horizon_signal` row older than **36 hours** is considered stale. `get_horizon_multiplier()` returns 1.0 and logs a WARNING. The 36-hour window covers weekend gaps (Friday signal valid Sat–Sun).
+
+<!-- RULE_BLOCK: HORIZON_SIZING_CONTRACT_V1 -->
+```yaml
+rule_id: HORIZON_SIZING_CONTRACT_V1
+source_module: [HORIZON, MANTIS]
+confidence: 0.90
+rules:
+  GATES:
+    regime_block_list: [CONTRACTION]
+    concordance_required: true
+  MULTIPLIER:
+    scale_factor: 0.50
+    confidence_floor: 0.40
+    min: 0.50
+    max: 1.50
+  STALENESS:
+    max_age_hours: 36
+    fallback_multiplier: 1.0
+  AUDIT:
+    log_every_call: true
+    rule_version: HORIZON_SIZING_CONTRACT_V1
+```
+<!-- END_RULE_BLOCK -->

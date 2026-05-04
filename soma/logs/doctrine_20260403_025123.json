@@ -1,0 +1,131 @@
+{
+  "timestamp": "2026-04-03T02:51:23.473821+00:00",
+  "beliefs_analyzed": 15,
+  "alerts_raised": 0,
+  "conviction_changes": [],
+  "alerts": [],
+  "regime": "UNKNOWN",
+  "beliefs": [
+    {
+      "belief_id": "BEH_RECENCY_BIAS",
+      "domain": "behavioral",
+      "statement": "Recency bias is the biggest risk to conviction \u2014 recent data gets overweighted vs base rates",
+      "conviction": 7,
+      "evidence_for": 0,
+      "evidence_against": 0
+    },
+    {
+      "belief_id": "BEH_THESIS_DISCIPLINE",
+      "domain": "behavioral",
+      "statement": "Sticking to pre-committed thesis rules outperforms reactive decision-making in volatile markets",
+      "conviction": 8,
+      "evidence_for": 0,
+      "evidence_against": 0
+    },
+    {
+      "belief_id": "CRYPTO_BTC_STORE_OF_VALUE",
+      "domain": "crypto",
+      "statement": "Bitcoin is a legitimate institutional store of value and inflation hedge",
+      "conviction": 7,
+      "evidence_for": 0,
+      "evidence_against": 0
+    },
+    {
+      "belief_id": "CRYPTO_DEFI_SELF_CUSTODY",
+      "domain": "crypto",
+      "statement": "Self-custody DeFi on Solana offers superior risk-adjusted returns vs centralized platforms",
+      "conviction": 6,
+      "evidence_for": 0,
+      "evidence_against": 0
+    },
+    {
+      "belief_id": "CRYPTO_ONCHAIN_SIGNALS",
+      "domain": "crypto",
+      "statement": "On-chain metrics (MVRV, NUPL, SOPR) have predictive power for cycle tops and bottoms",
+      "conviction": 7,
+      "evidence_for": 0,
+      "evidence_against": 0
+    },
+    {
+      "belief_id": "CRYPTO_SOL_ECOSYSTEM",
+      "domain": "crypto",
+      "statement": "Solana is the strongest smart-contract ecosystem for DeFi execution speed and cost",
+      "conviction": 7,
+      "evidence_for": 0,
+      "evidence_against": 0
+    },
+    {
+      "belief_id": "EQ_AI_SECULAR_THEME",
+      "domain": "equities",
+      "statement": "AI infrastructure spending is a decade-long secular theme with sustainable growth",
+      "conviction": 7,
+      "evidence_for": 0,
+      "evidence_against": 0
+    },
+    {
+      "belief_id": "EQ_CONCENTRATION_ALPHA",
+      "domain": "equities",
+      "statement": "Concentrated portfolios (10-15 positions) outperform diversified portfolios when conviction is high",
+      "conviction": 8,
+      "evidence_for": 0,
+      "evidence_against": 0
+    },
+    {
+      "belief_id": "EQ_VALUATION_MEAN_REVERT",
+      "domain": "equities",
+      "statement": "Implied upside from fundamental valuation mean-reverts over 12-24 month horizons",
+      "conviction": 7,
+      "evidence_for": 0,
+      "evidence_against": 0
+    },
+    {
+      "belief_id": "MACRO_ENERGY_STRUCTURAL",
+      "domain": "macro",
+      "statement": "Energy sector is in a multi-year structural bull market driven by underinvestment",
+      "conviction": 5,
+      "evidence_for": 0,
+      "evidence_against": 0
+    },
+    {
+      "belief_id": "MACRO_FISCAL_DOMINANCE",
+      "domain": "macro",
+      "statement": "Fiscal policy has overtaken monetary policy as the primary market driver",
+      "conviction": 6,
+      "evidence_for": 0,
+      "evidence_against": 0
+    },
+    {
+      "belief_id": "MACRO_GLI_REGIME",
+      "domain": "macro",
+      "statement": "Global Liquidity Index is the primary driver of broad market direction",
+      "conviction": 8,
+      "evidence_for": 0,
+      "evidence_against": 0
+    },
+    {
+      "belief_id": "MACRO_RATE_CYCLE",
+      "domain": "macro",
+      "statement": "Central bank rate cycles create predictable regime transitions with 6-12 month lags",
+      "conviction": 6,
+      "evidence_for": 0,
+      "evidence_against": 0
+    },
+    {
+      "belief_id": "RISK_DRAWDOWN_ASYMMETRY",
+      "domain": "risk",
+      "statement": "Avoiding large drawdowns matters more than capturing all upside for long-term compounding",
+      "conviction": 9,
+      "evidence_for": 0,
+      "evidence_against": 0
+    },
+    {
+      "belief_id": "RISK_REGIME_TIMING",
+      "domain": "risk",
+      "statement": "Regime-based position sizing reduces max drawdown without proportionally reducing returns",
+      "conviction": 8,
+      "evidence_for": 0,
+      "evidence_against": 0
+    }
+  ],
+  "summary": "DOCTRINE analyzed 15 active beliefs under UNKNOWN regime. No conviction changes."
+}

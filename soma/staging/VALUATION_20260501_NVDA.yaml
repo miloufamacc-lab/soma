@@ -1,0 +1,79 @@
+type: VALUATION
+schema_version: "1.0"
+date: "2026-05-01"
+source: "equity-valuation"
+source_type: "valuation_model"
+ticker: "NVDA"
+wiki_slug: "nvda-valuation"
+
+valuation_summary:
+  current_price: 199.57
+  price_date: "2026-05-01"
+  blended_fv: 177.06
+  implied_upside_pct: -0.113
+  recommendation: "HOLD"
+  recommendation_threshold_note: "HOLD band widened to (-15%, +20%) for high-quality wide-moat name (Quality 96/100, Wide moat per internal screen)"
+  dcf_blended_fv: 192.46
+  sotp_fv: 153.95
+  scenario_fvs:
+    bear: 44.58
+    neutral: 140.89
+    bull: 252.17
+  scenario_weights:
+    bear: 0.10
+    neutral: 0.35
+    bull: 0.55
+  blend_weights:
+    dcf: 0.60
+    sotp: 0.40
+
+key_assumptions:
+  rf_rate: 0.0442
+  erp: 0.0423
+  beta_neutral: 1.8864
+  wacc_neutral: 0.115
+  terminal_g_neutral: 0.04
+  fy26_revenue_b: 215.9
+  fy27_consensus_b: 370.0
+  diluted_shares_b: 24.30
+
+doctrine_evidence:
+  - belief_id: EQ_VALUATION_MEAN_REVERT
+    source_detail: "NVDA model: Blended FV $177.06 vs market $199.57 (-11.3% implied)"
+    supports: false
+    weight: 0.6
+    note: "Modest overvaluation in a high-quality name; not a strong mean-revert signal. Quality cross-check (Quality 96/100, Wide moat) tempers the bearish reading."
+
+internal_screen_disagreement:
+  internal_screen_method: "DCF + EV/Revenue"
+  internal_screen_dcf_upside: 0.402
+  internal_screen_bucket: "WATCH"
+  internal_screen_verdict: "Undervalued (GF)"
+  in_house_verdict: "HOLD"
+  reconciliation_note: |
+    Internal screen DCF FV of $282.79 was computed at a price-of-record snapshot (~$167); price has since rallied to $199.57.
+    This build's DCF + SOTP gives blended FV $177.06, implying -11.3% — HOLD given high-quality moat tempering.
+    Both views agree NVDA is high-quality (Quality 96/100, Wide moat). Disagreement is on price level, not business quality.
+    Internal screen flags "Possible Value Trap, Think Twice" warning — consistent with this build's HOLD-with-downside-skew read.
+
+key_risks:
+  - "Customer concentration / AI capex cycle (Customer)"
+  - "China export controls / geopolitical (Industry)"
+  - "Custom silicon competition — TPU/Trainium/Maia (Competitive)"
+  - "Process tech / TSMC dependency / HBM4 (Industry)"
+  - "Valuation / multiple compression (Financial)"
+
+catalysts_next_12m:
+  - date: "2026-05-28 (est)"
+    event: "Q1 FY27 earnings print"
+    direction: "POSITIVE/NEUTRAL"
+  - date: "H2 2026 (est)"
+    event: "Vera Rubin first production shipments"
+    direction: "POSITIVE"
+  - date: "Q1 2027 (est)"
+    event: "GR00T humanoid robotics platform GA"
+    direction: "POSITIVE"
+
+confidence: "Medium-High"
+build_version: 1
+prompt_version: "v14 + HG-0..HG-5 (2026-05-01 amendment)"

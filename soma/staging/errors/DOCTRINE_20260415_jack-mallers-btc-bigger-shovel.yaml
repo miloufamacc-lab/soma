@@ -1,0 +1,52 @@
+doctrine_evidence:
+  # Supporting existing beliefs
+  - belief_id: MACRO_ENERGY_STRUCTURAL
+    source_module: PRISM
+    source_detail: "Mallers in Jack Mallers Show Ep113: traffic of the straight has fallen off a cliff"
+    supports: true
+    weight: 0.5  # Tier 3 speaker
+    transcript_hash: "c5682bf0"
+    note: "Hormuz closure reinforces structural energy thesis. 20% of global oil offline. Speaker cites shipping data but is Tier 3."
+
+  - belief_id: MACRO_FISCAL_DOMINANCE
+    source_module: PRISM
+    source_detail: "Mallers in Ep113: dollar has to go lower, they have to monetize the debt"
+    supports: true
+    weight: 0.5
+    transcript_hash: "c5682bf0"
+    note: "Reinforces fiscal dominance thesis. $2T deficit, 0-for-3 on reshoring attempts. Also cites Bukele on money printing."
+
+  - belief_id: CRYPTO_BTC_STORE_OF_VALUE
+    source_module: PRISM
+    source_detail: "Mallers in Ep113: Iran accepting Bitcoin per FT report"
+    supports: true
+    weight: 0.5
+    transcript_hash: "c5682bf0"
+    note: "If FT report accurate, first known sovereign use of BTC for trade settlement under sanctions. Major store-of-value validation."
+
+  - belief_id: RISK_DRAWDOWN_ASYMMETRY
+    source_module: PRISM
+    source_detail: "Mallers in Ep113: Blue Owl 22%, Carlyle 16% withdrawals, $1.8T private credit stress"
+    supports: true
+    weight: 0.5
+    transcript_hash: "c5682bf0"
+    note: "Private credit crisis signals systemic risk building. Bloomberg and WSJ sourced. Higher confidence than typical Tier 3."
+
+  # New belief candidates
+  - belief_id: MACRO_STAGFLATION_TRAP_CANDIDATE
+    domain: macro
+    statement: "Fed is trapped between AI-driven deflation and energy-driven inflation — both paths lead to dollar debasement"
+    conviction: 5
+    source: "Jack Mallers Show Ep113, Jack Mallers, 2026-04-15"
+    status: CANDIDATE
+    transcript_hash: "c5682bf0"
+    note: "Novel framing from Arthur Hayes (Tier 2). Low initial conviction due to complexity and Tier 3 primary speaker."
+
+  - belief_id: GEOPOLITICAL_PETRODOLLAR_EROSION_CANDIDATE
+    domain: macro
+    statement: "Petrodollar system is actively eroding — Iran rejecting USD, China settling in gold, sanctioned nations exploring Bitcoin"
+    conviction: 5
+    source: "Jack Mallers Show Ep113, 2026-04-15. Cites FT, Groman, Reuters."
+    status: CANDIDATE
+    transcript_hash: "c5682bf0"
+    note: "Multiple partial sources. FT + Reuters cited. Gold export data from Groman (Tier 2). Needs cross-validation."

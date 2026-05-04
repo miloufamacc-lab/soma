@@ -1,0 +1,121 @@
+---
+# SOMA Rule Extractions — Dwarkesh x Jensen Huang NVIDIA Interview
+# Date: 2026-04-17
+# Transcript hash: d9beabf0
+# Subject slug: jensen-huang-nvidia-ai-compute
+# Skill version: V3.0
+# Source: Dwarkesh Patel podcast (YouTube)
+
+rules:
+  - rule_id: install-base-moat-rule-v1
+    source_module: PRISM
+    domain: equities
+    rule_data:
+      - |
+        When a compute platform has >100M active install base (measured by deployed
+        devices + active developers + cross-cloud ubiquity), competitive threats from
+        alternative architectures require 2+ years of sustained cross-workload overlap
+        before the platform's moat confidence drops below 0.70.
+      - |
+        Applies specifically to the Jensen Huang "CUDA flywheel" thesis: four-component
+        model = richness of ecosystem + size of install base + versatility of locations
+        + developer gravitational pull. 500M+ CUDA-enabled GPUs independently verified
+        (NVIDIA official) as of 2026-04.
+      - |
+        Caveat: rule applies to LONG-TAIL developer segment. Hyperscaler-layer (top-5
+        customers writing custom CUDA C++ kernels or migrating to internal silicon)
+        is a partial exception and does NOT benefit from the 0.70 moat floor.
+    confidence: 0.80
+    source_transcript: "Dwarkesh Patel x Jensen Huang, NVIDIA CEO interview (2026-04, ~1h43m)"
+    transcript_hash: "d9beabf0"
+    claim_references: [claim_7]
+
+  - rule_id: book-talk-coi-rule-v1
+    source_module: PRISM
+    domain: behavioral
+    rule_data:
+      - |
+        Forward-looking claims from a founder who is also the largest individual
+        shareholder cap at 0.60 initial confidence before any other calibration.
+      - |
+        Additional dampening:
+        - -0.05 if claim defends a policy position that affects addressable market
+          (export controls, tariffs, subsidies, regulatory framework)
+        - -0.10 if public data directly contradicts the numeric anchor
+        - -0.05 to -0.15 if claim maps to a revenue line the speaker guides on formal
+          earnings calls (Reg-FD proximity)
+      - |
+        Applies whenever the speaker's equity value is >5% of their net worth OR
+        they retain founder-status. Triggered for: Jensen Huang (NVDA), Elon Musk
+        (TSLA/X/xAI), Michael Saylor (MSTR), Mark Zuckerberg (META), Jeff Bezos (AMZN,
+        legacy holdings), Tim Cook (AAPL, lower founder weight), etc.
+      - |
+        Calibration floor stays at 0.40 — cumulative dampening cannot push below floor.
+    confidence: 0.85
+    source_transcript: "Dwarkesh Patel x Jensen Huang, NVIDIA CEO interview (2026-04)"
+    transcript_hash: "d9beabf0"
+    claim_references: [claim_3, claim_13, claim_14, claim_22]
+
+  - rule_id: tpu-external-vs-internal-rule-v1
+    source_module: PRISM
+    domain: equities
+    rule_data:
+      - |
+        "Customer X = 100% of competitor usage" claims require cross-check against the
+        competitor's OWN internal-usage disclosures before acceptance. Internal
+        substitution by a hyperscaler is a competitive threat to merchant silicon
+        EVEN IF external-customer share is concentrated in one name.
+      - |
+        Measurement bias: Jensen's "TPU/Trainium growth = 100% Anthropic" framing
+        measures external-customer share only. Actual 2025 TPU deployment is ~80%
+        INTERNAL Google use (Gemini training + Search/YouTube/Maps/Photos/Gmail
+        inference at billions-of-queries scale). Internal substitution IS the threat.
+      - |
+        Applies to ANY competitive-silicon disclosure from an incumbent merchant vendor
+        when the competitor operates a large first-party workload. Trigger list:
+        Google (TPU), Amazon (Trainium, Graviton), Microsoft (Maia), Meta (MTIA),
+        Apple (Neural Engine), Tesla (Dojo), Oracle (RDMA fabric).
+    confidence: 0.80
+    source_transcript: "Dwarkesh Patel x Jensen Huang, NVIDIA CEO interview (2026-04, 37:09-37:27)"
+    transcript_hash: "d9beabf0"
+    claim_references: [claim_8]
+
+  - rule_id: china-fungibility-rule-v1
+    source_module: PRISM
+    domain: equities
+    rule_data:
+      - |
+        "Chinese market share = N% and fungible" claims from US-regulated entities
+        require primary-source corroboration (SEMI/SIA/MacroPolo/SIPRI/CSIS or
+        equivalent) before PRISM ingestion above 0.45 confidence.
+      - |
+        Specific dampening triggers:
+        - Speaker has China-market revenue exposure >5% of total revenue
+        - Speaker is lobbying for export-control relaxation
+        - Numeric anchor (e.g., "60%", "50%") lacks explicit source citation
+        - Verbal hedging ("maybe more", "roughly", "around") attached to precise-looking percentages
+      - |
+        Jensen example (2026-04-17): "60% mainstream chips Chinese / 50% AI researchers
+        Chinese / 40% of tech industry" — all unsourced, all triggered all four dampeners.
+        SEMI data shows China ~30% wafer capacity; MacroPolo shows 47% Chinese-origin
+        researchers but only 28% working in Chinese institutions. Numeric anchors
+        overstated by 10-20pp.
+      - |
+        Rule requires cross-artifact logging to PRISM geopolitical routing + COI tag
+        in DOCTRINE evidence entry.
+    confidence: 0.75
+    source_transcript: "Dwarkesh Patel x Jensen Huang, NVIDIA CEO interview (2026-04, 59:14 + 1:19:40 + 1:24:01)"
+    transcript_hash: "d9beabf0"
+    claim_references: [claim_13, claim_22]
+
+meta:
+  total_rules: 4
+  rule_categories:
+    equities: 3
+    behavioral: 1
+  target_kb_file: "shared/soma/staging/SOMA_rules_2026-04-17_jensen-nvidia.yaml"
+  eventual_merge_targets:
+    - "shared/soma/knowledge/mantis_mechanics.md"      # install-base-moat-rule-v1
+    - "shared/soma/knowledge/communication_compliance.md"  # book-talk-coi-rule-v1
+    - "shared/soma/knowledge/valuation_models.md"      # tpu-external-vs-internal-rule-v1
+    - "shared/soma/knowledge/valuation_models.md"      # china-fungibility-rule-v1

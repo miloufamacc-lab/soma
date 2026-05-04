@@ -1,0 +1,10 @@
+type: DOCTRINE_EVIDENCE
+schema_version: '1.0'
+date: '2026-04-16'
+source: dabeiba-doctrine-brief
+source_type: scheduled_task
+source_hash: 6c4a633d
+belief_id: BELIEF_AI_CAPEX_INTACT
+source_detail: MSFT +5.23% on Azure AI breakthrough; TSLA +8% on AI5 chip tape-out; PLTR cons PT $164 / est $195 with 19/28 Buy. AI capex cycle validated.
+supports: true
+weight: 1.0

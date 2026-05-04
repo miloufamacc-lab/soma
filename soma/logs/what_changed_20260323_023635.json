@@ -1,0 +1,92 @@
+{
+  "has_material_change": false,
+  "changes": [],
+  "timestamp": "2026-03-23T02:36:35.039910+00:00",
+  "regime_summary": {
+    "current_regime": "NORMAL",
+    "previous_regime": "NORMAL",
+    "gli_value": 58.87,
+    "gli_delta": 0.0
+  },
+  "valuation_summary": {
+    "avg_upside_current": -0.1175,
+    "avg_upside_previous": -0.1928,
+    "delta": 0.0753,
+    "tickers_changed": [
+      "AMZN",
+      "AVGO",
+      "BDRBF",
+      "BIP",
+      "BN",
+      "CELH",
+      "CNSWF",
+      "COIN",
+      "COST",
+      "CP",
+      "CRWD",
+      "CVX",
+      "DELL",
+      "DLMAF",
+      "ECL",
+      "ELEEF",
+      "FSLR",
+      "GFL",
+      "HD",
+      "HON",
+      "HOOD",
+      "MELI",
+      "META",
+      "MSTR",
+      "NEE",
+      "NOW",
+      "NVDA",
+      "ORCL",
+      "PBA",
+      "RTX",
+      "SHOP",
+      "SNCAF",
+      "SOFI",
+      "SPGI",
+      "SU",
+      "TMTNF",
+      "TRP",
+      "TSLA",
+      "UNH",
+      "UNP",
+      "VST",
+      "WSPOF"
+    ]
+  },
+  "outlook_summary": {
+    "current_version": "v20260323_0229",
+    "previous_version": "v20260323_0228",
+    "jaccard_score": 1.0
+  },
+  "trigger_type": [],
+  "before": {
+    "gli": 58.87,
+    "regime": "NORMAL",
+    "diffusion": null,
+    "momentum": null,
+    "avg_upside": -0.1928
+  },
+  "after": {
+    "gli": 58.87,
+    "regime": "NORMAL",
+    "diffusion": null,
+    "momentum": null,
+    "avg_upside": -0.1175
+  },
+  "delta": {
+    "gli": 0.0,
+    "diffusion": null,
+    "momentum": null,
+    "avg_upside": 0.0753
+  },
+  "materiality_score": 0,
+  "context": {
+    "data_points_available": 40,
+    "regime_streak": 3
+  },
+  "historical_context": []
+}

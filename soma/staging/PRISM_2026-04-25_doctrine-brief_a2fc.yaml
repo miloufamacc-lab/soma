@@ -1,0 +1,42 @@
+type: PRISM
+schema_version: "1.0"
+date: "2026-04-25"
+source: "dabeiba-doctrine-brief"
+source_type: "scheduled_task"
+prism_intake:
+  - source_type: scheduled_task
+    category: "macro"
+    target_pipeline: "TITAN"
+    relevance_score: 9
+    key_claims:
+      - "FOMC April 28-29 hold expected; Q1 GDP advance (April 30) Atlanta GDPNow 1.24% — sharply below consensus; tariffs largest US tax hike since 1993"
+      - "Iran ceasefire extended; Brent below 00 but Hormuz traffic still depressed; IMF slashed global growth to 3.1%"
+    tags: ["doctrine-brief", "macro", "daily", "fomc", "gdp", "iran"]
+    processed_date: "2026-04-25"
+  - source_type: scheduled_task
+    category: "equities"
+    target_pipeline: "TITAN"
+    relevance_score: 9
+    key_claims:
+      - "S&P 500 record 7165, Nasdaq record 24836; INTC +23.6% Q1 earnings beat; semis 18-day rally; MRVL +95% YTD"
+      - "6 portfolio tickers report this week: GOOG, META, AMZN, MSFT, SPGI, MA (April 28-30)"
+    tags: ["doctrine-brief", "equities", "earnings", "semiconductors", "daily"]
+    processed_date: "2026-04-25"
+  - source_type: scheduled_task
+    category: "crypto"
+    target_pipeline: "COBALT"
+    relevance_score: 7
+    key_claims:
+      - "SOL ~6, resistance 6.82-8.46, ETF inflows declined 6 consecutive months; on-chain TVL 80M SOL ATH"
+      - "Jupiter DEX 95% Solana market share, -4B daily volume, 4M Q1 revenue; BTC ~7,831"
+    tags: ["doctrine-brief", "crypto", "solana", "daily"]
+    processed_date: "2026-04-25"
+  - source_type: scheduled_task
+    category: "geopolitical"
+    target_pipeline: "TITAN"
+    relevance_score: 8
+    key_claims:
+      - "US-Iran ceasefire extended ~April 21; Hormuz traffic still depressed; oil below 00 but 1B barrels production lost"
+      - "Fed Chair Powell term expires May 2026; succession uncertainty major policy risk"
+    tags: ["doctrine-brief", "geopolitical", "iran", "energy", "daily"]
+    processed_date: "2026-04-25"

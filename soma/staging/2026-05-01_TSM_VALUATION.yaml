@@ -1,0 +1,68 @@
+type: VALUATION
+schema_version: "1.0"
+date: "2026-05-01"
+source: "equity-valuation"
+source_type: "valuation_model"
+ticker: "TSM"
+wiki_slug: "tsm-valuation"
+build_version: 1
+prompt_version: "v14"
+
+valuation_summary:
+  current_price: 397.99
+  currency: USD
+  blended_dcf_fv: 278.07
+  sotp_fv: 501.50
+  dcf_sotp_average_fv: 389.79
+  implied_upside_pct: -2.1
+  recommendation: HOLD
+  stance: "Trim above $420 / add below $320; max 5% portfolio (Taiwan-Strait concentration cap)"
+
+doctrine_evidence:
+  - belief_id: EQ_VALUATION_MEAN_REVERT
+    source_detail: "TSM model: DCF+SOTP avg fair value $389.79 vs market $397.99 (-2.1% upside). Pure DCF says -30%, SOTP says +26%; central blend signals fair-with-trim-bias on AI-cycle multiple."
+    supports: true
+    weight: 0.85
+
+  - belief_id: WIDE_MOAT_PERSISTENCE
+    source_detail: "TSM 90% leading-edge foundry share, 28% ROIC vs 10.5% WACC (17.6pp economic-profit spread), node-leadership cadence held since 2018. Wide moat designation across switching costs, network effect, cost advantage, intangibles."
+    supports: true
+    weight: 1.0
+
+  - belief_id: GEOPOLITICAL_TAIL_RISK
+    source_detail: "TSM single-region (Taiwan) concentration of leading-edge fabs. Coercive PRC scenario P=12% would scale Bear -20%; kinetic event P=5% modeled outside DCF as black-swan exclusion."
+    supports: true
+    weight: 1.0
+
+internal_screen_disagreement:
+  internal_screen_method: "In-house DCF + GuruFocus DCF + profitability quality"
+  internal_screen_dcf_upside: -0.123
+  internal_screen_dcf_fair_value: 349.03
+  internal_screen_bucket: "WATCH"
+  in_house_verdict: "HOLD"
+  reconciliation_note: "ALIGNED — both internal screen and in-house verdict flag Overvalued. Pure cash-flow DCF and GF disc/prem both penalize the AI-cycle multiple expansion already priced in. SOTP cross-check disagrees (+26%) because Tier 2/Tier 3 multiples (18-28x EV/EBITDA) capture A16/A14 + advanced-packaging optionality the DCF understates. Note: GuruFocus DCF showed Apr-04 $216 (Overvalued) → Apr-17 $375 (Fairly Valued) — likely growth-rate sensitivity in earnings-power model."
+
+key_claims:
+  - claim: "TSMC FY2025 revenue NT$3,809B (+31.6% YoY); HPC 58% of mix; North America 75% of revenue."
+    source: "TSMC 20-F filed 2026-04-16"
+  - claim: "N2 (2nm) volume production began Q4 2025 in Hsinchu and Kaohsiung; 70% capacity CAGR projected 2026-2028."
+    source: "TSMC management commentary; capacity guidance press"
+  - claim: "FY2026 capex guidance US$52-56B (~38% of revenue at midpoint of guidance)."
+    source: "TSMC management"
+  - claim: "Customer concentration: AAPL ~25%, NVDA ~12% — top-2 = ~37% of revenue."
+    source: "Sell-side estimates; TSMC concentration footnote"
+  - claim: "A16 (1.6nm) introduction targeted H2 2026; A14 mass production targeted 2028."
+    source: "TSMC roadmap / GlobalSemiResearch"
+
+execution_milestones:
+  - "1987-02-21: Founded by Morris Chang"
+  - "2018-04: First volume 7nm shipment"
+  - "2020: First volume 5nm"
+  - "2022-Q4: N3 volume start"
+  - "2024-Q4: Arizona Fab 21 Phase 1 — 4nm volume"
+  - "2025-Q4: N2 volume start"
+  - "2026-04-16: FY2025 20-F filed"
+
+next_review:
+  trigger: "TSM ±15% move; Taiwan tension escalation; N2 yield commentary surprise; A16 customer announcement; Arizona Phase 2 install milestone"
+  cadence: "Quarterly with earnings; monthly geo-risk pulse"

@@ -1,0 +1,18 @@
+INVESTMENT THESIS DISCIPLINE — Personal Reflection
+
+After reviewing my trading journal from Q1 2026, I notice a clear pattern:
+every time I deviated from my pre-committed thesis rules, the outcome was worse
+than if I had stuck to the framework.
+
+Key lessons:
+- Position sizing discipline matters more than entry timing
+- Drawdown management through regime-based exposure is working
+- The conviction framework needs to weight base rates over recent data
+- Behavioral bias awareness (recency, anchoring) has prevented 3 bad trades
+- Contrarian positions that align with thesis outperform reactionary trades
+
+The compounding advantage of avoiding large drawdowns continues to be the
+single most important insight. A 30% drawdown requires 43% gain to recover.
+Risk management is alpha generation in disguise.
+
+Strategy principle: if the thesis hasn't changed, the position shouldn't change.

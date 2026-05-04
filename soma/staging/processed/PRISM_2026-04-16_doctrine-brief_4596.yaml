@@ -1,0 +1,23 @@
+type: PRISM
+schema_version: '1.0'
+date: '2026-04-16'
+source: dabeiba-doctrine-brief
+source_type: scheduled_task
+prism_intake:
+- source_type: scheduled_task
+  category: equities
+  target_pipeline: TITAN
+  relevance_score: 7
+  key_claims:
+  - MSFT +5.23% on Azure AI infrastructure breakthrough; lifted CRM, IBM in Quality-Tech sympathy bid
+  - TSLA +8% on completion of AI5 chip design ahead of Q1 earnings; Barclays still Equal Weight, flags FCF risk
+  - 'NFLX Q1 tonight AMC: cons EPS $0.77 / rev $12.17B +15.5% YoY; 15 EPS cuts / 0 raises = margin warning'
+  - 'Cyclicals weak: CAT -3.62%, JPM -1.67%; clear Growth-to-Value rotation inside risk-on tape'
+  - SPX 7022.93 +0.80%, NDX 24016.02 +1.66%, VIX 18.17
+  tags:
+  - doctrine-brief
+  - equities
+  - daily
+  - quality-tech
+  - earnings-week
+  processed_date: '2026-04-16'

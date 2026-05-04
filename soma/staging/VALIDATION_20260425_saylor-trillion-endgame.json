@@ -1,0 +1,877 @@
+{
+  "source": "scanner_results.json",
+  "validated_at": "2026-04-25T21:32:03.675125",
+  "money_validations": [
+    {
+      "original": "$100 million",
+      "context": "money amount: $100 million",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null
+    },
+    {
+      "original": "$2 billion",
+      "context": "money amount: $2 billion",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-38-equity-portfolio-construction-management-mastercl",
+          "snippet": "section-38-equity-portfolio-construction-management-mastercl"
+        }
+      ]
+    },
+    {
+      "original": "$1.8 trillion",
+      "context": "money amount: $1.8 trillion",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null
+    },
+    {
+      "original": "$10 ",
+      "context": "money amount: $10 ",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-24-fixed-income-portfolio-construction-advanced-topi",
+          "snippet": "section-24-fixed-income-portfolio-construction-advanced-topi"
+        },
+        {
+          "slug": "section-37-masterclass-private-wealth-advanced-behavioral-st",
+          "snippet": "section-37-masterclass-private-wealth-advanced-behavioral-st"
+        },
+        {
+          "slug": "section-34-managing-concentrated-positions-for-professionals",
+          "snippet": "section-34-managing-concentrated-positions-for-professionals"
+        }
+      ]
+    },
+    {
+      "original": "$11",
+      "context": "money amount: $11",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-34-managing-concentrated-positions-for-professionals",
+          "snippet": "section-34-managing-concentrated-positions-for-professionals"
+        },
+        {
+          "slug": "section-24-fixed-income-portfolio-construction-advanced-topi",
+          "snippet": "section-24-fixed-income-portfolio-construction-advanced-topi"
+        },
+        {
+          "slug": "section-37-masterclass-private-wealth-advanced-behavioral-st",
+          "snippet": "section-37-masterclass-private-wealth-advanced-behavioral-st"
+        }
+      ]
+    },
+    {
+      "original": "$1 ",
+      "context": "money amount: $1 ",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-24-fixed-income-portfolio-construction-advanced-topi",
+          "snippet": "section-24-fixed-income-portfolio-construction-advanced-topi"
+        },
+        {
+          "slug": "section-34-managing-concentrated-positions-for-professionals",
+          "snippet": "section-34-managing-concentrated-positions-for-professionals"
+        },
+        {
+          "slug": "section-37-masterclass-private-wealth-advanced-behavioral-st",
+          "snippet": "section-37-masterclass-private-wealth-advanced-behavioral-st"
+        }
+      ]
+    },
+    {
+      "original": "$115,000 ",
+      "context": "money amount: $115,000 ",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null
+    },
+    {
+      "original": "$10 million",
+      "context": "money amount: $10 million",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-34-managing-concentrated-positions-for-professionals",
+          "snippet": "section-34-managing-concentrated-positions-for-professionals"
+        }
+      ]
+    },
+    {
+      "original": "$5 ",
+      "context": "money amount: $5 ",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-24-fixed-income-portfolio-construction-advanced-topi",
+          "snippet": "section-24-fixed-income-portfolio-construction-advanced-topi"
+        },
+        {
+          "slug": "section-34-managing-concentrated-positions-for-professionals",
+          "snippet": "section-34-managing-concentrated-positions-for-professionals"
+        },
+        {
+          "slug": "section-37-masterclass-private-wealth-advanced-behavioral-st",
+          "snippet": "section-37-masterclass-private-wealth-advanced-behavioral-st"
+        }
+      ]
+    },
+    {
+      "original": "$170 trillion",
+      "context": "money amount: $170 trillion",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null
+    },
+    {
+      "original": "$100 billion",
+      "context": "money amount: $100 billion",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-38-equity-portfolio-construction-management-mastercl",
+          "snippet": "section-38-equity-portfolio-construction-management-mastercl"
+        }
+      ]
+    },
+    {
+      "original": "$5,000 ",
+      "context": "money amount: $5,000 ",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null
+    },
+    {
+      "original": "$10 billion",
+      "context": "money amount: $10 billion",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-38-equity-portfolio-construction-management-mastercl",
+          "snippet": "section-38-equity-portfolio-construction-management-mastercl"
+        }
+      ]
+    },
+    {
+      "original": "$1 million",
+      "context": "money amount: $1 million",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-34-managing-concentrated-positions-for-professionals",
+          "snippet": "section-34-managing-concentrated-positions-for-professionals"
+        }
+      ]
+    },
+    {
+      "original": "$6 billion",
+      "context": "money amount: $6 billion",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-38-equity-portfolio-construction-management-mastercl",
+          "snippet": "section-38-equity-portfolio-construction-management-mastercl"
+        }
+      ]
+    },
+    {
+      "original": "$21 million",
+      "context": "money amount: $21 million",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null
+    },
+    {
+      "original": "$2 trillion",
+      "context": "money amount: $2 trillion",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null
+    },
+    {
+      "original": "$200 trillion",
+      "context": "money amount: $200 trillion",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null
+    },
+    {
+      "original": "$50 million",
+      "context": "money amount: $50 million",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-34-managing-concentrated-positions-for-professionals",
+          "snippet": "section-34-managing-concentrated-positions-for-professionals"
+        }
+      ]
+    },
+    {
+      "original": "$100 ",
+      "context": "money amount: $100 ",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-37-masterclass-private-wealth-advanced-behavioral-st",
+          "snippet": "section-37-masterclass-private-wealth-advanced-behavioral-st"
+        },
+        {
+          "slug": "section-38-equity-portfolio-construction-management-mastercl",
+          "snippet": "section-38-equity-portfolio-construction-management-mastercl"
+        },
+        {
+          "slug": "section-19-derivatives-overlay-strategies",
+          "snippet": "section-19-derivatives-overlay-strategies"
+        }
+      ]
+    },
+    {
+      "original": "$20 ",
+      "context": "money amount: $20 ",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-24-fixed-income-portfolio-construction-advanced-topi",
+          "snippet": "section-24-fixed-income-portfolio-construction-advanced-topi"
+        },
+        {
+          "slug": "section-34-managing-concentrated-positions-for-professionals",
+          "snippet": "section-34-managing-concentrated-positions-for-professionals"
+        },
+        {
+          "slug": "section-37-masterclass-private-wealth-advanced-behavioral-st",
+          "snippet": "section-37-masterclass-private-wealth-advanced-behavioral-st"
+        }
+      ]
+    },
+    {
+      "original": "$9,000 ",
+      "context": "money amount: $9,000 ",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null
+    }
+  ],
+  "percentage_validations": [
+    {
+      "original": "2%",
+      "context": "percentage: 2%",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-40-review-workshop-supplemental-decision-rules-new-c",
+          "snippet": "section-40-review-workshop-supplemental-decision-rules-new-c"
+        },
+        {
+          "slug": "section-20-currency-management-fx-overlay",
+          "snippet": "section-20-currency-management-fx-overlay"
+        },
+        {
+          "slug": "section-31-investment-planning-taxation-portfolio-optimizati",
+          "snippet": "section-31-investment-planning-taxation-portfolio-optimizati"
+        }
+      ]
+    },
+    {
+      "original": "150%",
+      "context": "percentage: 150%",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-23-ethics-professional-standards-standards-i-vii-dee",
+          "snippet": "section-23-ethics-professional-standards-standards-i-vii-dee"
+        }
+      ]
+    },
+    {
+      "original": "29%",
+      "context": "percentage: 29%",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-11-portfolio-construction-allocation-deep-dive",
+          "snippet": "section-11-portfolio-construction-allocation-deep-dive"
+        },
+        {
+          "slug": "section-29-institutional-swf-case-study-enterprise-risk-mana",
+          "snippet": "section->>>29<<<-institutional-swf-case-study-enterprise-risk-mana"
+        },
+        {
+          "slug": "section-37-masterclass-private-wealth-advanced-behavioral-st",
+          "snippet": "section-37-masterclass-private-wealth-advanced-behavioral-st"
+        }
+      ]
+    },
+    {
+      "original": "30%",
+      "context": "percentage: 30%",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-31-investment-planning-taxation-portfolio-optimizati",
+          "snippet": "section-31-investment-planning-taxation-portfolio-optimizati"
+        },
+        {
+          "slug": "section-25-asset-allocation-to-alternative-investments",
+          "snippet": "section-25-asset-allocation-to-alternative-investments"
+        },
+        {
+          "slug": "section-26-private-wealth-management-life-cycle-framework",
+          "snippet": "section-26-private-wealth-management-life-cycle-framework"
+        }
+      ]
+    },
+    {
+      "original": "5%",
+      "context": "percentage: 5%",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-40-review-workshop-supplemental-decision-rules-new-c",
+          "snippet": "section-40-review-workshop-supplemental-decision-rules-new-c"
+        },
+        {
+          "slug": "section-20-currency-management-fx-overlay",
+          "snippet": "section-20-currency-management-fx-overlay"
+        },
+        {
+          "slug": "section-31-investment-planning-taxation-portfolio-optimizati",
+          "snippet": "section-31-investment-planning-taxation-portfolio-optimizati"
+        }
+      ]
+    },
+    {
+      "original": "85%",
+      "context": "percentage: 85%",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-20-currency-management-fx-overlay",
+          "snippet": "section-20-currency-management-fx-overlay"
+        },
+        {
+          "slug": "section-31-investment-planning-taxation-portfolio-optimizati",
+          "snippet": "section-31-investment-planning-taxation-portfolio-optimizati"
+        },
+        {
+          "slug": "section-37-masterclass-private-wealth-advanced-behavioral-st",
+          "snippet": "section-37-masterclass-private-wealth-advanced-behavioral-st"
+        }
+      ]
+    },
+    {
+      "original": "10%",
+      "context": "percentage: 10%",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-40-review-workshop-supplemental-decision-rules-new-c",
+          "snippet": "section-40-review-workshop-supplemental-decision-rules-new-c"
+        },
+        {
+          "slug": "section-20-currency-management-fx-overlay",
+          "snippet": "section-20-currency-management-fx-overlay"
+        },
+        {
+          "slug": "section-31-investment-planning-taxation-portfolio-optimizati",
+          "snippet": "section-31-investment-planning-taxation-portfolio-optimizati"
+        }
+      ]
+    },
+    {
+      "original": "95%",
+      "context": "percentage: 95%",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-31-investment-planning-taxation-portfolio-optimizati",
+          "snippet": "section-31-investment-planning-taxation-portfolio-optimizati"
+        },
+        {
+          "slug": "section-11-portfolio-construction-allocation-deep-dive",
+          "snippet": "section-11-portfolio-construction-allocation-deep-dive"
+        },
+        {
+          "slug": "section-37-masterclass-private-wealth-advanced-behavioral-st",
+          "snippet": "section-37-masterclass-private-wealth-advanced-behavioral-st"
+        }
+      ]
+    },
+    {
+      "original": "-85%",
+      "context": "percentage: -85%",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-20-currency-management-fx-overlay",
+          "snippet": "section-20-currency-management-fx-overlay"
+        },
+        {
+          "slug": "section-31-investment-planning-taxation-portfolio-optimizati",
+          "snippet": "section-31-investment-planning-taxation-portfolio-optimizati"
+        },
+        {
+          "slug": "section-37-masterclass-private-wealth-advanced-behavioral-st",
+          "snippet": "section-37-masterclass-private-wealth-advanced-behavioral-st"
+        }
+      ]
+    },
+    {
+      "original": "55%",
+      "context": "percentage: 55%",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-31-investment-planning-taxation-portfolio-optimizati",
+          "snippet": "section-31-investment-planning-taxation-portfolio-optimizati"
+        },
+        {
+          "slug": "section-37-masterclass-private-wealth-advanced-behavioral-st",
+          "snippet": "section-37-masterclass-private-wealth-advanced-behavioral-st"
+        }
+      ]
+    },
+    {
+      "original": "0%",
+      "context": "percentage: 0%",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-40-review-workshop-supplemental-decision-rules-new-c",
+          "snippet": "section-40-review-workshop-supplemental-decision-rules-new-c"
+        },
+        {
+          "slug": "section-20-currency-management-fx-overlay",
+          "snippet": "section-20-currency-management-fx-overlay"
+        },
+        {
+          "slug": "section-31-investment-planning-taxation-portfolio-optimizati",
+          "snippet": "section-31-investment-planning-taxation-portfolio-optimizati"
+        }
+      ]
+    },
+    {
+      "original": "10.2%",
+      "context": "percentage: 10.2%",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null
+    },
+    {
+      "original": "60%",
+      "context": "percentage: 60%",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-40-review-workshop-supplemental-decision-rules-new-c",
+          "snippet": "section-40-review-workshop-supplemental-decision-rules-new-c"
+        },
+        {
+          "slug": "section-26-private-wealth-management-life-cycle-framework",
+          "snippet": "section-26-private-wealth-management-life-cycle-framework"
+        },
+        {
+          "slug": "section-37-masterclass-private-wealth-advanced-behavioral-st",
+          "snippet": "section-37-masterclass-private-wealth-advanced-behavioral-st"
+        }
+      ]
+    },
+    {
+      "original": "7%",
+      "context": "percentage: 7%",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-20-currency-management-fx-overlay",
+          "snippet": "section-20-currency-management-fx-overlay"
+        },
+        {
+          "slug": "section-31-investment-planning-taxation-portfolio-optimizati",
+          "snippet": "section-31-investment-planning-taxation-portfolio-optimizati"
+        },
+        {
+          "slug": "section-11-portfolio-construction-allocation-deep-dive",
+          "snippet": "section-11-portfolio-construction-allocation-deep-dive"
+        }
+      ]
+    },
+    {
+      "original": "3%",
+      "context": "percentage: 3%",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-40-review-workshop-supplemental-decision-rules-new-c",
+          "snippet": "section-40-review-workshop-supplemental-decision-rules-new-c"
+        },
+        {
+          "slug": "section-20-currency-management-fx-overlay",
+          "snippet": "section-20-currency-management-fx-overlay"
+        },
+        {
+          "slug": "section-31-investment-planning-taxation-portfolio-optimizati",
+          "snippet": "section-31-investment-planning-taxation-portfolio-optimizati"
+        }
+      ]
+    },
+    {
+      "original": "50%",
+      "context": "percentage: 50%",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-26-private-wealth-management-life-cycle-framework",
+          "snippet": "section-26-private-wealth-management-life-cycle-framework"
+        },
+        {
+          "slug": "section-37-masterclass-private-wealth-advanced-behavioral-st",
+          "snippet": "section-37-masterclass-private-wealth-advanced-behavioral-st"
+        },
+        {
+          "slug": "section-20-currency-management-fx-overlay",
+          "snippet": "section-20-currency-management-fx-overlay"
+        }
+      ]
+    },
+    {
+      "original": "500%",
+      "context": "percentage: 500%",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-12-fixed-income-dynamics-v3-expanded",
+          "snippet": "section-12-fixed-income-dynamics-v3-expanded"
+        },
+        {
+          "slug": "section-31-investment-planning-taxation-portfolio-optimizati",
+          "snippet": "section-31-investment-planning-taxation-portfolio-optimizati"
+        },
+        {
+          "slug": "section-20-currency-management-fx-overlay",
+          "snippet": "section-20-currency-management-fx-overlay"
+        }
+      ]
+    },
+    {
+      "original": "20%",
+      "context": "percentage: 20%",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-40-review-workshop-supplemental-decision-rules-new-c",
+          "snippet": "section-40-review-workshop-supplemental-decision-rules-new-c"
+        },
+        {
+          "slug": "section-20-currency-management-fx-overlay",
+          "snippet": "section->>>20<<<-currency-management-fx-overlay"
+        },
+        {
+          "slug": "section-26-private-wealth-management-life-cycle-framework",
+          "snippet": "section-26-private-wealth-management-life-cycle-framework"
+        }
+      ]
+    },
+    {
+      "original": "4%",
+      "context": "percentage: 4%",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-40-review-workshop-supplemental-decision-rules-new-c",
+          "snippet": "section-40-review-workshop-supplemental-decision-rules-new-c"
+        },
+        {
+          "slug": "section-20-currency-management-fx-overlay",
+          "snippet": "section-20-currency-management-fx-overlay"
+        },
+        {
+          "slug": "section-31-investment-planning-taxation-portfolio-optimizati",
+          "snippet": "section-31-investment-planning-taxation-portfolio-optimizati"
+        }
+      ]
+    },
+    {
+      "original": "93%",
+      "context": "percentage: 93%",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-12-fixed-income-dynamics-v3-expanded",
+          "snippet": "section-12-fixed-income-dynamics-v3-expanded"
+        }
+      ]
+    },
+    {
+      "original": "99%",
+      "context": "percentage: 99%",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-25-asset-allocation-to-alternative-investments",
+          "snippet": "section-25-asset-allocation-to-alternative-investments"
+        },
+        {
+          "slug": "section-26-private-wealth-management-life-cycle-framework",
+          "snippet": "section-26-private-wealth-management-life-cycle-framework"
+        },
+        {
+          "slug": "section-37-masterclass-private-wealth-advanced-behavioral-st",
+          "snippet": "section-37-masterclass-private-wealth-advanced-behavioral-st"
+        }
+      ]
+    },
+    {
+      "original": "21%",
+      "context": "percentage: 21%",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-11-portfolio-construction-allocation-deep-dive",
+          "snippet": "section-11-portfolio-construction-allocation-deep-dive"
+        },
+        {
+          "slug": "section-29-institutional-swf-case-study-enterprise-risk-mana",
+          "snippet": "section-29-institutional-swf-case-study-enterprise-risk-mana"
+        },
+        {
+          "slug": "section-37-masterclass-private-wealth-advanced-behavioral-st",
+          "snippet": "section-37-masterclass-private-wealth-advanced-behavioral-st"
+        }
+      ]
+    },
+    {
+      "original": "15%",
+      "context": "percentage: 15%",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-31-investment-planning-taxation-portfolio-optimizati",
+          "snippet": "section-31-investment-planning-taxation-portfolio-optimizati"
+        },
+        {
+          "slug": "section-26-private-wealth-management-life-cycle-framework",
+          "snippet": "section-26-private-wealth-management-life-cycle-framework"
+        },
+        {
+          "slug": "section-11-portfolio-construction-allocation-deep-dive",
+          "snippet": "section-11-portfolio-construction-allocation-deep-dive"
+        }
+      ]
+    },
+    {
+      "original": "100%",
+      "context": "percentage: 100%",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-20-currency-management-fx-overlay",
+          "snippet": "section-20-currency-management-fx-overlay"
+        },
+        {
+          "slug": "section-26-private-wealth-management-life-cycle-framework",
+          "snippet": "section-26-private-wealth-management-life-cycle-framework"
+        },
+        {
+          "slug": "section-29-institutional-swf-case-study-enterprise-risk-mana",
+          "snippet": "section-29-institutional-swf-case-study-enterprise-risk-mana"
+        }
+      ]
+    },
+    {
+      "original": "40%",
+      "context": "percentage: 40%",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-40-review-workshop-supplemental-decision-rules-new-c",
+          "snippet": "section->>>40<<<-review-workshop-supplemental-decision-rules-new-c"
+        },
+        {
+          "slug": "section-31-investment-planning-taxation-portfolio-optimizati",
+          "snippet": "section-31-investment-planning-taxation-portfolio-optimizati"
+        },
+        {
+          "slug": "section-37-masterclass-private-wealth-advanced-behavioral-st",
+          "snippet": "section-37-masterclass-private-wealth-advanced-behavioral-st"
+        }
+      ]
+    },
+    {
+      "original": "1%",
+      "context": "percentage: 1%",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-40-review-workshop-supplemental-decision-rules-new-c",
+          "snippet": "section-40-review-workshop-supplemental-decision-rules-new-c"
+        },
+        {
+          "slug": "section-20-currency-management-fx-overlay",
+          "snippet": "section-20-currency-management-fx-overlay"
+        },
+        {
+          "slug": "section-31-investment-planning-taxation-portfolio-optimizati",
+          "snippet": "section-31-investment-planning-taxation-portfolio-optimizati"
+        }
+      ]
+    },
+    {
+      "original": "90%",
+      "context": "percentage: 90%",
+      "status": "UNVERIFIED",
+      "confidence_adjustment": 0.0,
+      "reason": "No matching reference data found",
+      "reference": null,
+      "wiki_references": [
+        {
+          "slug": "section-11-portfolio-construction-allocation-deep-dive",
+          "snippet": "section-11-portfolio-construction-allocation-deep-dive"
+        },
+        {
+          "slug": "section-12-fixed-income-dynamics-v3-expanded",
+          "snippet": "section-12-fixed-income-dynamics-v3-expanded"
+        },
+        {
+          "slug": "section-25-asset-allocation-to-alternative-investments",
+          "snippet": "section-25-asset-allocation-to-alternative-investments"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total_claims": 49,
+    "verified": 0,
+    "disputed": 0,
+    "stale": 0,
+    "unverified": 49
+  }
+}

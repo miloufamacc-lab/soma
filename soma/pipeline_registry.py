@@ -4,11 +4,20 @@ DABEIBA Pipeline Registry — Single source of truth for all pipeline codenames.
 This file is the machine-readable reference for the DABEIBA naming convention.
 Any Claude session, script, or module can import this to understand the platform structure.
 
-Architecture V2.0 (March 29, 2026; updated April 2, 2026):
-  - 4 modules (ORACLE, SOMA, MANTIS, CIPHER) — permanent, function-based
+Architecture V2.1 (April 15, 2026):
+  - 5 modules (ORACLE, SOMA, MANTIS, CIPHER, RAPTOR) — permanent, function-based
   - 14 named pipelines — military/nuclear/intelligence codenames, expandable
   - Scaling rule: new data source → ORACLE pipeline, new processing → SOMA pipeline,
-    new decision logic → MANTIS pipeline, new comms → CIPHER pipeline. Never a 5th module.
+    new decision logic → MANTIS pipeline, new comms → CIPHER pipeline, new clients → RAPTOR.
+  - Display names updated to generic, function-first labels (no module prefixes).
+
+ALIAS LAYER (Phase 1 — April 5, 2026):
+  Each pipeline now carries:
+    - display_name:  human-readable label (change freely without touching any other file)
+    - aliases:       list of alternative names that resolve to this pipeline's internal_id
+    - categories:    routing categories (used by PRISM instead of hardcoded dicts)
+  Use resolve() to look up a pipeline by ANY name (codename, display_name, or alias).
+  Use get_category_routing() to generate category→pipeline mappings dynamically.
 
 Full documentation: ~/Desktop/DABEIBA/DABEIBA_ARCHITECTURE_V2.md
 """
@@ -18,27 +27,48 @@ Full documentation: ~/Desktop/DABEIBA/DABEIBA_ARCHITECTURE_V2.md
 MODULES = {
     "ORACLE": {
         "full_name": "Outlook, Research & Analytics for Cross-asset Liquidity Evaluation",
-        "stage": "COLLECT",
-        "function": "Signal extraction from ALL data sources",
+        "display_name": "Market Intelligence",
+        "aliases": ["oracle", "research", "market-intelligence", "equity-ranking", "Research"],
+        "stage": "COLLECT & ANALYZE",
+        "function": "Single-source intelligence: collect raw data, analyze within domain, render internal views",
+        "boundary": "Owns everything about ONE data vertical end-to-end. Does NOT cross domains.",
         "folder": "oracle/",
     },
     "SOMA": {
         "full_name": "Shared Ontology for Market Analysis",
-        "stage": "PROCESS",
-        "function": "Intelligence processing, storage, thesis testing, ingestion",
+        "display_name": "SOMA",
+        "aliases": ["soma", "synthesis", "cross-domain", "Synthesis"],
+        "stage": "SYNTHESIZE",
+        "function": "Cross-domain synthesis: combine ORACLE outputs, test theses, detect changes, orchestrate",
+        "boundary": "Activates when 2+ ORACLE domains need to be combined. Single-source analysis stays in ORACLE.",
         "folder": "shared/soma/",
     },
     "MANTIS": {
         "full_name": "Mechanical Algorithmic Navigator for Tactical Investment Signals",
-        "stage": "DECIDE",
-        "function": "Portfolio decisions + trade execution",
+        "display_name": "Execution & Risk",
+        "aliases": ["mantis", "decisions", "execution", "execution-and-risk", "Decisions"],
+        "stage": "DECIDE & EXECUTE",
+        "function": "Portfolio construction, position sizing, trade execution, risk management",
+        "boundary": "Takes SOMA synthesis, outputs portfolio actions. No analysis, no communication.",
         "folder": "mantis/",
     },
     "CIPHER": {
         "full_name": "Client Intelligence Platform for Holistic Equity Research",
+        "display_name": "Wealth Experience",
+        "aliases": ["cipher", "advisory", "wealth-experience", "client-advisory", "Advisory"],
         "stage": "COMMUNICATE",
-        "function": "Client communication + relationship management",
+        "function": "Client-facing output: reports, emails, profiles, compliance",
+        "boundary": "Anything that leaves the system and reaches a client. Internal views stay in ORACLE/SOMA.",
         "folder": "cipher/",
+    },
+    "RAPTOR": {
+        "full_name": "Revenue & Asset Prospecting Through Outreach & Relationship-building",
+        "display_name": "Asset Conquest",
+        "aliases": ["raptor", "acquisition", "asset-conquest", "net-new-assets", "Acquisition"],
+        "stage": "ACQUIRE",
+        "function": "Net new client acquisition, prospect intelligence, referral network",
+        "boundary": "New relationships only. Existing client management stays in CIPHER.",
+        "folder": "raptor/",
     },
 }
 
@@ -62,6 +92,9 @@ PIPELINES = {
         "module": "ORACLE",
         "function": "Equity + macro data ingestion, GLI regime detection, 76-ticker valuations",
         "status": "BUILT",
+        "display_name": "Equity & Macro Research",
+        "aliases": ["titan", "equities", "equity-collector", "macro-collector", "equity-ranking", "equities-and-macro", "Equities & Macro", "ORACLE: Equities & Macro"],
+        "categories": ["macro", "equities"],
         "key_files": [
             "oracle/main.py",
             "oracle/oracle/gli/gli_engine.py",
@@ -76,6 +109,9 @@ PIPELINES = {
         "module": "ORACLE",
         "function": "BTC/SOL on-chain metrics: MVRV proxy, NUPL proxy, network health, DeFi TVL, composite signals",
         "status": "BUILT",
+        "display_name": "Digital Assets",
+        "aliases": ["cobalt", "onchain", "crypto-collector", "chain-analytics", "ORACLE: On-Chain & Crypto"],
+        "categories": ["crypto"],
         "key_files": [
             "oracle/cobalt_engine.py",
         ],
@@ -87,12 +123,36 @@ PIPELINES = {
     "SPECTRE": {
         "acronym": "Strategic Political Event Classification & Threat Response Engine",
         "module": "ORACLE",
-        "function": "Geopolitical risk scoring via RSS feeds, keyword triage, phi4-mini NLP",
-        "status": "PLANNED",
-        "key_files": [],
+        "function": "Geopolitical risk scoring via RSS feeds, keyword triage, optional phi4-mini NLP, delta check",
+        "status": "BUILT",
+        "display_name": "Geopolitical & Event Risk",
+        "aliases": ["spectre", "geopolitical", "geo-collector", "geopolitics", "ORACLE: Geopolitical"],
+        "categories": ["geopolitical"],
+        "key_files": [
+            "oracle/spectre_engine.py",
+        ],
         "soma_tables": ["geo_events", "geo_vectors", "geo_baselines"],
-        "notes": "4-stage NLP funnel: ingest → regex triage → phi4-mini → delta check. "
+        "data_sources": ["Reuters RSS", "BBC World RSS", "Al Jazeera RSS"],
+        "notes": "4-stage funnel: ingest → regex triage → phi4-mini (optional) → delta check. "
+                 "6h cache TTL. Circuit breaker. Sigma-based material shift detection. "
                  "Feeds ORACLE regime model ONLY, not MANTIS directly.",
+    },
+
+    "MUSKONOMY": {
+        "acronym": "MUSK-focused Observatory for Navigating Optimized Market Yields",
+        "module": "ORACLE",
+        "function": "Daily TSLA intelligence — 6-segment SITREP, S-curve tracking, Grok DeepSearch",
+        "status": "BUILT",
+        "display_name": "X Corp Intelligence",
+        "aliases": ["muskonomy", "tsla-intel", "tesla-daily", "tsla-sitrep", "x-corp", "x-corporation", "everything-corp", "Musk Ecosystem", "ORACLE: TSLA Intelligence"],
+        "categories": [],
+        "key_files": [
+            "MUSKONOMY_ARCHITECTURE.md",
+        ],
+        "soma_tables": ["brief_log"],
+        "notes": "Scheduled task (7AM ET daily). Sources: robotaxitracker.com, "
+                 "Grok DeepSearch, web, ORACLE-TITAN. 6 segments: Auto, Energy, "
+                 "Robotaxi, FSD, Optimus, Services. Output: SITREP email.",
     },
 
     # ── SOMA Pipelines (Intelligence Processing) ─────────────────────────────
@@ -102,6 +162,9 @@ PIPELINES = {
         "module": "SOMA",
         "function": "What Changed engine — 7 materiality thresholds across all data sources",
         "status": "BUILT",
+        "display_name": "Regime & Change Detection",
+        "aliases": ["delta", "what-changed", "diff-engine", "change-detection", "regime-change", "Change Detection", "SOMA: Change Detection"],
+        "categories": [],
         "key_files": [
             "shared/soma/what_changed.py",
         ],
@@ -122,6 +185,9 @@ PIPELINES = {
         "module": "SOMA",
         "function": "Investment philosophy — beliefs, evidence, conviction tracking, conflict detection",
         "status": "BUILT",
+        "display_name": "Investment Thesis Engine",
+        "aliases": ["doctrine", "thesis-engine", "beliefs", "philosophy", "investment-thesis", "Thesis & Convictions", "SOMA: Thesis Engine"],
+        "categories": ["philosophy"],
         "key_files": [
             "shared/soma/doctrine_engine.py",
             "shared/soma/migrations/007_doctrine_tables.sql",
@@ -140,6 +206,9 @@ PIPELINES = {
         "module": "SOMA",
         "function": "KB validation + narrative alignment + rule enforcement",
         "status": "BUILT",
+        "display_name": "Compliance & Rule Validation",
+        "aliases": ["sentinel", "kb-validator", "rule-enforcer", "validation", "compliance", "Compliance & Validation", "SOMA: Validation"],
+        "categories": [],
         "key_files": [
             "shared/soma/kb_validator.py",
             "shared/soma/narrative_alignment.py",
@@ -152,6 +221,9 @@ PIPELINES = {
         "module": "SOMA",
         "function": "Universal ingestion funnel — scraper inbox, classification, routing to SOMA",
         "status": "BUILT",
+        "display_name": "Research Intake & Routing",
+        "aliases": ["prism", "ingestion", "inbox-processor", "ingest", "research-intake", "Intelligence Intake", "SOMA: Ingestion"],
+        "categories": [],
         "key_files": [
             "shared/soma/prism_engine.py",
             "shared/soma/migrations/008_raw_intelligence.sql",
@@ -168,6 +240,9 @@ PIPELINES = {
         "module": "SOMA",
         "function": "Tactical timing engine — 7-lens synthesis with Monte Carlo probability distributions",
         "status": "OPERATIONAL",
+        "display_name": "Tactical Timing & Signal Synthesis",
+        "aliases": ["horizon", "timing-engine", "tactical-timing", "7-lens", "signal-synthesis", "Timing & Signals", "SOMA: Tactical Timing"],
+        "categories": [],
         "key_files": [
             "shared/soma/horizon.py",
             "shared/soma/horizon_dataclasses.py",
@@ -214,6 +289,9 @@ PIPELINES = {
         "module": "MANTIS",
         "function": "Portfolio construction — V2 engine, inverse-vol weighting, drawdown tiers",
         "status": "BUILT",
+        "display_name": "Portfolio Construction",
+        "aliases": ["forge", "portfolio-builder", "portfolio-construction", "position-sizing", "Position Sizing & Risk", "MANTIS: Portfolio Construction"],
+        "categories": ["risk"],
         "key_files": [
             "mantis/convergence-backtester/src/v2_engine.py",
         ],
@@ -231,6 +309,9 @@ PIPELINES = {
         "module": "MANTIS",
         "function": "Trade execution — Solana RPC, Jupiter API, transaction construction",
         "status": "BUILT",
+        "display_name": "Trade Execution",
+        "aliases": ["vector", "trade-executor", "execution", "MANTIS: Execution"],
+        "categories": [],
         "key_files": [
             "mantis/convergence-backtester/src/execution.py",
             "mantis/convergence-backtester/src/solana_rpc.py",
@@ -246,6 +327,9 @@ PIPELINES = {
         "module": "CIPHER",
         "function": "Market outlook reports, narrative composition, 3-tier export (email/DOCX/PDF)",
         "status": "BUILT",
+        "display_name": "Market Outlook",
+        "aliases": ["beacon", "report-generator", "outlook-reports", "reports", "CIPHER: Reports"],
+        "categories": [],
         "key_files": [
             "cipher/cipher/pipeline/compose.py",
         ],
@@ -257,6 +341,9 @@ PIPELINES = {
         "module": "CIPHER",
         "function": "UHNW client profiling, IPS alignment, interaction history, money scripts",
         "status": "PARTIAL",
+        "display_name": "Client Profiles & IPS",
+        "aliases": ["dossier", "client-profiles", "client-intel", "ips", "investment-policy-statement", "Client Intelligence", "CIPHER: Client Profiles"],
+        "categories": [],
         "key_files": [],
         "soma_tables": ["client_profiles", "client_interactions"],
     },
@@ -266,6 +353,9 @@ PIPELINES = {
         "module": "CIPHER",
         "function": "Research sidebar — note ingestion, tagging, AI-powered analysis",
         "status": "BUILT",
+        "display_name": "Source Intake & Annotation",
+        "aliases": ["intel", "research-sidebar", "note-ingestion", "source-annotation", "Source Processing", "CIPHER: Research Intake"],
+        "categories": [],
         "key_files": [
             "cipher/cipher/pipeline/intake.py",
         ],
@@ -273,7 +363,103 @@ PIPELINES = {
     },
 }
 
+# ─── Alias Index (built at import time) ──────────────────────────────────────
+# Maps every known name (codename, display_name, alias, lowercase variants) → internal_id
+# This is rebuilt automatically whenever this module is imported.
+
+def _build_alias_index():
+    """Build a flat lookup: any name → internal ID.
+    Includes BOTH modules and pipelines (V4, April 16 2026).
+    """
+    index = {}
+    # Modules first (so pipeline codenames win if there is any collision)
+    for internal_id, meta in MODULES.items():
+        index[internal_id] = internal_id
+        index[internal_id.lower()] = internal_id
+        dn = meta.get("display_name", internal_id)
+        index[dn] = internal_id
+        index[dn.lower()] = internal_id
+        for alias in meta.get("aliases", []):
+            index[alias] = internal_id
+            index[alias.lower()] = internal_id
+    # Pipelines
+    for internal_id, meta in PIPELINES.items():
+        # The codename itself (always uppercase in PIPELINES keys)
+        index[internal_id] = internal_id
+        index[internal_id.lower()] = internal_id
+        # The display_name (may differ from codename after Phase 4 rename)
+        dn = meta.get("display_name", internal_id)
+        index[dn] = internal_id
+        index[dn.lower()] = internal_id
+        # All aliases
+        for alias in meta.get("aliases", []):
+            index[alias] = internal_id
+            index[alias.lower()] = internal_id
+    return index
+
+_ALIAS_INDEX = _build_alias_index()
+
+
+def _build_category_routing():
+    """Build category → internal_id mapping from pipeline metadata.
+    This replaces the hardcoded CATEGORY_TO_PIPELINE dict in prism_engine.py.
+    If multiple pipelines claim the same category, the first one wins."""
+    routing = {}
+    for internal_id, meta in PIPELINES.items():
+        for cat in meta.get("categories", []):
+            if cat not in routing:
+                routing[cat] = internal_id
+    return routing
+
+_CATEGORY_ROUTING = _build_category_routing()
+
+
 # ─── Convenience Functions ───────────────────────────────────────────────────
+
+def resolve(name: str) -> str:
+    """Resolve ANY name (codename, display_name, alias) → internal ID (module or pipeline).
+    Returns None if no match. Case-insensitive and space/hyphen-tolerant.
+
+    Examples:
+        resolve("TITAN")            → "TITAN"
+        resolve("equities")         → "TITAN"
+        resolve("equity ranking")   → "TITAN"    (space → hyphen normalization)
+        resolve("Market Intelligence") → "ORACLE"
+        resolve("Wealth Experience") → "CIPHER"
+    """
+    if not name:
+        return None
+    # Try literal, lowercase, space→hyphen, and lowercase space→hyphen
+    normalized = name.strip().replace(" ", "-")
+    return (
+        _ALIAS_INDEX.get(name)
+        or _ALIAS_INDEX.get(name.lower())
+        or _ALIAS_INDEX.get(normalized)
+        or _ALIAS_INDEX.get(normalized.lower())
+    )
+
+
+def get_display_name(codename: str) -> str:
+    """Get the human-readable display name for a module OR pipeline.
+    Checks MODULES first, then PIPELINES. Falls back to the codename if neither matches."""
+    if not codename:
+        return codename
+    key = codename.upper()
+    mod = MODULES.get(key)
+    if mod:
+        return mod.get("display_name", codename)
+    pipe = PIPELINES.get(key)
+    if pipe:
+        return pipe.get("display_name", codename)
+    return codename
+
+
+def get_category_routing() -> dict:
+    """Get the category → pipeline mapping for PRISM routing.
+    Returns dict like {"crypto": "COBALT", "macro": "TITAN", ...}
+    This is the SINGLE SOURCE OF TRUTH for ingestion routing."""
+    return dict(_CATEGORY_ROUTING)
+
 
 def get_pipeline(codename: str) -> dict:
     """Look up a pipeline by codename. Returns None if not found."""
@@ -299,9 +485,9 @@ def get_planned_pipelines() -> dict:
 def pipeline_summary() -> str:
     """Print a one-line summary of all pipelines, grouped by module."""
     lines = []
-    for mod in ["ORACLE", "SOMA", "MANTIS", "CIPHER"]:
+    for mod in ["ORACLE", "SOMA", "MANTIS", "CIPHER", "RAPTOR"]:
         pipes = get_module_pipelines(mod)
-        entries = [f"{name} [{v['status']}]" for name, v in pipes.items()]
+        entries = [f"{get_display_name(name)} [{v['status']}]" for name, v in pipes.items()]
         lines.append(f"  {mod}: {', '.join(entries)}")
     return "DABEIBA Pipeline Registry\n" + "\n".join(lines)
 
@@ -319,16 +505,41 @@ BUILD_ORDER = [
 
 # ─── Scaling Rule ────────────────────────────────────────────────────────────
 SCALING_RULE = """
-New data source?         → New ORACLE pipeline
-New processing function? → New SOMA pipeline
-New decision logic?      → New MANTIS pipeline (rare)
-New communication channel? → New CIPHER pipeline
-Never a 5th module.
+BOUNDARY TEST — Where does a new capability belong?
+
+1. Does it need data from only ONE source?     → ORACLE (collect + analyze within that domain)
+2. Does it combine 2+ ORACLE domains?          → SOMA (cross-domain synthesis)
+3. Does it produce portfolio actions?           → MANTIS (decide + execute)
+4. Does it go to an EXISTING client?            → CIPHER (communicate)
+5. Does it go to a PROSPECTIVE client?          → RAPTOR (acquire)
+
+Never a 6th module. New data verticals = new ORACLE pipeline. New synthesis = new SOMA step.
 """
 
 
 if __name__ == "__main__":
     print(pipeline_summary())
+    print()
+
+    # ── Alias Layer Demo ──
+    print("=" * 60)
+    print("ALIAS LAYER — Resolve any name to internal pipeline ID:")
+    print("=" * 60)
+    test_names = [
+        "TITAN", "equities", "crypto-collector", "thesis-engine",
+        "geopolitics", "portfolio-builder", "report-generator",
+        "COBALT", "onchain", "SPECTRE", "geo-collector",
+    ]
+    for name in test_names:
+        resolved = resolve(name)
+        display = get_display_name(resolved) if resolved else "NOT FOUND"
+        print(f"  resolve('{name}') → {resolved} (display: {display})")
+
+    print()
+    print("CATEGORY ROUTING (for PRISM):")
+    for cat, pipe in get_category_routing().items():
+        print(f"  {cat} → {pipe}")
+
     print()
     print("Planned pipelines:")
     for name, p in get_planned_pipelines().items():

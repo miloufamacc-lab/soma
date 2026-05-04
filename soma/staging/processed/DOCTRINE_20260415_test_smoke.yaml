@@ -1,0 +1,10 @@
+type: DOCTRINE_EVIDENCE
+schema_version: "1.0"
+date: "2026-04-15"
+source: "smoke-test"
+source_type: "manual"
+source_hash: "smoke002"
+belief_id: EQ_AI_SECULAR_THEME
+source_detail: "Smoke test: AI spending confirmed secular by multiple CEOs"
+supports: true
+weight: 1.0

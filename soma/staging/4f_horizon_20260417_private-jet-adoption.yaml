@@ -1,0 +1,118 @@
+---
+# HORIZON Phase 4f: Private Jet Adoption Trend
+# Catalyst Analysis — Timing Signals
+# Date: 2026-04-17
+# Signal Category: FUNDAMENTAL (No Explicit Endpoint)
+
+catalyst:
+  name: "Private Jet Adoption — Ongoing Secular Trend"
+  description: "Continuous adoption trend (no specific date endpoint stated). Long-tail secular trend driven by wealth growth, reduced friction (membership models), and automation (autonomous flight)."
+  primary_conviction: 0.50
+  note: "Unlike humanoid robots (2030) and Neato (Q4 2026), this is an open-ended trend. Track inflection points, not endpoints."
+
+timing_window:
+  label: "Continuous Monitoring Window"
+  period: "2026-ongoing (no expiration date)"
+  inflection_watch: "2027-2030 (when autonomy and membership scale may accelerate adoption)"
+  rationale: "No explicit catalyst date; instead, monitor for ACCELERATING adoption vs baseline trend. Watch for inflection points where adoption rate rises materially above historical 5-7% annual growth."
+
+action_trigger:
+  baseline_monitoring: "Track private aviation fleet size and membership adoption. Accumulate related equities (NetJets parent Berkshire, Flexjet parent Directional Aviation, Wheels Up, JSX) if year-over-year adoption accelerates >15% in any 12-month period"
+  inflection_alpha: "Increase conviction by 0.15 if autonomous eVTOL aircraft receive FAA certification (2027-2028) OR if membership-model fractional ownership crosses >20% of private aviation hours (from current ~5-10%)"
+  secular_hedge: "Position as long-duration secular hedge; rebalance quarterly but do not force exit date"
+  fallback: "Reduce conviction only if adoption rate drops below 3% YoY (signals structural headwind, e.g., recession, carbon tax shock)"
+
+monitor_metrics:
+  - metric: "Private Aviation Fleet Size"
+    frequency: "annual"
+    threshold: "FAA Registry: US registered business aircraft. Baseline 2025-2026 growth 5-7% YoY. Watch for acceleration to >12% YoY as inflection signal."
+    source: "FAA General Aviation Dashboard, GAMA (General Aviation Manufacturers Association) annual reports"
+    calculation: "Total active piston + turboprop + jet aircraft; exclude military, government, banner-tow"
+
+  - metric: "Membership-Model Hours Growth (Fractional Ownership)"
+    frequency: "quarterly"
+    threshold: "NetJets, Flexjet, Wheels Up combined flight hours YoY. Target inflection: >20% growth in any quarter (vs baseline 8-12%) signals mainstream adoption phase."
+    source: "Company SEC filings, quarterly earnings (NetJets subsidiary reports in Berkshire proxy, Flexjet reports via parent)"
+    note: "Membership model is key leading indicator — requires less capital commitment, expands addressable market"
+
+  - metric: "On-Demand Air Charter Market Size"
+    frequency: "bi-annual"
+    threshold: "Industry reports (Pratt & Whitney, Bombardier, Gulfstream market sizing). Growth from $10-12B (2025) to >$18-20B by 2028 = acceleration confirmation."
+    source: "Aircraft manufacturer market research, aviation consulting (Oliver Wyman, Booz Allen, McKinsey)"
+    timing: "Reports published in Q1 and Q3 each year"
+
+  - metric: "eVTOL / Autonomous Aviation Regulatory Milestones"
+    frequency: "event-driven"
+    triggers: [
+      "First eVTOL urban air mobility certificate (EASA/FAA) in 2027 → +0.10 conviction",
+      "First production eVTOL aircraft delivery (Joby, Archer) by 2028 → +0.15 conviction",
+      "First commercial autonomous helicopter flight test (Sikorsky, Boeing) by 2028 → +0.08 conviction"
+    ]
+    source: "FAA certification tracker, EASA Special Conditions, manufacturer press releases, SEC filings"
+    note: "Autonomy enables significant cost reduction (~30-40%) and is secular tailwind for adoption"
+
+  - metric: "Wealth Inequality & HNW Population Growth"
+    frequency: "annual"
+    threshold: "Credit Suisse / Capgemini World Wealth Report: Global HNW population (>$1M AUM). Target: >8% YoY growth in ultra-HNW (>$30M) = base case for private jet adoption acceleration."
+    source: "Credit Suisse Global Wealth Report, Capgemini World Wealth Report"
+    note: "Adoption is wealth-driven; if wealth inequality growth outpaces fleet growth, inventory tightness = pricing power"
+
+  - metric: "Carbon Tax / Regulatory Headwind Tracking"
+    frequency: "quarterly"
+    threshold: "Watch for aviation carbon taxes or private jet-specific regulations. EU SAF (Sustainable Aviation Fuel) mandate for 2% SAF by 2025, 70% by 2050. Negative regulatory shifts reduce long-term trend confidence."
+    source: "EU regulations, IEA climate policy tracker, FAA noise/emission rules"
+    risk_anchor: "Carbon tax >$100/ton CO2 or private jet surcharges >30% would reduce adoption confidence significantly"
+
+  - metric: "Membership Penetration Rate"
+    frequency: "quarterly"
+    threshold: "Fractional ownership hours as % of total private aviation hours. Current ~5-10%; watch for rise to >15-20% by 2028 (signals mainstream shift from ownership to consumption model)."
+    source: "NetJets/Flexjet market share data; FAA survey of flight operators"
+    inflection: "Membership >20% is inflection point; indicates adoption curve moving from early adopter (rich) to early majority (upper-middle class)"
+
+  - metric: "Aircraft Utilization Rates"
+    frequency: "quarterly"
+    threshold: "Average flight hours per aircraft. High utilization (>400 hrs/year) indicates demand strength. Watch for compression below 250 hrs/year = oversupply signal."
+    source: "NetJets utilization data, fractional ownership management reports, FAA general aviation survey"
+
+fallback_conditions:
+  - condition: "Year-over-year adoption growth drops below 3% for 2+ consecutive years (2027-2028)"
+    action: "Reduce conviction from 0.50 → 0.30"
+    rationale: "Indicates secular headwind (recession, policy shift). Re-evaluate thesis entirely."
+
+  - condition: "Major carbon tax or regulatory restriction on private jet flights enacted (e.g., EU/US)"
+    action: "Reduce conviction by 0.15 → 0.35"
+    rationale: "Policy shock; adoption curve flattens; thesis survives but growth rate compression"
+
+  - condition: "Membership model adoption DOES NOT exceed 15% by end 2028"
+    action: "Reduce conviction by 0.10 → 0.40"
+    rationale: "Indicates market fragmentation; adoption staying luxury-only, not scaling to mass affluent"
+
+  - condition: "Economic recession reduces HNW population growth below 2% YoY (2027-2028)"
+    action: "Reduce conviction by 0.05 → 0.45"
+    rationale: "Wealth growth is primary driver; economic headwind is tail risk but doesn't invalidate secular trend"
+
+upside_triggers:
+  - "Joby / Archer / Lilium receive FAA Part 23 certification for eVTOL aircraft in 2027 (autonomous flight 18-36 months later)"
+  - "Major corporation (Fortune 100 CEO) announces private jet as standard executive benefit (signals corporate adoption expansion)"
+  - "Fractional ownership membership crosses >20% of total private aviation hours by end 2027"
+  - "First autonomous helicopter flight test completes successfully (2027-2028); announces commercial timeline"
+  - "HNW population growth accelerates to >10% YoY due to crypto / tech wealth creation (2026-2027)"
+
+risk_anchors:
+  - "Recession risk (2027-2028): HNW wealth contraction could reduce fleet growth to 0-2% for 12-24 months. Monitor hedge fund manager sentiment quarterly."
+  - "Carbon regulatory cliff: EU carbon border tax (2026), potential US regulations (post-election 2026). Non-trivial risk to long-term trend."
+  - "Autonomous flight delay: If eVTOL certification pushed to 2029-2030, secular trend extension may be delayed but not broken."
+  - "Membership market saturation: If NetJets/Flexjet fleet utilization drops >20% YoY, indicates demand plateau at current price/service levels."
+  - "Geopolitical: If US-China trade tensions impact aircraft manufacturing (avionics, engines), supply constraints could limit growth."
+
+summary:
+  signal_confidence: 0.50
+  speaker_tier: 2
+  transcript_source: "Chris Camillo × Mark Moss (~78 min, 2026-04-17)"
+  transcript_hash: "fba58360"
+  conviction_window: "2026-ongoing (no expiration date; strategic secular thesis)"
+  monitoring_focus: "Watch for inflection points (acceleration >15% YoY adoption, eVTOL certification, membership >20% penetration)"
+  update_frequency: "quarterly fleet tracking; annual eVTOL regulatory checks; semi-annual wealth report monitoring"
+  next_review: "2026-09-30 (post-Q2 earnings + GAMA mid-year data release)"
+  position_type: "strategic secular trend (long-duration, no exit date; rebalance quarterly based on inflection indicators)"
+  note: "This is NOT a binary catalyst like Neato or humanoid robots. Monitor for accelerating adoption rate, not specific endpoint. Hold until explicit evidence of secular trend reversal."

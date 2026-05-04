@@ -1,0 +1,60 @@
+---
+# PRISM Routing — Saylor Digital Credit Monologue
+# Generated: 2026-04-18 | Skill: transcript-to-intel V3.0
+# Transcript: Michael Saylor ~50min monologue (pasted text)
+---
+
+meta:
+  slug: saylor-digital-credit
+  date: 2026-04-18
+  pptx: intel/by-topic/digital-assets/btc/capital-structure/INTEL_20260418_01_saylor-digital-credit.pptx
+  speaker: Michael Saylor
+  speaker_tier: T2_PROMOTER
+  language: en
+  mode: STANDARD
+  signal_count: 12
+  signal_density: HIGH
+
+categories:
+  primary: crypto
+  secondary: macro
+  tertiary: equities
+  multi_domain: false
+
+routes:
+  - domain: crypto
+    pipeline: COBALT
+    score: 9
+    triggers:
+      - STRC preferred stock instrument design
+      - Bitcoin as monetary base layer (L1)
+      - Digital credit ecosystem (L2/L3)
+      - Reflexive flywheel mechanics
+      - ICA 1940 regulatory moat for BTC-backed instruments
+    confidence: 0.80
+
+  - domain: macro
+    pipeline: TITAN
+    score: 7
+    triggers:
+      - Stochastic duration framework for capital ranking
+      - Duration mismatch risk (LTCM/Lehman analog)
+      - 25x income differential vs T-bills
+      - Credit market TAM sizing ($300T flagged as overstated)
+    confidence: 0.65
+
+  - domain: equities
+    pipeline: TITAN
+    score: 6
+    triggers:
+      - MSTR #3 most volatile S&P 500
+      - MSTR #1 options OI / market cap ratio
+      - STRC 130x liquidity vs average preferred
+    confidence: 0.65
+
+red_flags:
+  - PROMOTER_CONFLICT: Saylor is issuer of STRC, holds MSTR equity and personal BTC
+  - LUNA_UST_ANALOG: Reflexive flywheel = structurally identical mechanism that failed May 2022
+  - TAM_OVERSTATED: $300T is total global credit; realistic addressable = $10-15T
+  - TAX_TREATMENT_FORWARD_LOOKING: TEY contingent on IRS + FASB classification stability
+  - DRAWDOWN_WINDOW_CHERRY_PICKED: 45% BTC threshold breached in 2022 (-77% actual)

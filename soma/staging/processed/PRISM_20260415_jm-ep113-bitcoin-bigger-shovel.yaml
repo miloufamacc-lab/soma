@@ -1,0 +1,79 @@
+prism_intake:
+  - source_type: transcript
+    source_url: ""
+    language: "en"
+    category: "macro"
+    target_pipeline: "TITAN"
+    relevance_score: 9
+    key_claims:
+      - "Strait of Hormuz traffic collapsed — 20% of global oil offline, Iran rejecting dollars"
+      - "Fed probing $1.8T private credit industry — Blue Owl 22%, Carlyle 16% redemptions"
+      - "Fed trapped: cut rates into oil inflation or hike into AI deflation — no good exit"
+      - "1973 oil shock parallel — markets took 12 months to digest, current rally may be false"
+      - "US gold exports to Switzerland→China — gold lubricating global trade as petrodollar weakens"
+    tags: ["hormuz", "oil-shock", "private-credit", "fed-trap", "dollar-debasement", "gold-trade"]
+    processed_date: "2026-04-15"
+    skill_version: "V2.1"
+    transcript_hash: "526802c1"
+
+  - source_type: transcript
+    source_url: ""
+    language: "en"
+    category: "crypto"
+    target_pipeline: "COBALT"
+    relevance_score: 9
+    key_claims:
+      - "FT confirms Iran accepting Bitcoin for Strait of Hormuz passage — sovereign BTC settlement"
+      - "Sanctioned nation-states mining and holding BTC, not stablecoins (anonymous sources)"
+      - "Bitcoin is uniquely both monetary asset AND monetary network — gold lacks native network"
+      - "BTC market cap $1.49T vs $400-500T monetary market = 200x theoretical upside"
+    tags: ["iran-btc", "sovereign-settlement", "btc-vs-gold", "monetary-network", "reserve-currency"]
+    processed_date: "2026-04-15"
+    skill_version: "V2.1"
+    transcript_hash: "526802c1"
+
+  - source_type: transcript
+    source_url: ""
+    language: "en"
+    category: "geopolitical"
+    target_pipeline: "SPECTRE"
+    relevance_score: 8
+    key_claims:
+      - "Iran 10-point ceasefire demands = effective US loss if accepted — petrodollar at risk"
+      - "Trump using fake ceasefire announcements to placate markets while strait remains closed"
+      - "Trump China trip focused on rare earths — US still wholly dependent, can't reshore"
+      - "$950M oil bet placed hours before ceasefire announcement — systemic insider trading"
+    tags: ["iran-us-war", "ceasefire-theater", "rare-earths", "insider-trading", "petrodollar"]
+    processed_date: "2026-04-15"
+    skill_version: "V2.1"
+    transcript_hash: "526802c1"
+
+  - source_type: transcript
+    source_url: ""
+    language: "en"
+    category: "philosophy"
+    target_pipeline: "DOCTRINE"
+    relevance_score: 6
+    key_claims:
+      - "Taxes sideline greatest producers, redirect capital to unproductive government"
+      - "El Salvador model: low taxes + light regulation attracts net producers → better infrastructure"
+      - "Bukele: taxes uphold illusion of funding government — real funding is money printing"
+    tags: ["taxes", "libertarian", "el-salvador", "bukele", "fiat-critique"]
+    processed_date: "2026-04-15"
+    skill_version: "V2.1"
+    transcript_hash: "526802c1"
+
+  - source_type: transcript
+    source_url: ""
+    language: "en"
+    category: "risk"
+    target_pipeline: "FORGE"
+    relevance_score: 8
+    key_claims:
+      - "Private credit redemptions surging — Blue Owl 22%, Carlyle 16% gated at 5%"
+      - "CRE office buildings at 90% off — AI + remote work destroying collateral"
+      - "Consumer delinquencies rising — $250K earners losing jobs to AI, credit-dependent"
+    tags: ["private-credit", "cre-collapse", "consumer-default", "ai-deflation"]
+    processed_date: "2026-04-15"
+    skill_version: "V2.1"
+    transcript_hash: "526802c1"

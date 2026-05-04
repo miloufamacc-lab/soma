@@ -1,0 +1,42 @@
+type: PRISM
+schema_version: "1.0"
+date: "2026-04-26"
+source: "dabeiba-doctrine-brief"
+source_type: "scheduled_task"
+prism_intake:
+  - source_type: scheduled_task
+    category: "macro"
+    target_pipeline: "TITAN"
+    relevance_score: 9
+    key_claims:
+      - "FOMC April 28-29 hold at 3.5-3.75% (99.7% probability); March CPI 3.3% YoY highest since May 2024; GDPNow Q1 1.24% SAAR stagflation signal"
+      - "Q1 earnings beat rate 89% with +12.3% above estimates; mega-cap MSFT/META/GOOG/AMZN report April 29"
+    tags: ["doctrine-brief", "macro", "daily", "fomc", "earnings-season", "stagflation"]
+    processed_date: "2026-04-26"
+  - source_type: scheduled_task
+    category: "crypto"
+    target_pipeline: "COBALT"
+    relevance_score: 8
+    key_claims:
+      - "BTC dominance broke above 60% targeting 66% - altcoin headwind, SOL at 85-88 support with neutral technicals"
+      - "BTC ETF AUM 105.28B with 8 consecutive inflow days (223M Apr 23); Jupiter 95% DEX share, Firedancer 5500+ TPS"
+    tags: ["doctrine-brief", "crypto", "daily", "btc-dominance", "sol", "defi"]
+    processed_date: "2026-04-26"
+  - source_type: scheduled_task
+    category: "geopolitical"
+    target_pipeline: "SPECTRE"
+    relevance_score: 9
+    key_claims:
+      - "Hormuz crisis: 9.1M bbl/day shut-in in April (largest disruption in history); Brent 107.10, EIA peak 115/bbl Q2 2026"
+      - "IEEPA tariffs ruled unlawful (SCOTUS 6-3); admin shifted to Section 122 15% global duty; Trump-Xi summit narrow deliverables"
+    tags: ["doctrine-brief", "geopolitical", "daily", "hormuz", "oil", "tariffs"]
+    processed_date: "2026-04-26"
+  - source_type: scheduled_task
+    category: "equities"
+    target_pipeline: "TITAN"
+    relevance_score: 8
+    key_claims:
+      - "SPX 7165 / NDX 24836 at record highs April 24; INTC +23% earnings beat; NVDA Seaport Sell at 100 PT; AAPL Jefferies downgrade"
+      - "VIX 18.71, 10Y/2Y spread +48bps; earnings season 89% beat rate signals broad corporate resilience"
+    tags: ["doctrine-brief", "equities", "daily", "earnings", "spx", "tech"]
+    processed_date: "2026-04-26"

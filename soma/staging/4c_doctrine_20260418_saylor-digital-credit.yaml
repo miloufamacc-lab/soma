@@ -1,0 +1,179 @@
+# DOCTRINE PHASE 4C: BELIEF MATCHING
+# Transcript: Saylor Digital Credit Monologue (~50 min)
+# Processed: 2026-04-18
+# Phase 4b confidence reconciliation & soma.db query result
+# Status: DATABASE_UNAVAILABLE (workspace timeout), proceeding with candidate rule generation
+
+---
+
+beliefs:
+
+  # BELIEF 1: Credit-equity yield sandwich creates asymmetric return profile
+  - belief_id: "BEHAV-001-SAYLOR-CREDIT-EQUITY"
+    statement: >
+      A preferred credit instrument (STRC) backed by volatile asset appreciation (BTC) + principal protection
+      achieves equity-like returns with credit-like safety simultaneously, creating a new return-risk profile
+      unavailable in traditional fixed income or equities.
+    domain: BEHAVIORAL
+    conviction_transcript: HIGH
+    confidence_transcript: 0.45
+    confidence_reason: "PROMOTER-tier speaker (Saylor), material COI (STRC issuer), 2022 near-insolvency event contradicts principal-protection claim"
+    prior_rule_match: "NONE_FOUND (DATABASE_UNAVAILABLE)"
+    prior_rule_id: null
+    prior_confidence: null
+    delta: null
+    action: "CANDIDATE_NEW_RULE: Generate BEH-CREDIT-EQUITY-SANDWICH. Conviction HIGH but confidence LOW (0.45). Flags: STRONG counter (2022 MSTR -91% margin call risk), STRONG counter (Luna/UST reflexive collapse). Recommend red-team before promotion. Confidence floor 0.50+ needed before soma.db commit."
+    supporting_claims: ["C1-triple-benefit", "C2-45pct-drawdown", "C3-18-23pct-TEY"]
+    contrarian_evidence: ["2022 MSTR near-insolvency", "Luna/UST $40B→$0 in 5 days", "Cherry-picked 45% drawdown window vs 77-93% historical precedent"]
+    recommendation: "HOLD_FOR_RED_TEAM"
+
+  # BELIEF 2: Reflexive credit loops can compound value faster than institutional consensus can price
+  - belief_id: "BEHAV-002-REFLEXIVITY-COMPOUNDING"
+    statement: >
+      Issuing credit → buying volatile asset → asset appreciation → issuing more credit creates a self-reinforcing
+      loop that compounds wealth faster than traditional business models; reflexivity (Soros) accelerates both growth
+      and collapse symmetrically.
+    domain: BEHAVIORAL
+    conviction_transcript: HIGH
+    confidence_transcript: 0.55
+    confidence_reason: "Soros reflexivity framework is established economic theory, but Saylor's application assumes unlimited reflexive cycle (ignores breakage). PROMOTER dampening. STRONG counter: Luna/UST identical structure."
+    prior_rule_match: "NONE_FOUND (DATABASE_UNAVAILABLE)"
+    prior_rule_id: null
+    prior_confidence: null
+    delta: null
+    action: "CANDIDATE_NEW_RULE: Generate BEHAV-REFLEXIVE-COMPOUNDING. Conviction HIGH, confidence LOW (0.55). Red-team already completed (Phase 2.5): Luna/UST case is STRONG counter. Recommend manual promotion with confidence cap 0.55 pending 2-3 additional reflexive case studies."
+    supporting_claims: ["C4-reflexive-flywheel"]
+    contrarian_evidence: ["Luna/UST: $40B on May 7 → ~$0 on May 13, 2022", "LTCM/Lehman funding mismatch (historical parallel)", "Reflexivity works both directions — collapse as fast as growth"]
+    recommendation: "HOLD_FOR_RED_TEAM"
+
+  # BELIEF 3: Tax arbitrage (ROC vs ordinary income) justifies premium valuations
+  - belief_id: "BEHAV-003-TAX-ARBITRAGE-MOAT"
+    statement: >
+      Return-of-capital tax treatment for STRC distributions (vs ordinary income equivalent) creates 18-23% tax-equivalent
+      yield (for top-bracket investors) that justifies a structural valuation premium and attracts institutional capital
+      that cannot access arbitrage inefficiencies in other credit markets.
+    domain: BEHAVIORAL
+    conviction_transcript: MEDIUM
+    confidence_transcript: 0.60
+    confidence_reason: "Tax mechanics are verifiable, but treatment is NOT locked. FASB ASU 2023-08 (mark-to-market on BTC) + IRS Notice 2023-2 could convert ROC→ordinary income, collapsing tax premium from 18-23% to 11-13%."
+    prior_rule_match: "NONE_FOUND (DATABASE_UNAVAILABLE)"
+    prior_rule_id: null
+    prior_confidence: null
+    delta: null
+    action: "CANDIDATE_NEW_RULE: Generate BEHAV-TAX-ARBITRAGE-ROC. Conviction MEDIUM, confidence 0.60. Regulatory risk is MODERATE: two levers (FASB, IRS) could trigger re-classification. Recommend annual audit of tax classification; confidence floor 0.60 (currently meets floor)."
+    supporting_claims: ["C3-18-23pct-TEY"]
+    contrarian_evidence: ["FASB ASU 2023-08 effective Dec 2024 (BTC mark-to-market)", "IRS Notice 2023-2 (structured preferred scrutiny)", "Distributable earnings test could convert ROC to ordinary"]
+    recommendation: "CANDIDATE_PROMOTABLE"
+
+  # BELIEF 4: ICA 1940 creates durable moat for BTC-backed credit instruments
+  - belief_id: "RISK-001-ICA1940-MOAT"
+    statement: >
+      Investment Company Act of 1940 prohibits public companies from holding a portfolio of securities as primary assets,
+      making BTC-backed preferred credit instruments (STRC) uniquely viable. No S&P-backed, Nvidia-backed, or
+      gold-backed competitor can legally replicate the structure using securities as collateral.
+    domain: RISK
+    conviction_transcript: HIGH
+    confidence_transcript: 0.70
+    confidence_reason: "Legal/structural claim with verifiable basis (ICA 1940 text available). Not forward-looking. Higher confidence than product claims. RISK: single-point-of-failure if Congress/SEC reclassifies BTC as security."
+    prior_rule_match: "NONE_FOUND (DATABASE_UNAVAILABLE)"
+    prior_rule_id: null
+    prior_confidence: null
+    delta: null
+    action: "CANDIDATE_NEW_RULE: Generate RISK-ICA1940-MOAT. Conviction HIGH, confidence 0.70. Regulatory bridge: BTC classification is fixed (not-a-security per SEC FinHub 2019), but Congress/SEC could change. Recommend monitoring: if BTC reclassification proposed, confidence → 0.15 (moat collapses). Otherwise stable at 0.70."
+    supporting_claims: ["C8-ICA1940-moat"]
+    contrarian_evidence: ["Single regulatory lever: BTC reclassification would break moat entirely", "Congressional pressure on crypto regulation (2023-2026) raises risk"]
+    recommendation: "CANDIDATE_PROMOTABLE"
+
+  # BELIEF 5: Duration mismatch between capital funding source and asset holding period is primary financial collapse risk
+  - belief_id: "RISK-002-DURATION-MISMATCH-FAILURE"
+    statement: >
+      Capital instruments should be ranked by stochastic duration (probabilistic hold time), not stated maturity.
+      LTCM and Lehman funded long-duration assets (10yr bonds) with short-duration funding (1-day repo). Duration
+      mismatch is the primary cause of financial system failure; STRC avoids this by using long-duration equity capital.
+    domain: RISK
+    conviction_transcript: MEDIUM
+    confidence_transcript: 0.60
+    confidence_reason: "Framework is internally coherent and well-analogized (LTCM/Lehman), but 'stochastic duration' is not standard finance theory. Saylor's terminology is novel; academic validation absent. Confidence capped at 0.60 (well-reasoned but non-standard)."
+    prior_rule_match: "NONE_FOUND (DATABASE_UNAVAILABLE)"
+    prior_rule_id: null
+    prior_confidence: null
+    delta: null
+    action: "CANDIDATE_NEW_RULE: Generate RISK-DURATION-MISMATCH. Conviction MEDIUM, confidence 0.60. Status: novel framework not yet in academic literature. Recommend low priority (not immediately actionable for MANTIS decision-making). If adopted, treat as 'forward-looking thesis' not 'established risk rule'."
+    supporting_claims: ["C9-stochastic-duration"]
+    contrarian_evidence: ["Non-standard terminology", "LTCM/Lehman cases support thesis but do not prove 'stochastic duration' framework"]
+    recommendation: "HOLD_FOR_ACADEMIC_VALIDATION"
+
+  # BELIEF 6: Addressable market for BTC-backed credit is $300T (overstated, realistic $10-15T)
+  - belief_id: "EQUITIES-001-STRC-TAM"
+    statement: >
+      Digital credit (STRC-type instruments) addresses a $300 trillion global credit market opportunity;
+      5-10% capture = $15-30 trillion market opportunity for STRC ecosystem and competitors.
+    domain: EQUITIES
+    conviction_transcript: MEDIUM
+    confidence_transcript: 0.50
+    confidence_reason: "TAM is OVERSTATED: $300T includes retail mortgages, auto loans, consumer credit — none addressable by BTC-backed preferred. Realistic addressable = corporate bonds + sovereign debt subset = $10-15T. Confidence capped at 0.50 (directional thesis but 3x TAM inflation)."
+    prior_rule_match: "NONE_FOUND (DATABASE_UNAVAILABLE)"
+    prior_rule_id: null
+    prior_confidence: null
+    delta: null
+    action: "CANDIDATE_REFRAMED: Generate EQUITIES-DIGITAL-CREDIT-TAM with DEFLATED estimate. Use $10-15T addressable (not $300T). Conviction MEDIUM, confidence 0.50. Red-team note: If STRC successfully captures even 1% of realistic TAM, implies $100-150B value creation potential for MSTR platform layer."
+    supporting_claims: ["C5-300T-TAM"]
+    contrarian_evidence: ["Saylor conflates 'total credit' with 'addressable credit'", "Realistic addressable excludes retail, consumer, auto loans"]
+    recommendation: "CANDIDATE_PROMOTABLE_WITH_DEFLATION"
+
+  # BELIEF 7: Extreme equity volatility + option open interest creates market structure inefficiencies
+  - belief_id: "BEHAVIORAL-004-VOLATILITY-OI-ALPHA"
+    statement: >
+      MSTR's #3 S&P 500 volatility ranking + #1 options open interest (relative to market cap) creates deep
+      liquidity for sophisticated hedging strategies. High volatility + deep OI = market microstructure opportunity
+      for systematic volatility arbitrageurs and cross-gamma traders.
+    domain: BEHAVIORAL
+    conviction_transcript: MEDIUM
+    confidence_transcript: 0.65
+    confidence_reason: "MSTR volatility and OI metrics are snapshot-dependent (verifiable) but not promotional claims. Ties to broader behavioral-alpha thesis. Confidence 0.65 reflects market-structure observation without forward-looking assumptions."
+    prior_rule_match: "NONE_FOUND (DATABASE_UNAVAILABLE)"
+    prior_rule_id: null
+    prior_confidence: null
+    delta: null
+    action: "CANDIDATE_NEW_RULE: Generate BEHAV-VOLATILITY-MICRO-STRUCTURE. Conviction MEDIUM, confidence 0.65. Note: This is an observed market structure fact, not a Saylor thesis. Useful for MANTIS execution strategy (if deploying gamma strategies on MSTR)."
+    supporting_claims: ["C12-MSTR-vol-OI"]
+    contrarian_evidence: ["None — this is a market fact, not a predictive claim"]
+    recommendation: "CANDIDATE_PROMOTABLE"
+
+---
+
+# CONFIDENCE GAP ANALYSIS
+# Claims flagged: HIGH CONVICTION + LOW CONFIDENCE (needs red-team, already done in Phase 2.5)
+
+confidence_gaps:
+  - belief: "BEHAV-001: Credit-equity yield sandwich"
+    conviction: HIGH
+    confidence: 0.45
+    gap_size: 0.55
+    red_team_status: "COMPLETE (Phase 2.5)"
+    red_team_findings: ["2022 MSTR margin call risk", "Luna/UST identical structure collapse", "Cherry-picked drawdown window"]
+    recommendation: "Do not promote to soma.db without confidence validation. Requires: (1) independent STRC backtest under 2022 scenarios, (2) 10-year historical stress test, (3) competitor structure comparison (if any exist)"
+
+  - belief: "BEHAV-002: Reflexive compounding"
+    conviction: HIGH
+    confidence: 0.55
+    gap_size: 0.45
+    red_team_status: "COMPLETE (Phase 2.5)"
+    red_team_findings: ["Luna/UST May 2022 case ($40B→$0 in 5 days)", "LTCM 1998 funding mismatch parallel"]
+    recommendation: "Confidence 0.55 is reasonable given STRONG counter-evidence. Do not elevate. Consider: is reflexive growth without bound even theoretically sustainable?"
+
+---
+
+meta:
+  phase: "4c_DOCTRINE_BELIEF_MATCHING"
+  subject: "Saylor Digital Credit Monologue"
+  subject_slug: "saylor-digital-credit-20260418"
+  processed_date: "2026-04-18T00:00:00Z"
+  soma_db_status: "DATABASE_UNAVAILABLE (workspace timeout)"
+  output_destination: "shared/soma/staging/4c_doctrine_20260418_saylor-digital-credit.yaml"
+  candidates_ready_for_manual_review: 7
+  high_confidence_candidates: 2  # RISK-001 (ICA1940), BEHAV-003 (tax-arbitrage)
+  low_confidence_holds: 2  # BEHAV-001, BEHAV-002
+  novel_framework_holds: 1  # RISK-002 (stochastic duration)
+  reframed_deflationary: 1  # EQUITIES-001 (TAM)
+  next_action: "Manual review of 7 candidates; decide promotion to soma.db or additional red-team"

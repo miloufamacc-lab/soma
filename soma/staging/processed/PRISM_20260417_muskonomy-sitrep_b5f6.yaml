@@ -1,0 +1,20 @@
+type: PRISM
+schema_version: "1.0"
+date: "2026-04-17"
+source: "muskonomy-daily-sitrep"
+source_type: "scheduled_task"
+prism_intake:
+  - source_type: scheduled_task
+    source_url: ""
+    category: "equities"
+    target_pipeline: "TITAN"
+    relevance_score: 9
+    key_claims:
+      - "TSLA $361.83 snapshot -7.69% vs AI5 day close $391.95 on pre-earnings de-risking (T-5)"
+      - "ORACLE DCF fair value $821.43 unchanged; implied upside widens to +126.7% at current print"
+      - "Polymarket 2026-04-17 close $370 leading outcome at 93% - market rejects $390 rally"
+      - "Waymo 500K rides/wk across 10 US cities with 3,000 fleet vs Tesla's 11 unsupervised (30x lead widening)"
+      - "EU FSD Netherlands Day 7 at EUR 99/mo; Germany/France/Belgium/Spain/Italy May-June queue"
+    tags: ["musk-ecosystem", "tsla", "daily-sitrep", "q1-earnings-preview", "fsd-eu", "ai5"]
+    processed_date: "2026-04-17"
+    skill_version: "muskonomy-v1"

@@ -1,0 +1,21 @@
+type: DOCTRINE_EVIDENCE
+schema_version: "1.0"
+date: "2026-04-18"
+source: "dabeiba-doctrine-brief"
+source_type: "scheduled_task"
+source_hash: "202604_HORMUZ"[:16]
+belief_id: "GEOPOLITICAL_RISK_OIL_SUPPLY"
+source_detail: "Iran declared Strait of Hormuz completely open during Israel-Lebanon ceasefire (April 17). WTI -14% to $81. US blockade remains — resolution fragile but directionally de-escalatory."
+supports: true
+weight: 1.0
+---
+type: DOCTRINE_EVIDENCE
+schema_version: "1.0"
+date: "2026-04-18"
+source: "dabeiba-doctrine-brief"
+source_type: "scheduled_task"
+source_hash: "202604_SOLUSD"[:16]
+belief_id: "SOL_MEDIUM_TERM_BULLISH"
+source_detail: "SOL at $85 with bearish near-term technicals. Drift $280M exploit weighs on ecosystem. Commodity classification + Firedancer + ETF pipeline are structural bulls. $80 support critical."
+supports: false
+weight: 0.6

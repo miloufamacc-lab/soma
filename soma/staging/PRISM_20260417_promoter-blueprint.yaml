@@ -1,0 +1,46 @@
+# PRISM Routing — Promoter Blueprint
+# Generated 2026-04-17
+transcript_id: promoter-blueprint-2026-04-17
+transcript_hash: cbb417e3
+source: "Startup Ideas Podcast — Greg Eisenberg with Jonathan Courtney"
+duration_min: 44
+language: en
+
+primary_category: philosophy
+secondary_categories:
+  - business-operations
+  - ai-workflows
+
+routing:
+  modules:
+    - CIPHER      # advisory content (framework could inform client communication)
+  pipelines:
+    - DOCTRINE    # add as evidence for philosophy/operations cluster
+    - PRISM       # topic routing recorded
+
+conviction_tier: T2
+trust_level: 0.55  # operator-practitioner, heavy commercial bias
+
+key_concepts:
+  - promoter-blueprint-framework
+  - chief-promoting-officer-cpo
+  - traffic-holding-pattern-selling-event
+
+red_flags:
+  - "Active commercial promotion during recording (speaker selling $450K webinar)"
+  - "Pre-PMF vs post-PMF applicability not addressed"
+  - "Funnel rates 1.5-3x industry median"
+
+wiki_articles_created:
+  - promoter-blueprint-framework
+  - jonathan-courtney-speaker
+
+deliverables:
+  deck: "intel/by-topic/philosophy/INTEL_20260417_01_promoter-blueprint.pptx"
+  scratchpad: "shared/soma/staging/SCRATCHPAD_20260417_promoter-blueprint.md"
+
+testable_predictions:
+  - id: C5
+    claim: "AJ&Smart generates ~$450K per weekly webinar"
+    verifiable_window_days: 365
+    verification_method: "Cross-check with agency revenue disclosures or third-party attribution"

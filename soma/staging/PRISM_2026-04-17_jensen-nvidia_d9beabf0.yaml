@@ -1,0 +1,128 @@
+---
+# PRISM Routing — Dwarkesh x Jensen Huang NVIDIA Interview
+# Date: 2026-04-17
+# Subject slug: jensen-huang-nvidia-ai-compute
+# Primary ticker: NVDA
+# Transcript hash: d9beabf0
+# Skill version: V3.0
+
+meta:
+  subject_slug: "jensen-huang-nvidia-ai-compute"
+  primary_ticker: "NVDA"
+  primary_category: "equities"
+  secondary_categories: ["technology-platforms", "geopolitical", "macro", "risk"]
+  language: "en"
+  source_type: "youtube"
+  source_url: ""
+  processed_date: "2026-04-17"
+  skill_version: "V3.0"
+  transcript_hash: "d9beabf0"
+
+prism_intake:
+
+  - source_type: youtube
+    source_url: ""
+    language: "en"
+    category: "equities"
+    target_pipeline: "TITAN"
+    primary_ticker: "NVDA"
+    relevance_score: 10
+    key_claims:
+      - "Next several years are a trillion dollars in scale (Jensen 7:56, forward, post-redteam 0.45)"
+      - "CUDA install-base flywheel is NVDA's great treasure (26:04, 500M+ GPUs verified, 0.80)"
+      - "TPU/Trainium growth = 100% Anthropic (37:09, contradicted by Google disclosure, 0.40 floor)"
+      - "Vera Rubin 2026 -> Vera Rubin Ultra 2027 -> Feynman 2028 annual cadence (55:37, 0.65)"
+      - "Nvidia won't become a hyperscaler — 'as much as needed, as little as possible' doctrine (44:24, 0.70)"
+      - "$100B+ filed purchase commitments, $250B total per SemiAnalysis (4:32, 0.80)"
+      - "60% of NVDA revenue from top-5 hyperscalers but 'most is external' customer reach (33:27, 0.70)"
+    tags: ["nvda", "cuda", "ai-compute", "roadmap", "moat", "supply-chain", "dwarkesh-2026-04"]
+    processed_date: "2026-04-17"
+    skill_version: "V3.0"
+    transcript_hash: "d9beabf0"
+    claim_ids_routed: [claim_01, claim_02, claim_03, claim_05, claim_06, claim_07, claim_08, claim_09, claim_10, claim_11, claim_15, claim_16, claim_17, claim_18, claim_19, claim_20, claim_21, implicit_B, implicit_F]
+
+  - source_type: youtube
+    source_url: ""
+    language: "en"
+    category: "technology-platforms"
+    target_pipeline: "TITAN"
+    relevance_score: 9
+    key_claims:
+      - "Programmability enables 10-100x algorithm leaps vs Moore's Law 25%/yr (22:00, 0.75)"
+      - "Blackwell = 50x Hopper at only 75% more transistors — architecture > transistor (1:32:40, 0.75)"
+      - "Five-layer cake: energy -> chips -> systems -> models -> applications (framework)"
+      - "Supplier reflexivity: Jensen educates suppliers -> they pre-invest -> NVDA absorbs (5:14, 0.72)"
+      - "CPU=Cadillac vs GPU=F1 racer expertise wall — programmability != easy programmability"
+      - "Full-stack co-design across processors/system/fabric/libraries/algorithm"
+      - "Premium-token-ASP segment (Groq acquisition, 1:37:49, 0.60)"
+    tags: ["semiconductor", "architecture", "full-stack", "programmability", "cuda", "moat"]
+    processed_date: "2026-04-17"
+    skill_version: "V3.0"
+    transcript_hash: "d9beabf0"
+    claim_ids_routed: [claim_05, claim_06, claim_09, claim_12, claim_17, claim_23, implicit_B]
+
+  - source_type: youtube
+    source_url: ""
+    language: "en"
+    category: "geopolitical"
+    target_pipeline: "SPECTRE"
+    relevance_score: 9
+    key_claims:
+      - "60% of world mainstream chips Chinese; 50% of AI researchers Chinese (59:14/1:19:40, contradicted, 0.40 floor)"
+      - "7nm + energy + chip-ganging neutralizes China compute gap (1:05:44, 0.40 floor)"
+      - "Losing China = 40% of tech industry + ceding standards (1:24:01, 0.50)"
+      - "China is 2nd-largest compute market; abundance of energy; over-capacity in trailing-edge silicon"
+      - "(Implicit) AI will diffuse globally making current tech-stack choice standards-determinative"
+      - "(Implicit) Chinese researchers are fungible with US output — challenged by PLA-alignment asymmetry"
+      - "Ad-hominem escalation: 'childish', 'loser attitude', 'completely nonsense' when pressed on cost-of-sale"
+    tags: ["china", "export-controls", "geopolitics", "policy-advocacy", "coi-flag", "floor-clamped"]
+    processed_date: "2026-04-17"
+    skill_version: "V3.0"
+    transcript_hash: "d9beabf0"
+    claim_ids_routed: [claim_13, claim_14, claim_22, implicit_A, implicit_C]
+
+  - source_type: youtube
+    source_url: ""
+    language: "en"
+    category: "macro"
+    target_pipeline: "TITAN"
+    relevance_score: 7
+    key_claims:
+      - "Physical bottlenecks (EUV, CoWoS, HBM) are 2-3 year problems; energy is real long-term constraint (14:17, 0.55)"
+      - "Moore's Law effectively dead at 25%/yr; algorithm lever is 10x/yr (1:09:45, 0.75)"
+      - "AI share of TSMC N3: 60% this year, 86% next (SemiAnalysis, 8:57-9:03)"
+      - "US energy-scarce posture disadvantages US DC buildout vs energy-abundant jurisdictions (implicit)"
+    tags: ["macro", "energy", "supply-chain", "semi-cycle", "moores-law"]
+    processed_date: "2026-04-17"
+    skill_version: "V3.0"
+    transcript_hash: "d9beabf0"
+    claim_ids_routed: [claim_04, claim_12, claim_23, implicit_D]
+
+  - source_type: youtube
+    source_url: ""
+    language: "en"
+    category: "risk"
+    target_pipeline: "FORGE"
+    relevance_score: 6
+    key_claims:
+      - "30-year NVDA-TSMC relationship has no legal contract — trust-based 'rough justice' (55:14, 0.70)"
+      - "NVDA is underwriting supplier capex — 2027+ HBM/CoWoS over-capacity risk if demand softens"
+      - "Export-control policy risk: ~$10-15B/yr China DC GPU opportunity"
+      - "(Implicit) No digestion cycle — but every prior super-cycle had one (0.45)"
+    tags: ["counterparty-risk", "supply-chain-risk", "export-controls", "semi-cycle-risk"]
+    processed_date: "2026-04-17"
+    skill_version: "V3.0"
+    transcript_hash: "d9beabf0"
+    claim_ids_routed: [claim_04, claim_19, implicit_F]
+
+summary:
+  total_routing_records: 5
+  primary_pipelines: [TITAN, SPECTRE, FORGE]
+  cross_domain_flag: true
+  soma_brief_triggered: true
+  total_claims_routed: 29
+  unique_claim_ids: 29
+  impact_weighted_pipeline_allocation:
+    TITAN: 0.70   # equities + technology-platforms + macro
+    SPECTRE: 0.20 # geopolitical
+    FORGE: 0.10   # risk

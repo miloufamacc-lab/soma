@@ -1,0 +1,61 @@
+horizon_signals:
+  - date: "2026-04-26"
+    source: "Saylor at Bitcoin conference panel"
+    lens: "CREDIT_LIQUIDITY"
+    direction: "BEARISH"
+    timeframe: "5 years"
+    signal_detail: "High-yield credit (HYG/JNK) faces digital-credit displacement pressure 2026-2031; investable thesis to short HY ETFs"
+    confidence: 0.50
+    speaker_tier: 1
+    transcript_hash: "a33f474c"
+    notes: "Red-team caveat: NAIC/ERISA capital-charge regime makes wholesale displacement structurally improbable. Confidence post-red-team."
+
+  - date: "2026-04-26"
+    source: "Saylor at Bitcoin conference panel"
+    lens: "CREDIT_LIQUIDITY"
+    direction: "BEARISH"
+    timeframe: "10 years"
+    signal_detail: "IG corporate spreads vulnerable to digital-credit pressure 2030+; trillion-dollar STRC scale required for inflection"
+    confidence: 0.45
+    speaker_tier: 1
+    transcript_hash: "a33f474c"
+
+  - date: "2026-04-26"
+    source: "Saylor at Bitcoin conference panel"
+    lens: "CREDIT_LIQUIDITY"
+    direction: "BEARISH"
+    timeframe: "20 years"
+    signal_detail: "Mortgage-backed securities and other IG categories face long-horizon compression by ~2046"
+    confidence: 0.40
+    speaker_tier: 1
+    transcript_hash: "a33f474c"
+
+  - date: "2026-04-26"
+    source: "Phong Le at Bitcoin conference panel"
+    lens: "FUNDAMENTAL"
+    direction: "BULLISH"
+    timeframe: "12 months"
+    signal_detail: "Banking adoption of Bitcoin/MSTR/STRC arrives in 2026; insurance + pension allocations are the high-AUM unlocks"
+    confidence: 0.60
+    speaker_tier: 1
+    transcript_hash: "a33f474c"
+
+  - date: "2026-04-26"
+    source: "Saylor at Bitcoin conference panel"
+    lens: "FUNDAMENTAL"
+    direction: "BULLISH"
+    timeframe: "7 years"
+    signal_detail: "MSTR target: double BTC-per-share over 7 years (~10.4% CAGR); decelerating from 74% (2024) and 22.8% (2025)"
+    confidence: 0.55
+    speaker_tier: 1
+    transcript_hash: "a33f474c"
+
+  - date: "2026-04-26"
+    source: "Saylor at Bitcoin conference panel"
+    lens: "GEOPOLITICAL"
+    direction: "BULLISH"
+    timeframe: "4 years"
+    signal_detail: "US regulatory tailwind: 5 named officials (Bessant/Walsh/Atkins/Sullig/Trump) supportive; OCC stablecoin guidance; risk = political turnover"
+    confidence: 0.70
+    speaker_tier: 1
+    transcript_hash: "a33f474c"

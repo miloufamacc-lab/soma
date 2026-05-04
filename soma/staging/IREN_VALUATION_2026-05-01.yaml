@@ -1,0 +1,57 @@
+type: VALUATION
+schema_version: "1.0"
+date: "2026-05-01"
+source: "equity-valuation"
+source_type: "valuation_model"
+ticker: "IREN"
+wiki_slug: "iren-valuation"
+
+valuation_summary:
+  current_price: 47.16
+  blended_fv: 94.70
+  implied_upside_pct: 100.8
+  recommendation: "BUY"
+  scenario_weights: {bear: 0.10, neutral: 0.35, bull: 0.55}
+  scenario_fv: {bear: 22.00, neutral: 60.00, bull: 130.00}
+  build_version: 1
+  prompt_version: "v14"
+  status: "audited"
+
+doctrine_evidence:
+  - belief_id: EQ_VALUATION_MEAN_REVERT
+    source_detail: "IREN model: Blended FV $94.70 vs market $47.16 (+100.8% upside). Microsoft Horizon $9.7B/5y contract (signed 2025-11-02) drives the gap; trailing fundamentals do not yet reflect contracted revenue."
+    supports: true
+    weight: 1.0
+  - belief_id: COMPUTE_INFRASTRUCTURE_BUILDOUT
+    source_detail: "IREN signed $9.7B / 5y Microsoft Horizon agreement on 2025-11-02 with 200MW liquid-cooled IT load across 4 data centers in Childress, TX. Validates hyperscaler GPU + power + colo demand thesis through 2031."
+    supports: true
+    weight: 1.0
+
+internal_screen_disagreement:
+  internal_method: "DCF + EV/Revenue (Profile Summary)"
+  internal_dcf_upside: 13.53
+  gf_disc_prem_pct: -90.90
+  qc_bucket_overall: "AVOID"
+  team175_quality_strength: 75
+  in_house_verdict: "BUY"
+  reconciliation_note: |
+    Internal trailing-fundamentals screen flags AVOID (TTM FCF -$1.13B, heavy capex, historical-only metrics).
+    In-house pro-forma valuation flags BUY (+100.8%) driven by $9.7B Microsoft Horizon contract NOT YET in
+    trailing fundamentals. The contract represents ~$1.94B/yr run-rate by 2027-12-31. Both views are
+    internally consistent; the gap is a forward-vs-trailing window artifact, not a methodological error.
+    Position size accordingly: 1-2% pilot; scale on Horizon 1 commissioning + Q4 FY26 results.
+
+key_facts_dated:
+  - {date: "2025-11-02", event: "Microsoft $9.7B / 5y Horizon agreement signed (NVIDIA GB300, Childress TX)"}
+  - {date: "2025-12-08", event: "$2.3B convertibles closed (0.25% '32 / 1.00% '33), $544.3M legacy debt repurchased"}
+  - {date: "2025-08-28", event: "FY25 10-K filed: $501M revenue (+168% YoY), $87M net income, $278M EBITDA"}
+  - {date: "2026-02-05", event: "Q2 FY26 results: $184.7M revenue"}
+  - {date: "2024-11", event: "Renamed Iris Energy -> IREN Limited"}
+  - {date: "2018", event: "Founded by Daniel + Will Roberts (ex-Macquarie infrastructure)"}
+
+deliverables:
+  - {file: "models/IREN/latest/IREN_VAL_MOD_01MAY26.xlsx", type: "excel"}
+  - {file: "models/IREN/latest/IREN_Valuation_Presentation.pptx", type: "pptx_presentation", slides: 30}
+  - {file: "models/IREN/latest/IREN_Model_User_Guide.pptx", type: "pptx_guide", slides: 16}
+  - {file: "models/IREN/latest/IREN_Valuation_Audit_Report.pptx", type: "pptx_audit", slides: 12}
+  - {file: "models/IREN/latest/IREN_CFA_Deep_Dive.pptx", type: "pptx_deep_dive", slides: 36}

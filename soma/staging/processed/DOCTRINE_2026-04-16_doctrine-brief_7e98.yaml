@@ -1,0 +1,10 @@
+type: DOCTRINE_EVIDENCE
+schema_version: '1.0'
+date: '2026-04-16'
+source: dabeiba-doctrine-brief
+source_type: scheduled_task
+source_hash: 19f511d1
+belief_id: BELIEF_SOL_ETF_PIPELINE
+source_detail: Franklin Templeton, Fidelity + 5 asset managers filed updated S-1s for spot SOL ETF after March 2026 SEC digital-commodity classification.
+supports: true
+weight: 1.0

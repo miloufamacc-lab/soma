@@ -22,6 +22,7 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 from shared.soma.soma_bridge import SomaBridge
+from shared.soma.pipeline_registry import get_display_name
 
 # ── ANSI codes ────────────────────────────────────────────────────────
 BOLD = "\033[1m"
@@ -378,7 +379,7 @@ def query_clients(db):
     if not profiles:
         _no_data("No client profiles yet. Add one with CIPHER or SomaBridge.")
         return
-    _title(f"Client Profiles ({len(profiles)})")
+    _title(f"Client Intelligence ({len(profiles)})")
     print(f"\n  {'Alias':<14} {'Positioning':<14} {'Risk':<8} {'Horizon':<8} {'Style':<14} {'Last Contact':<12}")
     print(f"  {'─' * 72}")
     for p in profiles:
@@ -626,6 +627,11 @@ def query_help(_db=None):
             ('"violations ORACLE"', "Violations from a specific module"),
             ('"violations critical"', "Filter by severity"),
             ('"violations summary"', "Counts by severity"),
+        ]),
+        (get_display_name("HORIZON"), [
+            ('"horizon [question]"', "Full 7-lens tactical timing analysis"),
+            ('"horizon history"', f"Last 5 {get_display_name('HORIZON')} analyses"),
+            ('"horizon last"', f"Show latest {get_display_name('HORIZON')} result"),
         ]),
         ("META", [
             ('"status"', "Full SOMA status dashboard"),
@@ -1174,6 +1180,87 @@ def query_violations_summary(db):
 
 # ── Query router ──────────────────────────────────────────────────────
 
+# ── HORIZON queries ──────────────────────────────────────────────────
+
+def query_horizon_run(db, question):
+    """Run a full HORIZON tactical timing analysis."""
+    from shared.soma.horizon import run_horizon, print_report
+    analysis = run_horizon(question, verbose=True)
+    print()
+    print_report(analysis)
+
+
+def query_horizon_history(db):
+    """Show last 5 HORIZON analyses."""
+    try:
+        rows = db.conn.execute(
+            """SELECT run_id, analysis_date, question, composite_score,
+                      composite_direction, concordance_passed, concordance_count,
+                      final_confidence, n_lenses, regime, write_timestamp
+               FROM horizon_analyses ORDER BY id DESC LIMIT 5"""
+        ).fetchall()
+    except Exception:
+        _no_data("No HORIZON analyses yet. Run: horizon \"your question\"")
+        return
+
+    if not rows:
+        _no_data("No HORIZON analyses yet. Run: horizon \"your question\"")
+        return
+
+    _title("HORIZON History (last 5)")
+    print(f"\n  {'Date':<12} {'Run':<10} {'Score':>6} {'Dir':<12} {'Conc':>5} {'Conf':>6} {'Regime':<10}")
+    print(f"  {'─' * 70}")
+    for r in rows:
+        r = dict(r)
+        cc = f"{r.get('concordance_count', '?')}/7"
+        passed = "✓" if r.get("concordance_passed") else "✗"
+        print(f"  {r['analysis_date']:<12} {r['run_id']:<10} "
+              f"{r.get('composite_score', 0):>+5.2f} {r.get('composite_direction', '?'):<12} "
+              f"{cc:>3}{passed} {r.get('final_confidence', 0):>5.0%} "
+              f"{r.get('regime', '?'):<10}")
+    print()
+
+
+def query_horizon_last(db):
+    """Show the latest HORIZON analysis result."""
+    try:
+        row = db.conn.execute(
+            """SELECT run_id, analysis_date, question, composite_score,
+                      composite_direction, concordance_passed, concordance_count,
+                      final_confidence, n_lenses, n_biases_detected,
+                      freshness_factor, regime, gli_value, write_timestamp
+               FROM horizon_analyses ORDER BY id DESC LIMIT 1"""
+        ).fetchone()
+    except Exception:
+        _no_data("No HORIZON analyses yet.")
+        return
+
+    if not row:
+        _no_data("No HORIZON analyses yet.")
+        return
+
+    r = dict(row)
+    _title("Latest HORIZON Analysis")
+    print(f"\n  {CYAN}Run:{RESET}         {r['run_id']}")
+    print(f"  {CYAN}Date:{RESET}        {r['analysis_date']}")
+    print(f"  {CYAN}Question:{RESET}    {r.get('question', '?')}")
+    print(f"\n  {CYAN}Score:{RESET}       {r.get('composite_score', 0):+.3f}")
+    dir_val = r.get('composite_direction', 'NEUTRAL')
+    color = GREEN if 'BUY' in dir_val else RED if 'SELL' in dir_val else YELLOW
+    print(f"  {CYAN}Direction:{RESET}   {color}{dir_val}{RESET}")
+
+    passed = "PASS" if r.get("concordance_passed") else "FAIL"
+    p_color = GREEN if r.get("concordance_passed") else YELLOW
+    print(f"  {CYAN}Concordance:{RESET} {r.get('concordance_count', '?')}/7 [{p_color}{passed}{RESET}]")
+    print(f"  {CYAN}Confidence:{RESET}  {r.get('final_confidence', 0):.0%}")
+    print(f"  {CYAN}Regime:{RESET}      {r.get('regime', '?')} (GLI={r.get('gli_value', 0):.2f})")
+    print(f"  {CYAN}Biases:{RESET}      {r.get('n_biases_detected', 0)} detected")
+    print(f"  {CYAN}Freshness:{RESET}   {r.get('freshness_factor', 0):.2f}")
+    print(f"  {CYAN}Lenses:{RESET}      {r.get('n_lenses', 0)}/7")
+    print(f"\n  {DIM}For full report: horizon \"{r.get('question', 'your question')}\"{RESET}")
+    print()
+
+
 def route_query(query, db):
     """Parse a query string and dispatch to the right handler."""
     q = query.strip().lower()
@@ -1327,6 +1414,22 @@ def route_query(query, db):
     m = re.match(r'^rule\s+(.+)$', q)
     if m:
         query_rule_detail(db, m.group(1).strip())
+        return
+
+    # ── HORIZON ──
+    if q in ("horizon history", "horizon analyses"):
+        query_horizon_history(db)
+        return
+    if q in ("horizon last", "horizon latest", "last horizon"):
+        query_horizon_last(db)
+        return
+    if q.startswith("horizon "):
+        question = query.strip()[8:]  # Preserve original case
+        if question:
+            query_horizon_run(db, question)
+            return
+    if q == "horizon":
+        query_horizon_last(db)
         return
 
     # ── Knowledge Base ──

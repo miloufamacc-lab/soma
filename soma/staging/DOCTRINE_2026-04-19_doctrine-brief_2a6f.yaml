@@ -1,0 +1,10 @@
+type: DOCTRINE_EVIDENCE
+schema_version: "1.0"
+date: "2026-04-19"
+source: "dabeiba-doctrine-brief"
+source_type: "scheduled_task"
+source_hash: "921849b6"
+belief_id: "REGIME_RISK_ON_UPGRADE_V1"
+source_detail: "Sunday weekly deep synthesis: 3/4 domains (equities, macro, crypto) support RISK-ON upgrade; SOMA regime 21d stale at GLI 58.87. VIX 17.48, breadth expansion, software rotation, curve steepening."
+supports: true
+weight: 1.0

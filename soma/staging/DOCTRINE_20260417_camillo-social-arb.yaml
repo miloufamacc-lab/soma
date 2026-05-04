@@ -1,0 +1,73 @@
+# DOCTRINE Belief Integration — fba58360
+# Source: Chris Camillo × Mark Moss, 2026-04-17
+# Phase 4c of transcript-to-intel V3.0
+
+doctrine_records:
+
+  # --- SUPPORTING EXISTING BELIEFS ---
+
+  - belief_id: EQ_CONCENTRATION_ALPHA
+    source_module: PRISM
+    source_detail: "Camillo in Mark Moss interview 2026-04-17: ~70 high-conviction trades over 18yr at 70%+ CAGR — concentration with options leverage, ~4 trades/yr"
+    supports: true
+    weight: 1.0  # Tier 2 speaker
+    transcript_hash: "fba58360"
+    notes: "Camillo's audited track record is the strongest retail-investor data point for EQ_CONCENTRATION_ALPHA. Self-reported + partial audit — apply standard T2 weight, not T1."
+
+  - belief_id: EQ_AI_SECULAR_THEME
+    source_module: PRISM
+    source_detail: "Camillo in Mark Moss interview 2026-04-17: AI is 6th tech revolution in 300yr, picks-and-shovels via NVDA/AMZN/Anthropic proxies"
+    supports: true
+    weight: 1.0  # Tier 2 speaker
+    transcript_hash: "fba58360"
+    notes: "Corroborates EQ_AI_SECULAR_THEME. Caveat: Camillo avoids early-stage AI, consistent with picks-and-shovels discipline already in belief."
+
+  - belief_id: RISK_DRAWDOWN_ASYMMETRY
+    source_module: PRISM
+    source_detail: "Camillo in Mark Moss interview 2026-04-17: Tim Hortons levered options wipeout — -33% liquid net worth from 100% options loss on one position"
+    supports: true
+    weight: 1.0  # Tier 2 speaker
+    transcript_hash: "fba58360"
+    notes: "Classic drawdown asymmetry case study. Multi-subsidiary holding company risk is a new sub-dimension — leverage on complex structures magnifies unknown unknowns. Supports belief with enhanced specificity."
+
+  - belief_id: BEH_THESIS_DISCIPLINE
+    source_module: PRISM
+    source_detail: "Camillo in Mark Moss interview 2026-04-17: QSR wipeout traced to incomplete diligence — lesson is to diligence ALL major revenue contributors, not just trending subsidiaries"
+    supports: true
+    weight: 1.0  # Tier 2 speaker
+    transcript_hash: "fba58360"
+    notes: "Tim Hortons case = disciplined thesis application failure. Supports BEH_THESIS_DISCIPLINE by showing what breakdown looks like in practice."
+
+  - belief_id: CRYPTO_BTC_STORE_OF_VALUE
+    source_module: PRISM
+    source_detail: "Camillo in Mark Moss interview 2026-04-17: BTC reflexivity thesis — 100-1,000x more young investors bullish on BTC vs. prior gold-bug generation; $80-100T intergenerational wealth transfer"
+    supports: true
+    weight: 1.0  # Tier 2 speaker — PROMOTER flag does not apply to BTC thesis (no commercial interest)
+    transcript_hash: "fba58360"
+    notes: "Camillo's BTC thesis is reflexivity-only (Soros), no intrinsic value belief. Supports CRYPTO_BTC_STORE_OF_VALUE via flow-driven demand, not fundamentals. Confidence 0.55 on the claim itself."
+
+  # --- CANDIDATE NEW BELIEFS ---
+
+  - belief_id: EQ_SOCIAL_ARB_ALPHA_CANDIDATE
+    domain: equities
+    statement: "Conversational data (TikTok comments, Reddit) systematically leads transactional data (credit card swipes) by days-to-weeks, creating a durable alpha edge for retail investors in small-cap and micro-trend positions — provided institutional NLP pipelines have not yet arbitraged the specific signal source."
+    conviction: 6
+    source: "Chris Camillo × Mark Moss podcast, 2026-04-17"
+    status: CANDIDATE  # NOT auto-added — requires manual review
+    transcript_hash: "fba58360"
+    supporting_evidence:
+      - "Camillo 18yr track record (partially audited)"
+      - "Four documented institutional blind-spot case studies (Snapple, iPhone, Tesla, Nvidia)"
+    contra_evidence:
+      - "Two Sigma / Citadel now run NLP on TikTok at $200M+/yr spend"
+      - "Academic research shows social media alpha decays rapidly once known"
+    notes: "Recommend conviction: 6 (not higher). Edge is real but may be narrowing. Consider CANDIDATE status until a second independent data point (non-Camillo) corroborates the signal lead time."
+
+  - belief_id: EQ_MULTI_SUB_DILIGENCE_CANDIDATE
+    domain: risk
+    statement: "In any multi-subsidiary holding company position, the investor must diligence EVERY major revenue contributor — not only the trend-driver subsidiaries. Concentration on trend subs while ignoring the revenue-majority sub is the primary failure mode for complex holding company trades."
+    conviction: 7
+    source: "Chris Camillo × Mark Moss podcast, 2026-04-17 — QSR Tim Hortons case study"
+    status: CANDIDATE  # Reclassify as RISK_ domain belief after review
+    transcript_hash: "fba58360"
+    notes: "Anecdotal but highly specific (painful case study = high credibility). Recommend adding under RISK_ domain. Conviction 7 because the underlying logic is sound and the case study is internally consistent."

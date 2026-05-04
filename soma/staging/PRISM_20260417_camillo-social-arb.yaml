@@ -1,0 +1,71 @@
+# PRISM Routing Record — transcript-to-intel V3.0
+# Source: Chris Camillo × Mark Moss podcast (~78 min, pasted)
+# transcript_hash: fba58360 | Date: 2026-04-17
+
+prism_intake:
+
+  - source_type: transcript
+    source_url: ""
+    language: "en"
+    category: "equities"
+    target_pipeline: "TITAN"
+    relevance_score: 9
+    key_claims:
+      - "TikTok conversational data leads transactional data (swipe) by days-to-weeks — closest real-time alpha signal available to retail"
+      - "Wall Street institutional attention scarcity (not information scarcity) creates structural edge for cultural-signal observers"
+      - "Audited >70% annualized returns over 18 years; ~70 high-conviction trades; deliberately kept at 7-8 figure AUM"
+      - "Tim Hortons wipeout: -33% liquid net worth; multi-subsidiary holding company risk requires full-subsidiary diligence"
+      - "Neato squishy toy: live thesis, 6.5% of unnamed holding co NAV, Q4 2026 holiday season catalyst; 20-40% potential NAV impact"
+      - "AI picks-and-shovels: NVDA, AMZN, Anthropic proxies; avoids early-stage AI startups (moat unassessable)"
+    tags: ["social-arbitrage", "options", "retail-alpha", "multi-subsidiary", "concentration", "ai-picks-shovels"]
+    processed_date: "2026-04-17"
+    skill_version: "V3.0"
+    transcript_hash: "fba58360"
+
+  - source_type: transcript
+    source_url: ""
+    language: "en"
+    category: "philosophy"
+    target_pipeline: "DOCTRINE"
+    relevance_score: 8
+    key_claims:
+      - "$100 future value framework: project every dollar at 100x lifetime potential → funds Big Money Account → asymmetric bets via Paul Tudor Jones 5:1 rule"
+      - "Social arbitrage methodology: observe cultural change → connect dots to publicly traded company → execute high-conviction levered bet"
+      - "Three needles: revenue / cost / perception — any of three moves the stock; perception needle doesn't require fundamental change"
+      - "60/40 portfolio at 6.5% annual = guaranteed loss to inflation; non-investing IS the worst risk"
+      - "Information asymmetry-to-parity discipline: enter when information edge exists, exit when market catches up"
+    tags: ["investing-philosophy", "mental-models", "risk-bucketing", "asymmetric-returns", "behavioral-finance"]
+    processed_date: "2026-04-17"
+    skill_version: "V3.0"
+    transcript_hash: "fba58360"
+
+  - source_type: transcript
+    source_url: ""
+    language: "en"
+    category: "macro"
+    target_pipeline: "TITAN"
+    relevance_score: 7
+    key_claims:
+      - "AI is 6th technology revolution in 300 years — widest-ever social arb opportunity set across all industries"
+      - "AI expands jobs more than destroys (Jevons): fast food 2/3 fewer staff per unit → 5x more units viable"
+      - "Solopreneur era: vibe coding removes friction between idea and product; $100K-$500K/yr one-person businesses now viable"
+      - "2030 humanoid robotics: 33% of global GDP is physical labor; both hardware and foundation models advancing with no unsolvable blocker"
+    tags: ["ai-macro", "labor-markets", "robotics-2030", "tech-revolution", "solopreneur"]
+    processed_date: "2026-04-17"
+    skill_version: "V3.0"
+    transcript_hash: "fba58360"
+
+  - source_type: transcript
+    source_url: ""
+    language: "en"
+    category: "crypto"
+    target_pipeline: "COBALT"
+    relevance_score: 6
+    key_claims:
+      - "BTC reflexivity thesis (unchanged 10 years): 100-1,000x more young investors bullish on BTC vs. prior gold-bug generation"
+      - "Intergenerational wealth transfer: $80-100T over 20-25 years; even 2-5% BTC allocation = $1.6-5T inflows"
+      - "Only invalidation: young investors lose interest in Bitcoin; institutionalization (spot ETFs) reduces this risk"
+    tags: ["bitcoin", "reflexivity", "generational-wealth", "intergenerational-transfer", "store-of-value"]
+    processed_date: "2026-04-17"
+    skill_version: "V3.0"
+    transcript_hash: "fba58360"

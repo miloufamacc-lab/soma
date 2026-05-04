@@ -1,0 +1,171 @@
+---
+# Prediction Ledger — Dwarkesh x Jensen Huang NVIDIA Interview
+# Date: 2026-04-17
+# Transcript hash: d9beabf0
+# Subject: jensen-huang-nvidia-ai-compute
+# Skill version: V3.0
+
+predictions:
+
+  - prediction_id: pred_vera_rubin_2026
+    claim_id: claim_09_annual_roadmap_cadence
+    speaker: "Jensen Huang"
+    tier: "T1"
+    claim_text: "Vera Rubin ships in 2026 ('this year Vera Rubin is going to be incredible')"
+    horizon: "2026-12-31"
+    direction: "BULLISH"
+    metric: "Vera Rubin shipping to at least one hyperscaler / neocloud customer"
+    target: "At-scale shipping confirmed via NVDA earnings disclosure or customer PR"
+    confidence: 0.75
+    source: "jensen-huang-dwarkesh-2026-04"
+    source_date: "2026-04-17"
+    link_to_doctrine_entry: claim_09
+    resolution_criteria: "NVDA Q4 FY26 (Jan 2027) or prior earnings call mentions Rubin revenue OR public customer install"
+
+  - prediction_id: pred_vera_rubin_ultra_2027
+    claim_id: claim_09_annual_roadmap_cadence
+    speaker: "Jensen Huang"
+    tier: "T1"
+    claim_text: "Vera Rubin Ultra ships in 2027"
+    horizon: "2027-12-31"
+    direction: "BULLISH"
+    metric: "Vera Rubin Ultra shipping"
+    target: "At-scale shipping confirmed"
+    confidence: 0.65
+    source: "jensen-huang-dwarkesh-2026-04"
+    source_date: "2026-04-17"
+    link_to_doctrine_entry: claim_09
+    resolution_criteria: "NVDA FY27 disclosures confirm Rubin Ultra revenue contribution"
+
+  - prediction_id: pred_feynman_2028
+    claim_id: claim_09_annual_roadmap_cadence
+    speaker: "Jensen Huang"
+    tier: "T1"
+    claim_text: "Feynman architecture ships in 2028"
+    horizon: "2028-12-31"
+    direction: "BULLISH"
+    metric: "Feynman shipping"
+    target: "At-scale shipping confirmed"
+    confidence: 0.60
+    source: "jensen-huang-dwarkesh-2026-04"
+    source_date: "2026-04-17"
+    link_to_doctrine_entry: claim_09
+    resolution_criteria: "NVDA FY28 confirms Feynman in-year revenue contribution"
+
+  - prediction_id: pred_token_cost_10x_yr
+    claim_id: claim_09_annual_roadmap_cadence
+    speaker: "Jensen Huang"
+    tier: "T2"
+    claim_text: "Token cost decreases by an order of magnitude every single year ('like clockwork')"
+    horizon: "2027-12-31"  # first resolvable year
+    direction: "BULLISH"  # NVDA adoption, BEARISH NVDA margin
+    metric: "Inference token cost at frontier model (Claude / GPT-class)"
+    target: "10x reduction in $/Mtoken vs 2025 baseline"
+    confidence: 0.50
+    source: "jensen-huang-dwarkesh-2026-04"
+    source_date: "2026-04-17"
+    link_to_doctrine_entry: claim_09
+    resolution_criteria: "Compare API pricing from OpenAI + Anthropic + Google public rate cards 2027 Q4 vs 2025 Q4. 10x = within 20% of that exact multiple."
+
+  - prediction_id: pred_trillion_scale_2028
+    claim_id: claim_03_trillion_scale
+    speaker: "Jensen Huang"
+    tier: "T2"
+    claim_text: "Next several years are a trillion dollars in scale (NVDA revenue OR industry AI-infra capex — scope ambiguous)"
+    horizon: "2028-12-31"
+    direction: "BULLISH"
+    metric: "NVDA cumulative revenue 2026-2028 OR AI-infra cumulative industry capex"
+    target: "$1T+ cumulative NVDA revenue OR $1T+ cumulative top-5-hyperscaler AI capex"
+    confidence: 0.45
+    source: "jensen-huang-dwarkesh-2026-04"
+    source_date: "2026-04-17"
+    link_to_doctrine_entry: claim_03
+    resolution_criteria: "NVDA 10-K cumulative 2026+2027+2028 revenue check vs $1T threshold. Separately: top-5-hyperscaler AI-capex disclosure cumulative 2026-2028 check."
+
+  - prediction_id: pred_86pct_n3_ai_share
+    claim_id: "semianalysis_attribution"
+    speaker: "Jensen Huang (attributing SemiAnalysis)"
+    tier: "T3"  # tertiary source, not Jensen's own
+    claim_text: "86% of TSMC N3 will be AI next year"
+    horizon: "2027-06-30"
+    direction: "BULLISH"
+    metric: "SemiAnalysis N3 AI-allocation estimate"
+    target: "86% AI share of N3 wafer output in 2027"
+    confidence: 0.55
+    source: "jensen-huang-dwarkesh-2026-04"
+    source_date: "2026-04-17"
+    link_to_doctrine_entry: null  # not in DOCTRINE evidence table
+    resolution_criteria: "SemiAnalysis 2027 N3 allocation report or TSMC disclosure"
+
+  - prediction_id: pred_groq_cuda_integration
+    claim_id: claim_17_premium_token_asp
+    speaker: "Jensen Huang"
+    tier: "T1"  # factual disclosure
+    claim_text: "Groq acquired and folded into CUDA for premium-token-ASP segment"
+    horizon: "2026-09-30"
+    direction: "BULLISH"
+    metric: "Groq LPU offering available via CUDA runtime"
+    target: "Public SDK/API confirming Groq-under-CUDA"
+    confidence: 0.60
+    source: "jensen-huang-dwarkesh-2026-04"
+    source_date: "2026-04-17"
+    link_to_doctrine_entry: claim_17
+    resolution_criteria: "NVDA developer docs or press release confirming Groq integration by end-Q3 2026"
+
+  - prediction_id: pred_china_market_access
+    claim_id: claim_22_losing_china_40pct
+    speaker: "Jensen Huang"
+    tier: "T2"
+    claim_text: "Conceding China market = losing 40% of world tech industry (policy advocacy implicit prediction: export controls will be relaxed OR NVDA will lose material revenue)"
+    horizon: "2026-11-30"
+    direction: "NEUTRAL"  # policy-inflection — bullish if loosened, bearish if tightened
+    metric: "BIS export-control list modification OR NVDA China-DC revenue disclosure"
+    target: "Either (a) H200-derivative B30A approval for China OR (b) NVDA China-segment revenue <$2B/qtr"
+    confidence: 0.45
+    source: "jensen-huang-dwarkesh-2026-04"
+    source_date: "2026-04-17"
+    link_to_doctrine_entry: claim_22
+    resolution_criteria: "BIS Federal Register + NVDA 10-Q filings through Q3 FY27"
+
+  - prediction_id: pred_no_digestion_cycle
+    claim_id: implicit_F_flywheel_no_digestion
+    speaker: "Jensen Huang"
+    tier: "T2"
+    claim_text: "(Implicit) No semi-cycle digestion phase for AI compute through 2028"
+    horizon: "2027-12-31"
+    direction: "BULLISH"
+    metric: "NVDA data-center revenue QoQ consecutive declines"
+    target: "No 2-quarter consecutive DC revenue decline >10% through 2027"
+    confidence: 0.45
+    source: "jensen-huang-dwarkesh-2026-04"
+    source_date: "2026-04-17"
+    link_to_doctrine_entry: implicit_F
+    resolution_criteria: "NVDA quarterly DC revenue trend through Q4 FY27 (Jan 2028)"
+
+  - prediction_id: pred_tpu_100pct_anthropic
+    claim_id: claim_08_tpu_100pct_anthropic
+    speaker: "Jensen Huang"
+    tier: "T2"
+    claim_text: "TPU/Trainium growth = 100% Anthropic (testable via external-customer disclosure)"
+    horizon: "2026-12-31"
+    direction: "BEARISH"  # against ASIC threat
+    metric: "Google/AWS external TPU + Trainium customer count"
+    target: "Anthropic = >95% of TPU + Trainium external-customer revenue"
+    confidence: 0.35  # already below floor, retained for resolution
+    source: "jensen-huang-dwarkesh-2026-04"
+    source_date: "2026-04-17"
+    link_to_doctrine_entry: claim_08
+    resolution_criteria: "Google Cloud + AWS customer-disclosure reports 2026. Expected resolution: FALSIFIED per Google Gemini internal use + Amazon Alexa/Bedrock."
+
+summary:
+  total_predictions: 10
+  by_tier:
+    T1: 4  # Rubin, Rubin Ultra, Feynman, Groq
+    T2: 5  # Token-cost, trillion-scale, china-access, no-digestion, tpu-anthropic
+    T3: 1  # SemiAnalysis 86% N3
+  by_horizon:
+    2026_resolvable: 4
+    2027_resolvable: 3
+    2028_resolvable: 3
+  expected_falsification_candidates: [pred_tpu_100pct_anthropic, pred_no_digestion_cycle]
+  transcript_hash: "d9beabf0"

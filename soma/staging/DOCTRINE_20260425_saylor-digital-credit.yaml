@@ -1,0 +1,49 @@
+doctrine_evidence:
+  - belief_id: CRYPTO_BTC_STORE_OF_VALUE
+    source_module: PRISM
+    source_detail: "Saylor in Digital Credit keynote 2026-04-25: Bitcoin = digital capital, foundation of digital credit"
+    supports: true
+    weight: 1.0   # Tier-2-effective (Tier-1 base, CONFLICT downgrade)
+    transcript_hash: "2e310387"
+
+  - belief_id: EQ_CONCENTRATION_ALPHA
+    source_module: PRISM
+    source_detail: "Saylor 2026-04-25: MSTR most-liquid + #3 most-volatile + #1 OI/mkt-cap in S&P; concentrated single-asset bet"
+    supports: true
+    weight: 1.0
+    transcript_hash: "2e310387"
+
+  - belief_id: RISK_DRAWDOWN_ASYMMETRY
+    source_module: PRISM
+    source_detail: "Saylor 2026-04-25: STRC held 0% NAV through 45% BTC drawdown; vol stripped from credit, absorbed by common equity (MSTR)"
+    supports: true
+    weight: 1.0
+    transcript_hash: "2e310387"
+
+  # NEW CANDIDATES — require manual review before promotion
+  - belief_id: EQ_REFLEXIVE_PREMIUM_CANDIDATE
+    domain: equities
+    statement: "Bitcoin-treasury equities (MSTR-style) trade at structurally persistent premiums to NAV due to a credit-issuance flywheel that converts capital into amplification, but the loop is symmetric and reverses when mNAV touches 1.0x"
+    conviction: 5
+    source: "Saylor — Digital Credit keynote 2026-04-25"
+    status: CANDIDATE
+    transcript_hash: "2e310387"
+    notes: "Soros reflexivity (uncredited). GBTC -49% Dec 2022 + MSTR mNAV 1.0x Nov 2022 / Aug 2024 are precedents for the reverse loop. Steelman STRONG — adopt only with explicit symmetric framing."
+
+  - belief_id: EQ_STOCHASTIC_DURATION_CANDIDATE
+    domain: equities
+    statement: "Variable-rate perpetual preferred is the longest-duration capital available short of common equity; this should drive Bitcoin-treasury cap-stack design"
+    conviction: 6
+    source: "Saylor — Digital Credit keynote 2026-04-25"
+    status: CANDIDATE
+    transcript_hash: "2e310387"
+    notes: "Framework, not testable claim. Cited cautionary precedents: Lehman, LTCM, Silvergate. Useful taxonomy with stylized durations."
+
+  - belief_id: CRYPTO_DIGITAL_CREDIT_CANDIDATE
+    domain: crypto
+    statement: "Bitcoin-collateralized variable-rate preferred can deliver double-digit nominal yield with return-of-capital tax treatment, displacing junk bonds and private credit on a risk-adjusted, after-tax basis"
+    conviction: 5
+    source: "Saylor — Digital Credit keynote 2026-04-25"
+    status: CANDIDATE
+    transcript_hash: "2e310387"
+    notes: "Speaker is PROMOTER. Steelman STRONG — FASB ASU 2023-08 directly threatens ROC classification. Adopt only after IRS letter-ruling clarity on no-E&P condition."

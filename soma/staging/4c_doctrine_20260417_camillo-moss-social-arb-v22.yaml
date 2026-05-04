@@ -1,0 +1,190 @@
+# DOCTRINE PHASE 4C: BELIEF MATCHING
+# Transcript: Camillo Moss Social Arbitrage v2.2 (78.8 min)
+# Processed: 2026-04-17
+# Phase 4b confidence reconciliation & soma.db query result
+# Status: DATABASE_UNAVAILABLE (workspace timeout), proceeding with candidate rule generation
+
+---
+
+beliefs:
+
+  # BELIEF 1: Present dollar purchasing power will compound 100x via AI productivity (AI abundance thesis)
+  - belief_id: "MACRO-001-CAMILLO-AI-ABUNDANCE"
+    statement: >
+      Every dollar in present purchasing power will be worth $100 in the future due to AI-driven productivity gains
+      compounding exponentially. This re-prices all present financial decisions toward maximum capital deployment
+      and against savings-dominant strategies.
+    domain: MACRO
+    conviction_transcript: HIGH
+    confidence_transcript: 0.50
+    confidence_reason: "Forward-looking prediction, no timeline specified. Speaker is Tier 2 (non-institutional trader, 15yr track record), outside macro expertise. Hedged modality ('potentially'). Prediction cap 0.60 before adjustments, -0.05 speaker scope, -0.05 no timeline = 0.50."
+    prior_rule_match: "NONE_FOUND (DATABASE_UNAVAILABLE)"
+    prior_rule_id: null
+    prior_confidence: null
+    delta: null
+    action: "CANDIDATE_NEW_RULE: Generate MACRO-AI-ABUNDANCE-100X. Conviction HIGH, confidence 0.50. Equivalence: $1→$100 = 100x multiplier over unknown duration. Discount rate implications vary with timeline. Recommend: (1) specify horizon (2030? 2040?), (2) compare to historical tech adoption curves (transistor, Moore's Law pacing), (3) stress-test against efficiency plateau scenarios."
+    supporting_claims: ["C1-dollar-100x"]
+    contrarian_evidence: ["No timeline specified", "AI productivity gains may follow S-curve (diminishing margins)", "AI hardware costs may not scale infinitely"]
+    recommendation: "HOLD_PENDING_TIMELINE"
+
+  # BELIEF 2: Pattern recognition is the single most important AI-age skill and is innate (not trainable)
+  - belief_id: "BEHAVIORAL-001-CAMILLO-PATTERN-RECOGNITION-INNATE"
+    statement: >
+      Pattern recognition (across domains, real-time signal detection from social media, consumer behavior) is the
+      single most important competitive advantage in the AI age. The skill is not uniformly distributed — "not everybody
+      can do that" — implying innate vs trained. This skill depreciates domain expertise and favors generalists over
+      specialists.
+    domain: BEHAVIORAL
+    conviction_transcript: MEDIUM_HIGH
+    confidence_transcript: 0.55
+    confidence_reason: "Normative/epistemic claim. Camillo hedges with 'probably'. No citations. Speaker is skilled trader (15yr audited track record) but making universal claim outside his domain. Confidence 0.55 reflects reasonableness but lack of empirical evidence."
+    prior_rule_match: "NONE_FOUND (DATABASE_UNAVAILABLE)"
+    prior_rule_id: null
+    prior_confidence: null
+    delta: null
+    action: "CANDIDATE_NEW_RULE: Generate BEHAV-PATTERN-RECOGNITION-INNATE. Conviction MEDIUM_HIGH, confidence 0.55. Embedded controversial claim: 'not everybody can do that' assumes pattern rec is innate. Counter: Deep learning has shown pattern recognition IS trainable (empirical evidence: neural networks, GPT, vision models). Recommend: (1) split into two sub-beliefs (pattern rec importance vs innateness), (2) if innateness is false, confidence collapses to 0.30."
+    supporting_claims: ["C2-pattern-recognition"]
+    contrarian_evidence: ["Deep learning/neural networks prove pattern recognition is trainable", "Transfer learning shows domain-agnostic pattern skills scale", "Camillo's own edge may be experiential pattern-matching, not innate"]
+    recommendation: "HOLD_PENDING_INNATENESS_VALIDATION"
+
+  # BELIEF 3: High conviction does not equal high probability; diversification across conviction buckets mitigates ruin
+  - belief_id: "RISK-001-CAMILLO-CONVICTION-VS-PROBABILITY"
+    statement: >
+      Personal case study: Camillo's highest-conviction trade (QSR, pandemic 2020) wiped out 1/3 of liquid net worth
+      in months. Empirical evidence that conviction ≠ probability, and that bucket-allocation (5 positions, 2-3 losers
+      acceptable if winners are convex) is required risk management. Pandemic was unforecastable tail risk for
+      restaurant franchise models (royalty-dependent revenue collapse).
+    domain: RISK
+    conviction_transcript: HIGH
+    confidence_transcript: 0.85
+    confidence_reason: "Factual/personal history (auditable). NUMERIC_VALIDATION: Restaurant Brands International (QSR), pandemic 2020 peak-to-trough ~45%. Magnitude plausible. -0.05 for unverified liquidity net-worth magnitude = 0.85."
+    prior_rule_match: "NONE_FOUND (DATABASE_UNAVAILABLE)"
+    prior_rule_id: null
+    prior_confidence: null
+    delta: null
+    action: "CANDIDATE_NEW_RULE: Generate RISK-CONVICTION-VS-PROBABILITY (high confidence anchor). Conviction HIGH, confidence 0.85. This is concrete empirical evidence for portfolio construction discipline. Useful for MANTIS position-sizing validation. Recommend: (1) extract Camillo's bucket allocation rules from full transcript, (2) compare vs Kelly Criterion / Merton portfolio optimization, (3) validate that 'bucket allocation' outperformed concentrated betting during 2008/2020 stress tests."
+    supporting_claims: ["C3-QSR-loss", "C4-risk-aversion-is-risk"]
+    contrarian_evidence: ["QSR case may be sector-specific (restaurant franchises face structural dislocation)", "Sample size: N=1 (needs more case studies)"]
+    recommendation: "CANDIDATE_PROMOTABLE_WITH_PORTFOLIO_VALIDATION"
+
+  # BELIEF 4: Inaction and risk aversion are the largest risks; savings-heavy strategies under-perform in inflationary/AI-accelerating world
+  - belief_id: "BEHAVIORAL-002-CAMILLO-INACTION-RISK"
+    statement: >
+      Most people frame investing as risky and inaction as safe. Inverted framing: inaction faces inflation erosion,
+      opportunity cost, optionality decay. In an AI-accelerating world, worst-case scenario is not losing capital but
+      failing to compound at the rate of productivity gains. Risk aversion is the largest risk.
+    domain: BEHAVIORAL
+    conviction_transcript: MEDIUM_HIGH
+    confidence_transcript: 0.60
+    confidence_reason: "Normative/philosophical claim. Hedged with 'probably'. Time-sensitive: depends on inflation regime and AI productivity pacing. Confidence capped at 0.60 (reasonable but regime-dependent)."
+    prior_rule_match: "NONE_FOUND (DATABASE_UNAVAILABLE)"
+    prior_rule_id: null
+    prior_confidence: null
+    delta: null
+    action: "CANDIDATE_NEW_RULE: Generate BEHAV-INACTION-RISK-PREMIUM. Conviction MEDIUM_HIGH, confidence 0.60. Aligned with 'time in market > timing' orthodoxy but inverted framing (inaction as risk). Regime condition: HIGH inflation + AI productivity > 5% annual. In low-inflation + low-productivity regime (Japan 1990-2000), claim inverts. Recommend: (1) conditional conviction on inflation/productivity regime, (2) MANTIS can use this for allocation rebalancing (boost equity bias in AI-productivity regime)."
+    supporting_claims: ["C4-risk-aversion"]
+    contrarian_evidence: ["Regime dependent: only true in high inflation/high growth", "Doesn't account for sequence-of-returns risk for retirees", "Ignores personal risk tolerance heterogeneity"]
+    recommendation: "CANDIDATE_PROMOTABLE_WITH_REGIME_CONDITIONS"
+
+  # BELIEF 5: Public market alpha (liquid trading) exceeds private market returns for skilled traders
+  - belief_id: "EQUITIES-001-CAMILLO-PUBLIC-VS-PRIVATE"
+    statement: >
+      For skilled liquid traders (Camillo's cohort: 15yr audited track record), public market alpha exceeded private
+      market returns over recent 10-15 year period. Illiquidity premium is often negative for skilled managers.
+      Challenges VC/PE wealth-building orthodoxy for HNW individuals who have liquid alpha generation capability.
+    domain: EQUITIES
+    conviction_transcript: HIGH
+    confidence_transcript: 0.75
+    confidence_reason: "Personal factual/retrospective. Unverified magnitude (how much alpha?). Survivorship risk: Camillo is in top decile of traders (audited Barclay record). Does not generalize to median investor. Confidence 0.75 reflects truthfulness of Camillo's own experience but limited generalizability."
+    prior_rule_match: "NONE_FOUND (DATABASE_UNAVAILABLE)"
+    prior_rule_id: null
+    prior_confidence: null
+    delta: null
+    action: "CANDIDATE_NEW_RULE: Generate EQUITIES-PUBLIC-VS-PRIVATE-SKILLED. Conviction HIGH, confidence 0.75. Scope caveat: ONLY for alpha-generating traders, not median LPs. Useful for MANTIS: if deploying capital on behalf of HNW with strong track record, favor liquid deployments + drawdown optionality over 10-year PE lockups. Recommend: (1) segment traders by percentile (Camillo = top 1-2%), (2) compare Camillo's returns to Barclay hedge fund average, (3) do not apply to retail/non-alpha investors."
+    supporting_claims: ["C8-private-underperformed"]
+    contrarian_evidence: ["Survivorship bias: Camillo is in top decile", "Market regime dependent: 2010-2020 was exceptional for tech/growth", "VC/PE outperformance in 1990-2010, 2020-2025 tech booms (sector specific)"]
+    recommendation: "CANDIDATE_PROMOTABLE_WITH_SURVIVORSHIP_CAVEAT"
+
+  # BELIEF 6 (IMPLICIT): AI winners and losers are identifiable without deep technical expertise using social-signal methods
+  - belief_id: "EQUITIES-002-CAMILLO-AI-WINNERS-OBVIOUS"
+    statement: >
+      In the AI boom, obvious winners and losers are identifiable to non-experts using social-signal/pattern-recognition
+      methods (Camillo's edge: TikTok/social media consumer-behavior tracking). This assumption underpins the claim
+      that 'we don't get opportunities like this very often' and retail can compete with incumbents (Mag 7).
+    domain: EQUITIES
+    conviction_transcript: MEDIUM
+    confidence_transcript: 0.45
+    confidence_reason: "Implicit claim (derived). Load-bearing assumption: 'obvious' winners are visible without insider knowledge. This may be false. Implicit cap 0.50, -0.05 for unvalidated assumption = 0.45."
+    prior_rule_match: "NONE_FOUND (DATABASE_UNAVAILABLE)"
+    prior_rule_id: null
+    prior_confidence: null
+    delta: null
+    action: "CANDIDATE_HOLD: Generate EQUITIES-AI-SECTOR-VISIBILITY (CANDIDATE status). Conviction MEDIUM, confidence 0.45. Historical pattern: tech booms (1999 Dot-com, 2017 ICO) felt 'obvious' to retail → massive losses to incumbents. Recommend: (1) validate with Camillo's actual AI stock picks (if documented), (2) compare vs Mag 7 / magnificent 7 outperformance, (3) run 20-year backtest on 'obvious' vs 'hidden' AI themes."
+    supporting_claims: ["C6-AI-winners-obvious"]
+    contrarian_evidence: ["1999 Dot-com: retail thought winners obvious (pets.com, eToys) → incumbents (Amazon) won", "2017 ICO: most coins thought 'obvious' (90% crashed) → ETH/BTC won", "Nasdaq Mag 7 concentration (2024) suggests incumbents may still dominate"]
+    recommendation: "HOLD_FOR_EMPIRICAL_VALIDATION"
+
+  # BELIEF 7: Bitcoin holds because narrative/adoption drive price, not fundamentals; reflexivity (Soros implicit)
+  - belief_id: "CRYPTO-001-CAMILLO-BITCOIN-REFLEXIVE"
+    statement: >
+      Camillo's 10-year Bitcoin thesis unchanged because "what matters is what other people think about Bitcoin" —
+      explicit reflexivity framing (unnamed Soros). Bitcoin valuation is narrative-driven, not utility/cashflow-driven.
+      Belief is held despite Camillo saying "I don't have a strong viewpoint on Bitcoin personally" — decoupling personal
+      conviction from reflexive-game analysis.
+    domain: CRYPTO
+    conviction_transcript: MEDIUM
+    confidence_transcript: 0.55
+    confidence_reason: "Reflexivity framework is defensible (Keynesian beauty contest model). But Camillo explicitly hedges personal conviction. Forward-looking prediction cap 0.60, -0.05 for personal hedge = 0.55. STANCE_DRIFT_CHECK: compare vs Camillo's Apr 16 wiki entry (chris-camillo.md) for consistency."
+    prior_rule_match: "NONE_FOUND (DATABASE_UNAVAILABLE)"
+    prior_rule_id: null
+    prior_confidence: null
+    delta: null
+    action: "CANDIDATE_NEW_RULE: Generate CRYPTO-BITCOIN-REFLEXIVITY. Conviction MEDIUM, confidence 0.55. Note: Camillo's 10-year consistency is data point (if true, validates conviction stability). But reflexivity alone doesn't predict price direction—only mechanism. Recommend: (1) validate prior wiki entry consistency, (2) if consistent across 3+ years, upgrade conviction to HIGH, (3) do NOT upgrade confidence without BTC price forecast mechanics."
+    supporting_claims: ["C5-bitcoin-10yr-thesis"]
+    contrarian_evidence: ["'I don't have strong viewpoint personally' → speaker unsure", "Reflexivity can break suddenly (narrative pivot)", "No forward BTC price target specified"]
+    recommendation: "CANDIDATE_PROMOTABLE_IF_STANCE_DRIFT_NEGATIVE"
+
+---
+
+# CONFIDENCE GAP ANALYSIS
+# Claims flagged: HIGH CONVICTION + LOW CONFIDENCE (needs red-team, already done in Phase 2.5)
+
+confidence_gaps:
+  - belief: "MACRO-001: AI abundance ($1→$100)"
+    conviction: HIGH
+    confidence: 0.50
+    gap_size: 0.50
+    red_team_status: "INCOMPLETE (Phase 2.5 skipped — no explicit red-team evidence file found)"
+    red_team_findings: ["No timeline specified (is this 2030? 2050?)", "AI productivity may follow S-curve", "Assumes Moore's Law continuity"]
+    recommendation: "Requires full red-team: (1) specify timeline, (2) compare to historical tech adoption pacing (transistor, internet, mobile), (3) model diminishing returns as AI capabilities saturate low-hanging fruit, (4) identify breakage scenarios."
+
+  - belief: "BEHAVIORAL-001: Pattern recognition is innate"
+    conviction: MEDIUM_HIGH
+    confidence: 0.55
+    gap_size: 0.45
+    red_team_status: "INCOMPLETE (contradicted by empirical ML evidence)"
+    red_team_findings: ["Deep learning proves pattern rec is trainable", "Neural networks + transfer learning disprove innateness assumption", "Camillo's pattern rec may be experiential, not innate"]
+    recommendation: "REFRAME: Split into (a) pattern recognition importance (keep conviction HIGH), (b) innateness claim (drop conviction to LOW). Confidence floor 0.30 if innateness is required."
+
+  - belief: "EQUITIES-002: AI winners are obvious to non-experts"
+    conviction: MEDIUM
+    confidence: 0.45
+    gap_size: 0.55
+    red_team_status: "INCOMPLETE (historical pattern suggests false)"
+    red_team_findings: ["1999 Dot-com: 'obvious' winners crashed (pets.com) while Amazon (overlooked) won", "2017 ICO: most 'obvious' coins ($0) while 'boring' ETH led", "2024 Mag 7 concentration suggests incumbents still dominate"]
+    recommendation: "High red-team priority. Do not promote until Camillo's actual AI picks are backtested (vs Mag 7) to validate edge claim."
+
+---
+
+meta:
+  phase: "4c_DOCTRINE_BELIEF_MATCHING"
+  subject: "Camillo Moss Social Arbitrage Interview"
+  subject_slug: "camillo-moss-social-arb-20260417"
+  processed_date: "2026-04-17T00:00:00Z"
+  soma_db_status: "DATABASE_UNAVAILABLE (workspace timeout)"
+  output_destination: "shared/soma/staging/4c_doctrine_20260417_camillo-moss-social-arb-v22.yaml"
+  candidates_ready_for_manual_review: 7
+  high_confidence_candidates: 2  # RISK-001 (conviction vs prob), EQUITIES-001 (public vs private)
+  low_confidence_holds: 3  # MACRO-001, BEHAVIORAL-001, EQUITIES-002
+  reflexive_candidates: 1  # CRYPTO-001 (bitcoin)
+  next_action: "Manual review of 7 candidates; validate AI-winners-obvious claim with backtest; validate bitcoin stance drift vs prior wiki entry"

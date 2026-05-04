@@ -1,0 +1,45 @@
+# DOCTRINE belief evidence — Saylor/Fong/Lavish STRC panel 2026-04-17
+# Transcript hash: 8fe33607
+
+doctrine_evidence:
+  - belief_id: CRYPTO_BTC_STORE_OF_VALUE
+    source_module: PRISM
+    source_detail: "Saylor in STRC panel 2026-04-17: Bitcoin L1 is immutable, permissionless, absolute red line — 22% BTC/share yield"
+    supports: true
+    weight: 1.0
+    transcript_hash: "8fe33607"
+    notes: "Strongest institutional endorsement seen to date. MSTR framing BTC as the L1 reserve layer of a $300-400T addressable market."
+
+  - belief_id: MACRO_FISCAL_DOMINANCE
+    source_module: PRISM
+    source_detail: "Saylor in STRC panel 2026-04-17: $300T credit market broken, spreads cannot cover defaults, return-free risk"
+    supports: true
+    weight: 1.0
+    transcript_hash: "8fe33607"
+    notes: "Supports fiscal dominance thesis — sovereign spreads (50-350bps) insufficient to compensate for embedded fiscal risk. Complements existing belief."
+
+  - belief_id: CRYPTO_DEFI_SELF_CUSTODY
+    source_module: PRISM
+    source_detail: "Saylor in STRC panel 2026-04-17: Bitcoin L1 immutability as absolute constraint for all Layer 2/3 builds"
+    supports: true
+    weight: 1.0
+    transcript_hash: "8fe33607"
+    notes: "L1 immutability = self-custody prerequisite upheld. STRC as L2 does NOT challenge self-custody — it builds on it."
+
+  - belief_id: EQ_AI_SECULAR_THEME
+    source_module: PRISM
+    source_detail: "Saylor in STRC panel 2026-04-17: AI creates largest deflationary shock in history, teams collapsing to 2+AI"
+    supports: true
+    weight: 1.0
+    transcript_hash: "8fe33607"
+    notes: "Strong corroboration of AI secular theme. 90% knowledge workforce reduction is extreme — watch for steelman (Saylor tends toward hyperbole)."
+
+doctrine_candidates:
+  - belief_id: CRYPTO_DIGITAL_CREDIT_DISRUPTION_CANDIDATE
+    domain: crypto
+    statement: "Bitcoin-backed digital credit (STRC-class instruments) will structurally displace traditional fixed-income in 3-4 year duration bucket within 5 years."
+    conviction: 5
+    source: "STRC panel, Michael Saylor + Fong Lee, 2026-04-17"
+    status: CANDIDATE
+    transcript_hash: "8fe33607"
+    notes: "Saylor is promoter (T2* not T1) — requires independent corroboration before upgrading to active belief. Steelman is weak: no historical precedent for this scale of credit market displacement."

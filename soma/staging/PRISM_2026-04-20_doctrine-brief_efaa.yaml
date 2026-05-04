@@ -1,0 +1,46 @@
+type: PRISM
+schema_version: "1.0"
+date: "2026-04-20"
+source: "dabeiba-doctrine-brief"
+source_type: "scheduled_task"
+prism_intake:
+  - source_type: scheduled_task
+    category: "macro"
+    target_pipeline: "TITAN"
+    relevance_score: 8
+    key_claims:
+      - "FOMC Apr 28-29 consensus hold 3.50-3.75% (14% cut prob); no SEP, language/Powell tone dominates."
+      - "March CPI 3.3% headline (reaccel), core 2.6%, energy +12.5% YoY; May CPI disinflation path oil-dependent."
+      - "VIX 17.48, curve +50bps, Brent $86 (-10.8% WoW); tape already pricing partial RISK-ON."
+    tags: ["doctrine-brief", "macro", "daily", "fomc", "cpi"]
+    processed_date: "2026-04-20"
+  - source_type: scheduled_task
+    category: "equities"
+    target_pipeline: "TITAN"
+    relevance_score: 9
+    key_claims:
+      - "Tesla Q1 earnings Apr 22 AMC — consensus $0.30-0.37 skew; Q1 deliveries 358K missed 370K consensus; 50K inventory build binary risk event."
+      - "NVDA upgraded to Buy, 43/48 analysts rate Buy/Strong Buy; AI trade re-accelerating."
+      - "2026 sector rotation: value > growth first time since 2022; VDE +30% YTD on Iran; 7 of 11 sectors beat SPX."
+    tags: ["doctrine-brief", "equities", "daily", "tsla", "nvda", "rotation"]
+    processed_date: "2026-04-20"
+  - source_type: scheduled_task
+    category: "crypto"
+    target_pipeline: "COBALT"
+    relevance_score: 7
+    key_claims:
+      - "SOL $85.4 on-chain Q1 record >$1T economic activity, TPS >3,000, DeFi TVL $11.5B; Jupiter DEX 24h vol $2-4B."
+      - "BTC $77K range, dominance 57.1% signals narrow market — altcoin rotation delayed until dominance rolls."
+      - "SEC CLARITY Act roundtable Apr 16 + Japan tax reform April 2026 = regulatory framework tailwind."
+    tags: ["doctrine-brief", "crypto", "daily", "sol", "btc", "clarity-act"]
+    processed_date: "2026-04-20"
+  - source_type: scheduled_task
+    category: "geopolitical"
+    target_pipeline: "SPECTRE"
+    relevance_score: 10
+    key_claims:
+      - "Trump announced interception of Iranian vessel TOUSKA Sunday; SPX/NDX futures -0.7 to -0.8% overnight."
+      - "Hormuz ceasefire deadline Apr 24 is single biggest cross-domain risk pin; Brent $86 vs pre-war $70."
+      - "Trump 50% China tariff threat linked to alleged Iranian arms shipment; Trump-Xi summit May 14-15; USTR 301 hearing Apr 28."
+    tags: ["doctrine-brief", "geopolitical", "daily", "iran", "hormuz", "china-tariff"]
+    processed_date: "2026-04-20"

@@ -1,0 +1,45 @@
+type: PRISM
+schema_version: "1.0"
+date: "2026-04-18"
+source: "dabeiba-doctrine-brief"
+source_type: "scheduled_task"
+prism_intake:
+  - source_type: scheduled_task
+    category: "macro"
+    target_pipeline: "TITAN"
+    relevance_score: 9
+    key_claims:
+      - "Israel-Lebanon ceasefire + Hormuz reopening collapsed WTI -14% to $81; disinflationary catalyst may give Fed cover for June 2026 cut signal"
+      - "FOMC April 28-29 holds expected (3.50-3.75%); Powell tone is the macro linchpin for next leg"
+      - "S&P 500 7100+ (all-time high), Nasdaq 12-day streak; VIX 17.94; 10Y-2Y spread +50bp"
+    tags: ["doctrine-brief", "macro", "daily", "fomc", "oil-crash", "ceasefire"]
+    processed_date: "2026-04-18"
+  - source_type: scheduled_task
+    category: "crypto"
+    target_pipeline: "COBALT"
+    relevance_score: 7
+    key_claims:
+      - "SOL at $85.21 with bearish technicals; Drift Protocol $280M exploit erased $1B TVL; $80 support critical"
+      - "BTC dominance 57%; Altcoin Season Index 34/100 (Bitcoin Season); capital flow suppressing alt rotation"
+      - "SOL commodity classification + Firedancer 5500 TPS are structural bullish; ETF pipeline advancing"
+    tags: ["doctrine-brief", "crypto", "daily", "solana", "bitcoin"]
+    processed_date: "2026-04-18"
+  - source_type: scheduled_task
+    category: "geopolitical"
+    target_pipeline: "TITAN"
+    relevance_score: 9
+    key_claims:
+      - "Iran Strait of Hormuz reopened during Israel-Lebanon ceasefire; US blockade of Iranian ports remains — fragile resolution"
+      - "Trump-Xi summit (May 2026): SCOTUS struck IEEPA tariffs; 15% Section 122 in effect; semiconductors/rare earths focus"
+    tags: ["doctrine-brief", "geopolitical", "daily", "hormuz", "tariffs", "china"]
+    processed_date: "2026-04-18"
+  - source_type: scheduled_task
+    category: "equities"
+    target_pipeline: "TITAN"
+    relevance_score: 8
+    key_claims:
+      - "Canadian Big Six Q1 2026: $19B collective profit, all beat. RY +13% YoY, TD +12% EPS, BMO +16% net income"
+      - "93 S&P 500 companies report next week; Financials dominate. Tesla Q1 April 22 asymmetric setup ($0.30 vs $0.37 consensus)"
+      - "Energy positions (PBA/SU/TRP) face oil-crash headwind; Consumer Discretionary and Financials are near-term rotation winners"
+    tags: ["doctrine-brief", "equities", "daily", "earnings", "canadian-banks"]
+    processed_date: "2026-04-18"

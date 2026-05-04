@@ -21,9 +21,18 @@ Design:
 
 import json
 import logging
+import re
 from datetime import datetime, timezone
 
 logger = logging.getLogger(__name__)
+
+# Phase 4.3 — rule-reference validator: match table.column patterns.
+# Tables must be >=4 chars, columns >=3 chars, lowercase+digits+underscores,
+# starting with a letter. This conservative pattern minimizes false positives
+# on prose like "e.g." or "Q1.2024".
+_RULE_TABLE_COL_RE = re.compile(
+    r'\b([a-z][a-z0-9_]{3,})\.([a-z][a-z0-9_]{2,})\b'
+)
 
 
 class KBValidator:
@@ -61,6 +70,88 @@ class KBValidator:
             self.bridge._maybe_commit()
         except Exception as e:
             logger.debug(f"KBValidator: could not log violation: {e}")
+
+    # ── Phase 4.3 — Rule-reference validator ──────────────────────────
+
+    def validate_rule_references(self, rule_id: str, rule_data: dict,
+                                 source_module: str = "SOMA") -> dict:
+        """Phase 4.3 — scan rule JSON for `table.column` refs; log invalid ones.
+
+        Walks the rule dict recursively, applies _RULE_TABLE_COL_RE to every
+        string value, and checks each match against the live SOMA schema via
+        sqlite_master + PRAGMA table_info. Invalid refs go to kb_violations
+        with severity=CRITICAL and write_type='rule_reference'. The rule is
+        still stored in kb_rules (non-blocking) — the violation is the signal.
+
+        Returns {valid: bool, violations: list[str], checked: int}.
+        """
+        violations: list[str] = []
+        checked = 0
+
+        # Live schema snapshot
+        try:
+            tables = {
+                r[0] for r in self.bridge.conn.execute(
+                    "SELECT name FROM sqlite_master WHERE type IN ('table','view')"
+                ).fetchall()
+            }
+        except Exception as e:
+            logger.debug(f"KBValidator: rule-ref schema fetch failed: {e}")
+            return {"valid": True, "violations": [], "checked": 0}
+
+        col_cache: dict[str, set] = {}
+
+        def _cols(t: str) -> set:
+            if t not in col_cache:
+                try:
+                    col_cache[t] = {
+                        r[1] for r in self.bridge.conn.execute(
+                            f'PRAGMA table_info("{t}")'
+                        ).fetchall()
+                    }
+                except Exception:
+                    col_cache[t] = set()
+            return col_cache[t]
+
+        def _walk(node, path: str = "") -> None:
+            nonlocal checked
+            if isinstance(node, dict):
+                for k, v in node.items():
+                    _walk(v, f"{path}.{k}" if path else str(k))
+            elif isinstance(node, list):
+                for i, item in enumerate(node):
+                    _walk(item, f"{path}[{i}]")
+            elif isinstance(node, str):
+                for t, c in _RULE_TABLE_COL_RE.findall(node):
+                    checked += 1
+                    if t not in tables:
+                        violations.append(
+                            f"{path or '<root>'}: missing table '{t}' (ref '{t}.{c}')"
+                        )
+                    elif c not in _cols(t):
+                        violations.append(
+                            f"{path or '<root>'}: missing column '{c}' in '{t}' "
+                            f"(ref '{t}.{c}')"
+                        )
+
+        _walk(rule_data)
+
+        # Log each violation. _log_violation is fire-and-forget internally.
+        for desc in violations:
+            self._log_violation(
+                severity="CRITICAL",
+                rule_id=rule_id,
+                source_module=source_module,
+                write_type="rule_reference",
+                description=desc,
+                context={"rule_id": rule_id, "source_module": source_module},
+            )
+
+        return {
+            "valid": len(violations) == 0,
+            "violations": violations,
+            "checked": checked,
+        }
 
     # ── Write-type validators ─────────────────────────────────────────
 

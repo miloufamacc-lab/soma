@@ -1,0 +1,26 @@
+type: PRISM
+schema_version: '1.0'
+date: '2026-04-16'
+source: dabeiba-doctrine-brief
+source_type: scheduled_task
+prism_intake:
+- source_type: scheduled_task
+  category: crypto
+  target_pipeline: COBALT
+  relevance_score: 8
+  key_claims:
+  - SOL $78.88 -45.38% 30-day; broken from Oct-Dec uptrend
+  - Drift Protocol $280-285M exploit early April erased ~$1B of Solana TVL (9B to 5.5-6B)
+  - BTC ~$74K four-week high; dominance 58.5%, Alt Season Index 34/100 Bitcoin season
+  - BTC correlation 84% to SPX and 87% to gold - crypto now trades as macro asset
+  - 'SOL spot ETF pipeline: Franklin Templeton, Fidelity + 5 more filed S-1s post Mar 2026 digital-commodity classification'
+  - Clarity Act Senate hearings Apr 13; SEC-CFTC Interpretive Release Mar 17 = regulatory tailwind
+  tags:
+  - doctrine-brief
+  - crypto
+  - daily
+  - solana
+  - bitcoin
+  - etf-pipeline
+  - regulatory
+  processed_date: '2026-04-16'

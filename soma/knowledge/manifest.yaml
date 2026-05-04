@@ -68,3 +68,25 @@ reference_files:
     scope: KB continuation entries and session notes
     lines: 1016
     type: reference
+
+# ── EXTERNAL KNOWLEDGE BASE (wiki — read/write by all modules) ──
+# The wiki is a Karpathy-style LLM knowledge base at ~/Desktop/DABEIBA/wiki/.
+# Articles are compiled markdown with YAML frontmatter.
+# SOMA can read wiki articles for cross-domain synthesis.
+# ORACLE writes wiki articles via valuation prompt Phase 6.4.5.
+# CIPHER reads wiki articles for client report context via export queue.
+# MANTIS reads wiki articles for position-sizing context.
+
+external_kb:
+  - path: ~/Desktop/DABEIBA/wiki/
+    type: wiki
+    format: markdown_with_frontmatter
+    index: wiki/indexes/search.db  # FTS5 SQLite index
+    article_count: 284  # as of 2026-04-13
+    domains: [finance, ai_research, crypto, health, personal, hobbies]
+    access:
+      ORACLE: read_write  # writes via wiki_seed_vault.py after valuation builds
+      SOMA: read           # reads for cross-domain synthesis
+      CIPHER: read         # reads for client report context
+      MANTIS: read         # reads for position-sizing priors
+      RAPTOR: read         # reads for prospect research context

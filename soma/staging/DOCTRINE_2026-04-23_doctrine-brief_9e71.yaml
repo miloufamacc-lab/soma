@@ -1,0 +1,21 @@
+type: DOCTRINE_EVIDENCE
+schema_version: "1.0"
+date: "2026-04-23"
+source: "dabeiba-doctrine-brief"
+source_type: "scheduled_task"
+source_hash: "1d1ee033"
+belief_id: "HORMUZ_SUPPLY_DISRUPTION_MACRO_RISK"
+source_detail: "Brent crude ~5.48, WTI +7% to 9.61 on renewed Hormuz attacks; IEA confirms largest oil supply disruption in history; Gulf OPEC+ output down 10M+ bpd; ceasefire stalling April 23"
+supports: true
+weight: 1.0
+---
+type: DOCTRINE_EVIDENCE
+schema_version: "1.0"
+date: "2026-04-23"
+source: "dabeiba-doctrine-brief"
+source_type: "scheduled_task"
+source_hash: "8d4d8623"
+belief_id: "SOMA_REGIME_STALE_POST_HORMUZ"
+source_detail: "SOMA NORMAL regime dated 2026-03-29 predates March 4 Hormuz closure; defensive sector rotation and geopolitical disruption suggest regime review warranted toward CAUTIOUS"
+supports: true
+weight: 0.9

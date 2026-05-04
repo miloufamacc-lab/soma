@@ -1,0 +1,25 @@
+prism_intake:
+  source_type: youtube_transcript
+  source_url: "[Bankless Podcast — Michael Saylor Interview, April 2025]"
+  category: "crypto"
+  secondary_categories: ["macro", "philosophy"]
+  target_pipeline: "COBALT"
+  secondary_pipelines: ["TITAN", "DOCTRINE"]
+  target_module: "ORACLE"
+  relevance_score: 9
+  key_claims:
+    - "BTC will reach $21M per coin over 21 years at blended 29% ARR"
+    - "STRC is first variable-rate perpetual preferred stock — trades at $100 par with <2 vol"
+    - "Bank credit networks are primary catalyst — each $10B credit absorbs one year mining supply"
+    - "Rehypothecation in crypto shadow banking suppresses BTC price by creating synthetic shorts"
+    - "Strategy spent $58B creating a crypto reactor for digital credit issuance"
+    - "Endgame: 8% bank accounts for 1 billion people via digital capital/credit/money stack"
+    - "Quantum threat: don't panic — iatrogenic risk of premature cures outweighs the threat"
+    - "Ethereum legitimized for tokenization post-election but future depends on legislation"
+  tags: ["bitcoin", "strc", "digital-credit", "saylor", "strategy", "mstr", "rehypothecation", "quantum", "ethereum", "preferred-stock"]
+  insights_extracted: 16
+  wiki_articles_generated: 4
+  soma_rules_extracted: 3
+  speaker_bias: "EXTREME — Saylor is Executive Chairman of Strategy, largest corporate BTC holder and STRC issuer"
+  processed_date: "2026-04-14"
+  deck_output: "INTEL_CRYPTO_20260414_saylor_digital_credit.pptx"

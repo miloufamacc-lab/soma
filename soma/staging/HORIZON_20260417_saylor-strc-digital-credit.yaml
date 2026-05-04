@@ -1,0 +1,33 @@
+# HORIZON timing signals — Saylor/Fong/Lavish STRC panel 2026-04-17
+
+horizon_signals:
+  - date: "2026-04-17"
+    source: "STRC panel, Michael Saylor"
+    lens: "CREDIT_LIQUIDITY"
+    direction: "BULLISH"
+    timeframe: "months"
+    signal_detail: "Basel reclassification + OCC stablecoin guidance already issued Apr 2026 — banking adoption window open NOW. Speaker expects acceleration in 2026."
+    confidence: 0.55
+    speaker_tier: 2
+    transcript_hash: "8fe33607"
+
+  - date: "2026-04-17"
+    source: "STRC panel, Michael Saylor"
+    lens: "FUNDAMENTAL"
+    direction: "BULLISH"
+    timeframe: "quarters"
+    signal_detail: "STRC targeting $30B market cap in 12-18 months. Current trajectory from zero — requires institutional distribution partnerships to deliver."
+    confidence: 0.45
+    speaker_tier: 2
+    transcript_hash: "8fe33607"
+    red_flag: "Promoter claim — Saylor has direct financial interest in STRC success. Hard cap 0.45."
+
+  - date: "2026-04-17"
+    source: "STRC panel, Michael Saylor"
+    lens: "MACRO"
+    direction: "BEARISH"
+    timeframe: "years"
+    signal_detail: "AI deflationary shock compressing human capital value — Saylor claims largest deflationary event in history within 2-5 years. Structural, not cyclical."
+    confidence: 0.50
+    speaker_tier: 2
+    transcript_hash: "8fe33607"

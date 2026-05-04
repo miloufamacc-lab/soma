@@ -13,6 +13,7 @@ Steps:
     [0.5] PRISM — process scraper inbox (if files present)
     [1/7] Run ORACLE → writes regime + valuations to SOMA
     [1b]  COBALT → on-chain intelligence (BTC/SOL metrics, composite signals)
+    [1c]  SPECTRE → geopolitical risk scoring (RSS feeds, keyword triage, delta check)
     [2/7] What Changed → diffs against previous, flags material shifts
     [2b]  DOCTRINE → thesis engine: belief testing, conviction adjustments, alerts
     [2c]  Narrative Alignment → flags outlook ↔ portfolio contradictions
@@ -28,6 +29,7 @@ import os
 import sys
 import subprocess
 import time
+from datetime import datetime
 
 # Make shared package importable
 _PROJECT_ROOT = os.path.join(os.path.dirname(__file__), "..", "..")
@@ -105,6 +107,55 @@ def step_0_backup():
         return False
 
 
+# ── Step 0b: Dispatch Staging Files ──────────────────────────────────
+
+def step_0b_dispatch_staging():
+    """Process any staging YAML files (PRISM, DOCTRINE, MODEL_FLAG, etc.)."""
+    _header("0b", "Staging Dispatch")
+
+    try:
+        from shared.soma.staging_dispatcher import StagingDispatcher
+        from shared.soma.soma_bridge import SomaBridge
+
+        staging_dir = os.path.join(_PROJECT_ROOT, "shared", "soma", "staging")
+        with SomaBridge() as db:
+            dispatcher = StagingDispatcher(staging_dir=staging_dir, soma_bridge=db)
+            results = dispatcher.process_all()
+
+        if results.get("skipped"):
+            _step_fail(f"Dispatcher skipped: {results.get('reason', 'unknown')}")
+            return results
+
+        processed = results.get("processed", 0)
+        errors = results.get("errors", 0)
+        skipped = results.get("skipped", 0)
+
+        if processed > 0:
+            _step_ok(f"{processed} staging files processed")
+            if results.get("model_flags"):
+                print(f"  {YELLOW}MODEL FLAGS:{RESET} {', '.join(results['model_flags'])}")
+            if results.get("wiki_updates"):
+                print(f"  {CYAN}WIKI UPDATES:{RESET} {', '.join(results['wiki_updates'])}")
+            if results.get("doctrine_evidence"):
+                print(f"  {DIM}DOCTRINE:{RESET} {', '.join(results['doctrine_evidence'])}")
+            if results.get("by_type"):
+                print(f"  {DIM}By type: {results['by_type']}{RESET}")
+        else:
+            _step_ok("No staging files to process")
+
+        if errors > 0:
+            print(f"  {RED}ERRORS: {errors} files moved to staging/errors/{RESET}")
+
+        return results
+
+    except ImportError as e:
+        _step_fail(f"Staging dispatcher not available: {e}")
+        return {}
+    except Exception as e:
+        _step_fail(f"Staging dispatch error: {e}")
+        return {}
+
+
 # ── Step 0.5: PRISM (Inbox Ingestion) ────────────────────────────────
 
 def step_05_prism():
@@ -140,7 +191,12 @@ def step_05_prism():
 # ── Step 1: ORACLE ────────────────────────────────────────────────────
 
 def step_1_oracle():
-    """Run ORACLE → writes regime + valuations to SOMA."""
+    """Run ORACLE → writes regime + valuations to SOMA.
+
+    Generates a stable run_id and passes it via $ORACLE_RUN_ID so the SOMA
+    UPSERT keys (regime_history.run_id, valuations.run_id+ticker) remain
+    idempotent across retries within the same run_day invocation.
+    """
     _header("1/6", "Run ORACLE")
 
     if not os.path.exists(_ORACLE_MAIN):
@@ -148,13 +204,19 @@ def step_1_oracle():
         print(f"  Run ORACLE manually, then re-run this script.")
         return False
 
-    print(f"  Running: python3 {_ORACLE_MAIN}")
+    # Stable run_id per run_day invocation — retries reuse the same UUID.
+    import uuid as _uuid
+    oracle_run_id = os.environ.setdefault("ORACLE_RUN_ID", str(_uuid.uuid4()))
+    env = {**os.environ, "ORACLE_RUN_ID": oracle_run_id}
+
+    print(f"  Running: python3 {_ORACLE_MAIN} --run-id {oracle_run_id}")
     print(f"  {DIM}(this may take a few minutes){RESET}\n")
     try:
         result = subprocess.run(
-            [sys.executable, _ORACLE_MAIN],
+            [sys.executable, _ORACLE_MAIN, "--run-id", oracle_run_id],
             cwd=os.path.dirname(_ORACLE_MAIN),
             timeout=600,
+            env=env,
         )
         if result.returncode == 0:
             _step_ok("ORACLE completed successfully")
@@ -170,11 +232,11 @@ def step_1_oracle():
         return False
 
 
-# ── Step 1b: COBALT (On-Chain Intelligence) ─────────────────────────
+# ── Step 1b: COBALT (Digital Assets) ────────────────────────────────
 
 def step_1b_cobalt():
-    """COBALT — on-chain intelligence: BTC/SOL metrics, composite signals."""
-    _header("1b", "COBALT — On-Chain Intelligence")
+    """COBALT — Digital Assets: BTC/SOL metrics, composite signals."""
+    _header("1b", "COBALT — Digital Assets")
 
     try:
         from oracle.cobalt_engine import CobaltEngine
@@ -207,6 +269,37 @@ def step_1b_cobalt():
         _step_fail(f"COBALT error: {e}")
 
 
+# ── Step 1c: SPECTRE (Geopolitical Intelligence) ────────────────────
+
+def step_1c_spectre():
+    """SPECTRE — geopolitical risk scoring: RSS feeds, keyword triage, delta check."""
+    _header("1c", "SPECTRE — Geopolitical Intelligence")
+
+    try:
+        from oracle.spectre_engine import SpectreEngine
+
+        with SpectreEngine() as spectre:
+            result = spectre.analyze()
+            spectre.print_terminal()
+            log_path = spectre.save_log()
+
+            n_events = result.get("relevant_events", 0)
+            n_shifts = len(result.get("material_shifts", []))
+            nlp_mode = result.get("nlp_mode", "triage-only")
+
+            _step_ok(f"{n_events} events classified ({nlp_mode})")
+
+            if n_shifts:
+                print(f"  {YELLOW}{n_shifts} material geopolitical shift(s) detected{RESET}")
+
+            _step_ok(f"Log saved to {log_path}")
+
+    except ImportError as e:
+        print(f"  {YELLOW}[SKIP] SPECTRE not importable: {e}{RESET}")
+    except Exception as e:
+        _step_fail(f"SPECTRE error: {e}")
+
+
 # ── Step 2: What Changed ─────────────────────────────────────────────
 
 def step_2_what_changed():
@@ -227,11 +320,11 @@ def step_2_what_changed():
         return None
 
 
-# ── Step 2b: DOCTRINE (Thesis Engine) ───────────────────────────────────
+# ── Step 2b: DOCTRINE (Thesis & Convictions) ────────────────────────────
 
 def step_2b_doctrine():
-    """DOCTRINE — Investment thesis engine: beliefs, evidence, conviction, alerts."""
-    _header("2b", "DOCTRINE — Thesis Engine")
+    """DOCTRINE — Thesis & Convictions: beliefs, evidence, conviction, alerts."""
+    _header("2b", "DOCTRINE — Thesis & Convictions")
 
     try:
         from shared.soma.doctrine_engine import DoctrineEngine
@@ -459,11 +552,11 @@ def step_5_cipher(wc_result):
         _step_fail(f"CIPHER error: {e}")
 
 
-# ── Step 6: HORIZON Tactical Timing ──────────────────────────────────
+# ── Step 6: HORIZON Timing & Signals ────────────────────────────────
 
 def step_6_horizon():
-    """HORIZON → run tactical timing analysis with fresh ORACLE data."""
-    _header("6/7", "HORIZON Tactical Timing")
+    """HORIZON → run timing & signals analysis with fresh Research data."""
+    _header("6/7", "HORIZON — Timing & Signals")
 
     try:
         from shared.soma.horizon import run_horizon
@@ -514,6 +607,80 @@ def step_6_horizon():
         print(f"  {YELLOW}[SKIP] HORIZON not importable: {e}{RESET}")
     except Exception as e:
         _step_fail(f"HORIZON error: {e}")
+
+
+# ── Step 7b: Wiki Sync (VAULT → Wiki) ────────────────────────────────
+
+def _alert_wiki_sync_failure(reason: str, detail: str = "") -> None:
+    """Loud banner + events-table row on wiki sync failure (Phase 3.5).
+
+    Non-fatal: never raises. If SOMA write itself fails, just prints.
+    """
+    banner = "#" * 72
+    print(f"\n{RED}{banner}{RESET}")
+    print(f"{RED}!! WIKI SYNC FAILED — wiki may be stale !!{RESET}")
+    print(f"{RED}   reason: {reason}{RESET}")
+    if detail:
+        print(f"{RED}   detail: {detail[:240]}{RESET}")
+    print(f"{RED}{banner}{RESET}\n")
+    try:
+        import json as _json
+        from shared.soma.soma_bridge import SomaBridge
+        today = datetime.now().strftime("%Y-%m-%d")
+        with SomaBridge() as s:
+            s.write_event(
+                date=today,
+                event_type="WIKI_SYNC_FAILED",
+                source_module="run_day.step_7b_wiki_sync",
+                details_json=_json.dumps({"reason": reason, "detail": detail[:500]}),
+                module_version="phase-3.5",
+            )
+    except Exception as e:
+        print(f"  {DIM}(could not log events row: {e}){RESET}")
+
+
+def step_7b_wiki_sync():
+    """Sync latest VAULT valuations to wiki company articles."""
+    _header("7b", "Wiki Sync (VAULT → Wiki)")
+
+    try:
+        import subprocess
+        wiki_seed = os.path.join(_PROJECT_ROOT, "wiki", "tools", "wiki_seed_vault.py")
+
+        if not os.path.exists(wiki_seed):
+            _step_ok("wiki_seed_vault.py not found — skipping (wiki tools not installed)")
+            return True
+
+        result = subprocess.run(
+            [sys.executable, wiki_seed, "--write", "--top", "10"],
+            capture_output=True, text=True, timeout=120,
+            cwd=os.path.join(_PROJECT_ROOT, "wiki"),
+        )
+
+        if result.returncode == 0:
+            _step_ok("Wiki articles refreshed (top 10 tickers)")
+            if result.stdout.strip():
+                for line in result.stdout.strip().split("\n")[:5]:
+                    print(f"  {DIM}{line}{RESET}")
+        else:
+            _step_fail(f"wiki_seed_vault.py returned {result.returncode}")
+            if result.stderr.strip():
+                print(f"  {DIM}{result.stderr.strip()[:200]}{RESET}")
+            _alert_wiki_sync_failure(
+                reason=f"wiki_seed_vault.py exit={result.returncode}",
+                detail=result.stderr.strip() or result.stdout.strip(),
+            )
+
+        return True
+
+    except subprocess.TimeoutExpired:
+        _step_fail("Wiki sync timed out (120s)")
+        _alert_wiki_sync_failure(reason="timeout", detail="wiki_seed_vault.py exceeded 120s")
+        return True  # non-fatal
+    except Exception as e:
+        _step_fail(f"Wiki sync error: {e}")
+        _alert_wiki_sync_failure(reason="exception", detail=str(e))
+        return True  # non-fatal
 
 
 # ── Step 7: Action Items + Timing ─────────────────────────────────────
@@ -573,6 +740,13 @@ def main():
     except Exception as e:
         print(f"  {RED}ERROR{RESET} in Backup step: {e}")
 
+    # Step 0b: Dispatch staging files
+    staging_results = {}
+    try:
+        staging_results = step_0b_dispatch_staging()
+    except Exception as e:
+        print(f"  {RED}ERROR{RESET} in Staging Dispatch step: {e}")
+
     # Step 0.5: PRISM (Inbox Ingestion)
     try:
         step_05_prism()
@@ -585,11 +759,17 @@ def main():
     except Exception as e:
         print(f"  {RED}ERROR{RESET} in ORACLE step: {e}")
 
-    # Step 1b: COBALT (On-Chain Intelligence)
+    # Step 1b: COBALT (Digital Assets)
     try:
         step_1b_cobalt()
     except Exception as e:
         print(f"  {RED}ERROR{RESET} in COBALT step: {e}")
+
+    # Step 1c: SPECTRE (Geopolitical Intelligence)
+    try:
+        step_1c_spectre()
+    except Exception as e:
+        print(f"  {RED}ERROR{RESET} in SPECTRE step: {e}")
 
     # Step 2: What Changed
     wc_result = None
@@ -622,7 +802,29 @@ def main():
     except Exception as e:
         print(f"  {RED}ERROR{RESET} in Status step: {e}")
 
-    # Step 4: MANTIS
+    # Step 6: HORIZON (moved BEFORE MANTIS — must produce same-day signal first)
+    # After HORIZON runs, HorizonContract computes and persists the sizing multiplier
+    # so MANTIS can consume it in the very next step.
+    try:
+        step_6_horizon()
+    except Exception as e:
+        print(f"  {RED}ERROR{RESET} in HORIZON step: {e}")
+
+    # Persist HORIZON→MANTIS sizing contract (migration 020)
+    # This writes the horizon_signal row that get_horizon_multiplier() will read.
+    try:
+        from soma.horizon_contract import HorizonContract
+        _hc = HorizonContract()
+        _hc_result = _hc.compute()
+        _hc_rowid  = _hc.persist(_hc_result)
+        print(f"  {GREEN}[CONTRACT]{RESET} horizon_signal persisted "
+              f"(mult={_hc_result.horizon_multiplier:.4f}, "
+              f"dir={_hc_result.composite_direction}, "
+              f"rowid={_hc_rowid})")
+    except Exception as e:
+        print(f"  {YELLOW}[WARN]{RESET} HorizonContract persist failed (non-fatal): {e}")
+
+    # Step 4: MANTIS (now consumes fresh same-day horizon_signal)
     try:
         step_4_mantis()
     except Exception as e:
@@ -634,11 +836,11 @@ def main():
     except Exception as e:
         print(f"  {RED}ERROR{RESET} in CIPHER step: {e}")
 
-    # Step 6: HORIZON
+    # Step 7b: Wiki Sync (VAULT → Wiki)
     try:
-        step_6_horizon()
+        step_7b_wiki_sync()
     except Exception as e:
-        print(f"  {RED}ERROR{RESET} in HORIZON step: {e}")
+        print(f"  {RED}ERROR{RESET} in Wiki Sync step: {e}")
 
     # Step 7: Action Items + Timing
     try:

@@ -1,0 +1,40 @@
+horizon_signals:
+  - date: "2026-04-15"
+    source: "Jack Mallers Show Ep113, Jack Mallers"
+    lens: "GEOPOLITICAL"
+    direction: "BEARISH"
+    timeframe: "weeks"
+    signal_detail: "Hormuz remains closed, ceasefire fake. Trump escalating blockade. No resolution visible in near term."
+    confidence: 0.60
+    speaker_tier: 3
+    transcript_hash: "c5682bf0"
+
+  - date: "2026-04-15"
+    source: "Jack Mallers Show Ep113, citing Bloomberg/Arthur Hayes"
+    lens: "CREDIT_LIQUIDITY"
+    direction: "BEARISH"
+    timeframe: "months"
+    signal_detail: "Private credit $1.8T crisis deepening. Blue Owl 22%, Carlyle 16% withdrawals. Fed probing bank exposure. Possible systemic event within months."
+    confidence: 0.70
+    speaker_tier: 2
+    transcript_hash: "c5682bf0"
+
+  - date: "2026-04-15"
+    source: "Jack Mallers Show Ep113, citing Bloomberg 1973 parallel"
+    lens: "MACRO"
+    direction: "BEARISH"
+    timeframe: "months"
+    signal_detail: "1973 oil shock analogy: S&P took 12 months to fully digest impact. Current markets may be far too optimistic. Suggests further downside over next 6-12 months."
+    confidence: 0.50
+    speaker_tier: 3
+    transcript_hash: "c5682bf0"
+
+  - date: "2026-04-15"
+    source: "Jack Mallers Show Ep113, Mallers"
+    lens: "MACRO"
+    direction: "BULLISH"
+    timeframe: "quarters"
+    signal_detail: "Central planners will eventually print — they always react to crisis, never preempt. When crisis hits, BTC/gold moonshot. DCA now."
+    confidence: 0.50
+    speaker_tier: 3
+    transcript_hash: "c5682bf0"

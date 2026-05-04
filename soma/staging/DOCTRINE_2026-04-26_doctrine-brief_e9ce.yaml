@@ -1,0 +1,21 @@
+type: DOCTRINE_EVIDENCE
+schema_version: "1.0"
+date: "2026-04-26"
+source: "dabeiba-doctrine-brief"
+source_type: "scheduled_task"
+source_hash: "571a69ff"
+belief_id: "CDN_ENERGY_OIL_PREMIUM"
+source_detail: "Hormuz crisis 9.1M bbl/day shut-in (largest in history), Brent at 107.10 with EIA Q2 peak 115/bbl; CDN Energy names SU/TRP/PBA direct structural beneficiaries across 5 consecutive daily doctrine logs"
+supports: true
+weight: 1.0
+---
+type: DOCTRINE_EVIDENCE
+schema_version: "1.0"
+date: "2026-04-26"
+source: "dabeiba-doctrine-brief"
+source_type: "scheduled_task"
+source_hash: "c51b9b06"
+belief_id: "AI_CAPEX_CYCLE"
+source_detail: "Q1 earnings beat rate 89% / +12.3%; MSFT+META combined AI capex ~700B forward; Morgan Stanley moved TSMC to Top Pick on AI capex acceleration; record SPX/NDX highs on semiconductor strength"
+supports: true
+weight: 1.0

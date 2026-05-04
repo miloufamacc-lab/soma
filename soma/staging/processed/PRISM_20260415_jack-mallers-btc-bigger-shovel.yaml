@@ -1,0 +1,77 @@
+prism_intake:
+  - source_type: transcript
+    source_url: ""
+    language: "en"
+    category: "macro"
+    target_pipeline: "TITAN"
+    relevance_score: 9
+    key_claims:
+      - "Strait of Hormuz effectively closed — 20% global oil supply offline, stagflation accelerating"
+      - "Fed trapped: raise rates into AI deflation or cut into oil inflation — both paths lead to dollar debasement"
+      - "Private credit $1.8T under stress — Blue Owl 22%, Carlyle 16% withdrawals signal systemic risk"
+      - "1973 oil shock parallel — markets took 12 months to digest, current optimism may be premature"
+      - "US dollar must weaken significantly for reshoring — DOGE, tariffs, Iran war all failed (0 for 3)"
+    tags: ["hormuz", "stagflation", "private-credit", "fed-policy", "dollar-debasement", "oil-shock"]
+    processed_date: "2026-04-15"
+    skill_version: "V2.1"
+    transcript_hash: "c5682bf0"
+
+  - source_type: transcript
+    source_url: ""
+    language: "en"
+    category: "crypto"
+    target_pipeline: "COBALT"
+    relevance_score: 8
+    key_claims:
+      - "Iran reportedly accepting Bitcoin for Strait of Hormuz transit (FT) — neutral settlement layer thesis"
+      - "Bitcoin is both monetary asset AND network — gold lacks network layer, requires trusted custodians"
+      - "BTC $1.47T market cap has 200x+ purchasing power upside against $400-500T monetary market"
+    tags: ["btc-settlement", "iran-bitcoin", "monetary-network", "reserve-currency"]
+    processed_date: "2026-04-15"
+    skill_version: "V2.1"
+    transcript_hash: "c5682bf0"
+
+  - source_type: transcript
+    source_url: ""
+    language: "en"
+    category: "geopolitical"
+    target_pipeline: "SPECTRE"
+    relevance_score: 8
+    key_claims:
+      - "Iran 10-point ceasefire demands amount to US capitulation — petrodollar enforcement via military failing"
+      - "Trump China trip focused on rare earths — US cannot sustain war without Chinese supply chain"
+      - "$950M oil trade placed hours before ceasefire announcement — government insider trading suspected"
+      - "Gold exports US→Switzerland→China: gold lubricating global trade, replacing dollar settlement"
+    tags: ["iran-war", "hormuz", "china-rare-earths", "petrodollar", "insider-trading", "gold-settlement"]
+    processed_date: "2026-04-15"
+    skill_version: "V2.1"
+    transcript_hash: "c5682bf0"
+
+  - source_type: transcript
+    source_url: ""
+    language: "en"
+    category: "philosophy"
+    target_pipeline: "DOCTRINE"
+    relevance_score: 6
+    key_claims:
+      - "Bitcoin uniquely combines monetary asset + monetary network — Satoshi innovation over gold"
+      - "Taxes sideline society's greatest producers — El Salvador model shows alternative"
+    tags: ["bitcoin-philosophy", "monetary-theory", "taxation", "el-salvador"]
+    processed_date: "2026-04-15"
+    skill_version: "V2.1"
+    transcript_hash: "c5682bf0"
+
+  - source_type: transcript
+    source_url: ""
+    language: "en"
+    category: "risk"
+    target_pipeline: "FORGE"
+    relevance_score: 7
+    key_claims:
+      - "Stagflation trap makes both rate hike and cut suicidal for financial system"
+      - "Private credit crisis may spill over into banking system — Fed probing exposure"
+      - "Office CRE -90% signals deep structural deflation in discretionary assets"
+    tags: ["stagflation", "private-credit-risk", "cre-collapse", "rate-policy-risk"]
+    processed_date: "2026-04-15"
+    skill_version: "V2.1"
+    transcript_hash: "c5682bf0"
