@@ -14,6 +14,7 @@ Steps:
     [1/7] Run ORACLE → writes regime + valuations to SOMA
     [1b]  COBALT → on-chain intelligence (BTC/SOL metrics, composite signals)
     [1c]  SPECTRE → geopolitical risk scoring (RSS feeds, keyword triage, delta check)
+    [1d]  SOMA-INTEL → graph enrichment + signal propagation + sweep + SOMA bridge
     [2/7] What Changed → diffs against previous, flags material shifts
     [2b]  DOCTRINE → thesis engine: belief testing, conviction adjustments, alerts
     [2c]  Narrative Alignment → flags outlook ↔ portfolio contradictions
@@ -298,6 +299,98 @@ def step_1c_spectre():
         print(f"  {YELLOW}[SKIP] SPECTRE not importable: {e}{RESET}")
     except Exception as e:
         _step_fail(f"SPECTRE error: {e}")
+
+
+# ── Step 1d: SOMA-INTEL (Graph + Signal layer) ────────────────────────
+
+def step_soma_intel():
+    """
+    SOMA-INTEL — daily graph enrichment + signal propagation.
+
+    Runs four sub-tools in sequence (all idempotent):
+      1. convergence_engine  — detect platform convergences, refresh beliefs
+      2. signal_propagator   — time-decayed aggregate score per universe ticker
+      3. signal_sweep        — expire stale signals, prune superseded beliefs
+      4. soma_intel_bridge   — write signals to raw_intelligence for MANTIS/CIPHER
+
+    Non-fatal: a failure in any sub-tool is logged but does not stop the run.
+    """
+    _header("1d", "SOMA-INTEL — Graph & Signal Layer")
+
+    from soma.intel.store import IntelStore
+    import os
+    from pathlib import Path
+
+    _dabeiba = Path(__file__).resolve().parent.parent.parent
+    db_path  = Path(os.environ.get("SOMA_DB_PATH",
+                    str(_dabeiba / "shared" / "soma" / "data" / "soma.db")))
+
+    # ── 1. Convergence engine ──────────────────────────────────────────
+    try:
+        from soma.intel.convergence_engine import run_pass_a, run_pass_b, run_pass_c
+        with IntelStore(db_path=db_path) as store:
+            a = run_pass_a(store, dry_run=False, verbose=False)
+            b = run_pass_b(store, dry_run=False, verbose=False)
+            c = run_pass_c(store, dry_run=False, verbose=False)
+        print(
+            f"  {GREEN}[convergence]{RESET}  "
+            f"companies={a['companies_processed']}  "
+            f"conv_edges={a['convergence_edges_written']}  "
+            f"has_thesis={b['has_thesis_written']}  "
+            f"beliefs={c['beliefs_refreshed']}"
+        )
+    except Exception as e:
+        print(f"  {YELLOW}[WARN]{RESET} convergence_engine failed (non-fatal): {e}")
+
+    # ── 2. Signal propagator ──────────────────────────────────────────
+    try:
+        from soma.intel.signal_propagator import run_propagator
+        with IntelStore(db_path=db_path) as store:
+            sp = run_propagator(store, tickers=None, dry_run=False,
+                                verbose=False, top_n=0)
+        print(
+            f"  {GREEN}[propagator]{RESET}   "
+            f"scored={sp['tickers_scored']}  "
+            f"written={sp['signals_written']}  "
+            f"reconfirmed={sp['reconfirmed']}  "
+            f"skipped={sp['skipped_low']}"
+        )
+    except Exception as e:
+        print(f"  {YELLOW}[WARN]{RESET} signal_propagator failed (non-fatal): {e}")
+
+    # ── 3. Signal sweep ───────────────────────────────────────────────
+    try:
+        from soma.intel.signal_sweep import run_pass_1, run_pass_2, run_pass_3
+        with IntelStore(db_path=db_path) as store:
+            p1 = run_pass_1(store, tickers=None, dry_run=False, verbose=False)
+            p2 = run_pass_2(store, dry_run=False, verbose=False)
+            p3 = run_pass_3(store, tickers=None, dry_run=False, verbose=False)
+        print(
+            f"  {GREEN}[sweep]{RESET}        "
+            f"expired={p1['expired']}  "
+            f"pruned={p2['pruned']}  "
+            f"reconfirmed={p3['reconfirmed']}  "
+            f"expired_low={p3['expired_low']}"
+        )
+    except Exception as e:
+        print(f"  {YELLOW}[WARN]{RESET} signal_sweep failed (non-fatal): {e}")
+
+    # ── 4. SOMA bridge ────────────────────────────────────────────────
+    try:
+        from datetime import date
+        from soma.intel.soma_intel_bridge import run_bridge
+        br = run_bridge(target_date=date.today().isoformat(),
+                        dry_run=False, verbose=False)
+        mantis = "written" if br["mantis_written"] else "skipped"
+        cipher = "written" if br["cipher_written"] else "skipped"
+        print(
+            f"  {GREEN}[bridge]{RESET}       "
+            f"signals={br['signals_found']}  "
+            f"convergence={br['convergence_hits']}  "
+            f"mantis={mantis}  cipher={cipher}"
+        )
+    except Exception as e:
+        print(f"  {YELLOW}[WARN]{RESET} soma_intel_bridge failed (non-fatal): {e}")
 
 
 # ── Step 2: What Changed ─────────────────────────────────────────────
@@ -770,6 +863,12 @@ def main():
         step_1c_spectre()
     except Exception as e:
         print(f"  {RED}ERROR{RESET} in SPECTRE step: {e}")
+
+    # Step 1d: SOMA-INTEL (Graph + Signal layer)
+    try:
+        step_soma_intel()
+    except Exception as e:
+        print(f"  {RED}ERROR{RESET} in SOMA-INTEL step: {e}")
 
     # Step 2: What Changed
     wc_result = None

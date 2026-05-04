@@ -283,9 +283,9 @@ def run_pass_a(
                 INSERT INTO soma_intel_belief
                   (subject_node_id, predicate, value, confidence, ts,
                    source_id, superseded_by)
-                VALUES (?, 'platform_count', ?, ?, ?, 'convergence_engine', ?)
+                VALUES (?, 'platform_count', ?, ?, ?, 'convergence_engine', NULL)
                 """,
-                (node_id, str(len(platforms)), CONV_BASE_CONFIDENCE, NOW, prior_id),
+                (node_id, str(len(platforms)), CONV_BASE_CONFIDENCE, NOW),
             )
             if prior_id:
                 store._c.execute(
@@ -451,9 +451,9 @@ def run_pass_c(
                 INSERT INTO soma_intel_belief
                   (subject_node_id, predicate, value, confidence, ts,
                    source_id, superseded_by)
-                VALUES (?, 'signal_score', ?, ?, ?, 'universe_manager', ?)
+                VALUES (?, 'signal_score', ?, ?, ?, 'universe_manager', NULL)
                 """,
-                (nid, f"{score:.3f}", min(0.95, score / 30.0), NOW, prior_id),
+                (nid, f"{score:.3f}", min(0.95, score / 30.0), NOW),
             )
             if prior_id:
                 store._c.execute(
