@@ -1,7 +1,7 @@
 {
   "_meta": {
     "version": "v1.0",
-    "generated_ts": "2026-05-04T16:07:23.596571+00:00",
+    "generated_ts": "2026-05-04T16:16:54.611770+00:00",
     "next_refresh_due": "2026-08-02",
     "total_tickers": 199,
     "etf_holdings_count": 113,
@@ -16,7 +16,8 @@
         "PLTR",
         "SMCI",
         "ASML",
-        "TSM"
+        "TSM",
+        "TSLA"
       ],
       "pl_robotics": [
         "TSLA",
@@ -1331,6 +1332,7 @@
       "security_no": "T013220",
       "source": "positions",
       "platform_tags": [
+        "pl_ai",
         "pl_energy_storage",
         "pl_robotics"
       ]
@@ -1880,6 +1882,7 @@
         "name": "Tesla Inc",
         "weight": 0.0946,
         "platform_tags": [
+          "pl_ai",
           "pl_energy_storage",
           "pl_robotics"
         ]

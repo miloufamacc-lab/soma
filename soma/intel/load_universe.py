@@ -11,7 +11,7 @@ Writes:
   - soma_intel_universe table in soma.db → loaded via IntelStore
 
 Platform tag rules (LOCKED per OPUS_DELIVERABLES §D.1 / BUILD_PLAN §0.2):
-  pl_ai:            NVDA AMD MSFT GOOGL META AVGO PLTR SMCI ASML TSM
+  pl_ai:            NVDA AMD MSFT GOOGL META AVGO PLTR SMCI ASML TSM TSLA
   pl_robotics:      TSLA ABB FANUY ISRG IRBT
   pl_energy_storage:TSLA ENPH FSLR ALB LIT
   pl_multi_omics:   ILMN PACB EXAS CRSP NTLA BEAM
@@ -63,7 +63,7 @@ DB_PATH = (
 # ── Platform tag rules (LOCKED — see §F, do not modify without Opus review) ──
 _PLATFORM_TAGS: dict[str, list[str]] = {
     "pl_ai":             ["NVDA", "AMD", "MSFT", "GOOGL", "META", "AVGO",
-                          "PLTR", "SMCI", "ASML", "TSM"],
+                          "PLTR", "SMCI", "ASML", "TSM", "TSLA"],
     "pl_robotics":       ["TSLA", "ABB", "FANUY", "ISRG", "IRBT"],
     "pl_energy_storage": ["TSLA", "ENPH", "FSLR", "ALB", "LIT"],
     "pl_multi_omics":    ["ILMN", "PACB", "EXAS", "CRSP", "NTLA", "BEAM"],
