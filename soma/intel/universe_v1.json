@@ -1,0 +1,2609 @@
+{
+  "_meta": {
+    "version": "v1.0",
+    "generated_ts": "2026-05-04T16:07:23.596571+00:00",
+    "next_refresh_due": "2026-08-02",
+    "total_tickers": 199,
+    "etf_holdings_count": 113,
+    "platform_tag_rules": {
+      "pl_ai": [
+        "NVDA",
+        "AMD",
+        "MSFT",
+        "GOOGL",
+        "META",
+        "AVGO",
+        "PLTR",
+        "SMCI",
+        "ASML",
+        "TSM"
+      ],
+      "pl_robotics": [
+        "TSLA",
+        "ABB",
+        "FANUY",
+        "ISRG",
+        "IRBT"
+      ],
+      "pl_energy_storage": [
+        "TSLA",
+        "ENPH",
+        "FSLR",
+        "ALB",
+        "LIT"
+      ],
+      "pl_multi_omics": [
+        "ILMN",
+        "PACB",
+        "EXAS",
+        "CRSP",
+        "NTLA",
+        "BEAM"
+      ],
+      "pl_blockchain": [
+        "COIN",
+        "MSTR",
+        "MARA",
+        "RIOT",
+        "BLOK"
+      ]
+    }
+  },
+  "core": [
+    {
+      "ticker": "AETUF",
+      "name": "ARC RESOURCES LTD",
+      "sector": "Energy",
+      "cad_symbol": "ARX",
+      "security_no": "A027500",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "CCJ",
+      "name": "CAMECO CORP",
+      "sector": "Energy",
+      "cad_symbol": "CCO",
+      "security_no": "C035713",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "CNQ",
+      "name": "CANADIAN NATURAL RESOURCES LTD",
+      "sector": "Energy",
+      "cad_symbol": "CNQ",
+      "security_no": "C157859",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "CVE",
+      "name": "CENOVUS ENERGY INC",
+      "sector": "Energy",
+      "cad_symbol": "CVE",
+      "security_no": "C110551",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "ENB",
+      "name": "ENBRIDGE INC",
+      "sector": "Energy",
+      "cad_symbol": "ENB",
+      "security_no": "E100301",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "PBA",
+      "name": "PEMBINA PIPELINE CORP",
+      "sector": "Energy",
+      "cad_symbol": "PPL",
+      "security_no": "P026694",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "SU",
+      "name": "SUNCOR ENERGY INC",
+      "sector": "Energy",
+      "cad_symbol": "SU",
+      "security_no": "S113614",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "TRMLF",
+      "name": "TOURMALINE OIL CORP",
+      "sector": "Energy",
+      "cad_symbol": "TOU",
+      "security_no": "T106998",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "TRP",
+      "name": "TC ENERGY CORP COM",
+      "sector": "Energy",
+      "cad_symbol": "TRP",
+      "security_no": "T031762",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "CVX",
+      "name": "CHEVRON CORPORATION",
+      "sector": "Energy",
+      "cad_symbol": null,
+      "security_no": "C011183",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "EOG",
+      "name": "EOG RES INC",
+      "sector": "Energy",
+      "cad_symbol": null,
+      "security_no": "E002802",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "XLE",
+      "name": "SELECT SECTOR SPDR TRUST STATE STREET ENERGY SELECT SECTOR SPDR ETF",
+      "sector": "Energy",
+      "cad_symbol": null,
+      "security_no": "S007154",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "ACDVF",
+      "name": "AIR CANADA VTG & VAR VTG SHS",
+      "sector": "Industrials",
+      "cad_symbol": "AC",
+      "security_no": "A037340",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "SNCAF",
+      "name": "ATKINSREALIS GROUP INC COM",
+      "sector": "Industrials",
+      "cad_symbol": "ATRL",
+      "security_no": "A064163",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "ATS",
+      "name": "ATS CORPORATION COM",
+      "sector": "Industrials",
+      "cad_symbol": "ATS",
+      "security_no": "A059878",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "BDRBF",
+      "name": "BOMBARDIER INC CL B NEW",
+      "sector": "Industrials",
+      "cad_symbol": "BBD.B",
+      "security_no": "B095128",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "CAE",
+      "name": "CAE INC",
+      "sector": "Industrials",
+      "cad_symbol": "CAE",
+      "security_no": "C000019",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "CGJTF",
+      "name": "CARGOJET INC COM VARIABLE VTG",
+      "sector": "Industrials",
+      "cad_symbol": "CJT",
+      "security_no": "C076375",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "CNI",
+      "name": "CANADIAN NATIONAL RAILWAY CO",
+      "sector": "Industrials",
+      "cad_symbol": "CNR",
+      "security_no": "C000606",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "CP",
+      "name": "CANADIAN PAC KANS CITY LTD COM",
+      "sector": "Industrials",
+      "cad_symbol": "CP",
+      "security_no": "C131944",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "ELEEF",
+      "name": "ELEMENT FLEET MANAGEMENT CORP COM",
+      "sector": "Industrials",
+      "cad_symbol": "EFN",
+      "security_no": "E015458",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "FINGF",
+      "name": "FINNING INTERNATIONAL INC",
+      "sector": "Industrials",
+      "cad_symbol": "FTT",
+      "security_no": "F260988",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "GFL",
+      "name": "GFL ENVIRONMENTAL INC SUB VTG SHS",
+      "sector": "Industrials",
+      "cad_symbol": "GFL",
+      "security_no": "G028082",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "RBA",
+      "name": "RB GLOBAL INC COM",
+      "sector": "Industrials",
+      "cad_symbol": "RBA",
+      "security_no": "R047735",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "TMTNY",
+      "name": "TOROMONT INDUSTRIES LTD",
+      "sector": "Industrials",
+      "cad_symbol": "TIH",
+      "security_no": "T443951",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "TRI",
+      "name": "THOMSON REUTERS CORP COM NO PAR",
+      "sector": "Industrials",
+      "cad_symbol": "TRI",
+      "security_no": "T042071",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "WCN",
+      "name": "WASTE CONNECTIONS INC COM",
+      "sector": "Industrials",
+      "cad_symbol": "WCN",
+      "security_no": "W013918",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "WSPOF",
+      "name": "WSP GLOBAL INC COM",
+      "sector": "Industrials",
+      "cad_symbol": "WSP",
+      "security_no": "W000350",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "BYD",
+      "name": "BOYD GROUP SVCS INC COM",
+      "sector": "Industrials",
+      "cad_symbol": null,
+      "security_no": "B069527",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "HON",
+      "name": "HONEYWELL INTL INC",
+      "sector": "Industrials",
+      "cad_symbol": null,
+      "security_no": "H006317",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "RTX",
+      "name": "RTX CORPORATION COMMON STOCK",
+      "sector": "Industrials",
+      "cad_symbol": null,
+      "security_no": "R037182",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "UNP",
+      "name": "UNION PACIFIC CORP",
+      "sector": "Industrials",
+      "cad_symbol": null,
+      "security_no": "U115887",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "XYL",
+      "name": "XYLEM INC COM",
+      "sector": "Industrials",
+      "cad_symbol": null,
+      "security_no": "Y003781",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "ETN",
+      "name": "EATON CORPORATION PLC",
+      "sector": "Industrials",
+      "cad_symbol": null,
+      "security_no": "E014167",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "GE",
+      "name": "GE AEROSPACE COMMON STOCK",
+      "sector": "Industrials",
+      "cad_symbol": null,
+      "security_no": "G030504",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "LMT",
+      "name": "LOCKHEED MARTIN CORP",
+      "sector": "Industrials",
+      "cad_symbol": null,
+      "security_no": "L413243",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "WM",
+      "name": "WASTE MANAGEMENT INC DEL",
+      "sector": "Industrials",
+      "cad_symbol": null,
+      "security_no": "W001310",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "UPS",
+      "name": "UNITED PARCEL SVC INC CL B",
+      "sector": "Industrials",
+      "cad_symbol": null,
+      "security_no": "U001241",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "ANCTF",
+      "name": "ALIMENTATION COUCHE-TARD INC COM",
+      "sector": "Consumer Staples",
+      "cad_symbol": "ATD",
+      "security_no": "A059441",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "LBLCF",
+      "name": "LOBLAW COMPANIES LTD",
+      "sector": "Consumer Staples",
+      "cad_symbol": "L",
+      "security_no": "L495002",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "MTRAF",
+      "name": "METRO INC COM",
+      "sector": "Consumer Staples",
+      "cad_symbol": "MRU",
+      "security_no": "M101789",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "COST",
+      "name": "COSTCO WHOLESALE CORP-NEW",
+      "sector": "Consumer Staples",
+      "cad_symbol": null,
+      "security_no": "C006280",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "KO",
+      "name": "COCA COLA COMPANY (THE)",
+      "sector": "Consumer Staples",
+      "cad_symbol": null,
+      "security_no": "C479486",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "MDLZ",
+      "name": "MONDELEZ INTERNATIONAL INC COM",
+      "sector": "Consumer Staples",
+      "cad_symbol": null,
+      "security_no": "M029036",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "PG",
+      "name": "PROCTER & GAMBLE CO",
+      "sector": "Consumer Staples",
+      "cad_symbol": null,
+      "security_no": "P748365",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "STZ",
+      "name": "CONSTELLATION BRANDS INC CL A",
+      "sector": "Consumer Staples",
+      "cad_symbol": null,
+      "security_no": "C008548",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "WMT",
+      "name": "WALMART INC COMMON STOCK",
+      "sector": "Consumer Staples",
+      "cad_symbol": null,
+      "security_no": "W030004",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "CELH",
+      "name": "CELSIUS HOLDINGS INC",
+      "sector": "Consumer Staples",
+      "cad_symbol": null,
+      "security_no": "C024617",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "MO",
+      "name": "ALTRIA GROUP INC",
+      "sector": "Consumer Staples",
+      "cad_symbol": null,
+      "security_no": "A014251",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "PEP",
+      "name": "PEPSICO INC COMMON STOCK",
+      "sector": "Consumer Staples",
+      "cad_symbol": null,
+      "security_no": "P395904",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "BAM",
+      "name": "BROOKFIELD ASSET MGMT LTD CL A LTD VTG SHS",
+      "sector": "Financials",
+      "cad_symbol": "BAM",
+      "security_no": "B100810",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "BMO",
+      "name": "BANK OF MONTREAL",
+      "sector": "Financials",
+      "cad_symbol": "BMO",
+      "security_no": "B084606",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "BN",
+      "name": "BROOKFIELD CORP VTG SHS CL A",
+      "sector": "Financials",
+      "cad_symbol": "BN",
+      "security_no": "B100811",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "BNS",
+      "name": "BANK OF NOVA SCOTIA",
+      "sector": "Financials",
+      "cad_symbol": "BNS",
+      "security_no": "B086409",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "CM",
+      "name": "CANADIAN IMPERIAL BANK OF COMMERCE",
+      "sector": "Financials",
+      "cad_symbol": "CM",
+      "security_no": "C146504",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "IFCZF",
+      "name": "INTACT FINANCIAL CORP",
+      "sector": "Financials",
+      "cad_symbol": "IFC",
+      "security_no": "H107153",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "MFC",
+      "name": "MANULIFE FINANCIAL CORP",
+      "sector": "Financials",
+      "cad_symbol": "MFC",
+      "security_no": "M101454",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "NTIOF",
+      "name": "NATIONAL BANK OF CANADA",
+      "sector": "Financials",
+      "cad_symbol": "NA",
+      "security_no": "N052356",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "PWCDF",
+      "name": "POWER CORP OF CANADA SUB-VTG",
+      "sector": "Financials",
+      "cad_symbol": "POW",
+      "security_no": "P691139",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "RY",
+      "name": "ROYAL BANK OF CANADA",
+      "sector": "Financials",
+      "cad_symbol": "RY",
+      "security_no": "R648865",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "SLF",
+      "name": "SUN LIFE FINANCIAL INC",
+      "sector": "Financials",
+      "cad_symbol": "SLF",
+      "security_no": "S102167",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "TD",
+      "name": "TORONTO-DOMINION BANK",
+      "sector": "Financials",
+      "cad_symbol": "TD",
+      "security_no": "T444273",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "TMXXF",
+      "name": "TMX GROUP LIMITED COM",
+      "sector": "Financials",
+      "cad_symbol": "X",
+      "security_no": "T016278",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "KKR",
+      "name": "KKR & CO INC COMMON STOCK",
+      "sector": "Financials",
+      "cad_symbol": null,
+      "security_no": "K009906",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "MA",
+      "name": "MASTERCARD INCORPORATED",
+      "sector": "Financials",
+      "cad_symbol": null,
+      "security_no": "M013236",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "BAC",
+      "name": "BANK OF AMERICA CORP",
+      "sector": "Financials",
+      "cad_symbol": null,
+      "security_no": "B006719",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "CB",
+      "name": "CHUBB LTD COM",
+      "sector": "Financials",
+      "cad_symbol": null,
+      "security_no": "C054349",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "JPM",
+      "name": "JPMORGAN CHASE & CO",
+      "sector": "Financials",
+      "cad_symbol": null,
+      "security_no": "J001425",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "SPGI",
+      "name": "S&P GLOBAL INC COM",
+      "sector": "Financials",
+      "cad_symbol": null,
+      "security_no": "S060780",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "AON",
+      "name": "AON PLC CLASS A ORDINARY SHARES",
+      "sector": "Financials",
+      "cad_symbol": null,
+      "security_no": "A053920",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "BRK.B",
+      "name": "BERKSHIRE HATHAWAY INC DEL CL B",
+      "sector": "Financials",
+      "cad_symbol": null,
+      "security_no": "B017074",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "CME",
+      "name": "CME GROUP INC",
+      "sector": "Financials",
+      "cad_symbol": null,
+      "security_no": "C021183",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "USB",
+      "name": "US BANCORP DEL COM",
+      "sector": "Financials",
+      "cad_symbol": null,
+      "security_no": "U002012",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "V",
+      "name": "VISA INC CL A COMMON STOCK",
+      "sector": "Financials",
+      "cad_symbol": null,
+      "security_no": "V004180",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "COIN",
+      "name": "COINBASE GLOBAL INC",
+      "sector": "Financials",
+      "cad_symbol": null,
+      "security_no": "C092612",
+      "source": "positions",
+      "platform_tags": [
+        "pl_blockchain"
+      ]
+    },
+    {
+      "ticker": "HOOD",
+      "name": "ROBINHOOD MARKETS INC",
+      "sector": "Financials",
+      "cad_symbol": null,
+      "security_no": "R041102",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "SOFI",
+      "name": "SOFI TECHNOLOGIES INC",
+      "sector": "Financials",
+      "cad_symbol": null,
+      "security_no": "S084905",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "XYZ",
+      "name": "BLOCK INC CLASS A COMMON STOCK",
+      "sector": "Financials",
+      "cad_symbol": null,
+      "security_no": "S059176",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "PYPL",
+      "name": "PAYPAL HOLDINGS INC COM",
+      "sector": "Financials",
+      "cad_symbol": null,
+      "security_no": "P037628",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "FCXXF",
+      "name": "FIRST CAPITAL REAL ESTATE INVT TR UNIT",
+      "sector": "Real Estate",
+      "cad_symbol": "FCR.UN",
+      "security_no": "F035845",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "GRTUF",
+      "name": "GRANITE REAL ESTATE INVT TR TR UNIT NEW",
+      "sector": "Real Estate",
+      "cad_symbol": "GRT.UN",
+      "security_no": "G037259",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "FRFHF",
+      "name": "FAIRFAX FINANCIAL HOLDINGS LTD SUBORDINATE VOTING SHARES",
+      "sector": "Real Estate",
+      "cad_symbol": "FFH",
+      "security_no": "F039527",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "CDPYF",
+      "name": "CANADIAN APARTMENT PPTYS REAL ESTATE INVT TRUST UTS",
+      "sector": "Real Estate",
+      "cad_symbol": "CAR.UN",
+      "security_no": "C100571",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "DLR",
+      "name": "DIGITAL REALTY TRUST INC",
+      "sector": "Real Estate",
+      "cad_symbol": null,
+      "security_no": "D008061",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "CCI",
+      "name": "CROWN CASTLE INC COMMON STOCK",
+      "sector": "Real Estate",
+      "cad_symbol": null,
+      "security_no": "C042080",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "PLD",
+      "name": "PROLOGIS INC",
+      "sector": "Real Estate",
+      "cad_symbol": null,
+      "security_no": "P031283",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "CNSWY",
+      "name": "CONSTELLATION SOFTWARE INC",
+      "sector": "Information Technology",
+      "cad_symbol": "CSU",
+      "security_no": "C107374",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "DSGX",
+      "name": "DESCARTES SYSTEMS GROUP INC",
+      "sector": "Information Technology",
+      "cad_symbol": "DSG",
+      "security_no": "D100102",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "GIB",
+      "name": "CGI INC CL A SUB VTG",
+      "sector": "Information Technology",
+      "cad_symbol": "GIB.A",
+      "security_no": "C074613",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "KXSCF",
+      "name": "KINAXIS INC COM",
+      "sector": "Information Technology",
+      "cad_symbol": "KXS",
+      "security_no": "K003328",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "MSFT",
+      "name": "MICROSOFT CORP",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "M415385",
+      "source": "positions",
+      "platform_tags": [
+        "pl_ai"
+      ]
+    },
+    {
+      "ticker": "NVDA",
+      "name": "NVIDIA CORP",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "N003056",
+      "source": "positions",
+      "platform_tags": [
+        "pl_ai"
+      ]
+    },
+    {
+      "ticker": "PANW",
+      "name": "PALO ALTO NETWORKS INC COMMON STOCK",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "P033070",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "SHOP",
+      "name": "SHOPIFY INC CL A",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "S049467",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "AMD",
+      "name": "ADVANCED MICRO DEVICES INC",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "A079471",
+      "source": "positions",
+      "platform_tags": [
+        "pl_ai"
+      ]
+    },
+    {
+      "ticker": "AAPL",
+      "name": "APPLE INC",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "A603109",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "AVGO",
+      "name": "BROADCOM INC",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "B053113",
+      "source": "positions",
+      "platform_tags": [
+        "pl_ai"
+      ]
+    },
+    {
+      "ticker": "CRWD",
+      "name": "CROWDSTRIKE HOLDINGS INC",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "C076661",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "DELL",
+      "name": "DELL TECHNOLOGIES INC",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "D047187",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "PLTR",
+      "name": "PALANTIR TECHNOLOGIES INC",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "P054244",
+      "source": "positions",
+      "platform_tags": [
+        "pl_ai"
+      ]
+    },
+    {
+      "ticker": "MSTR",
+      "name": "STRATEGY INC",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "M008348",
+      "source": "positions",
+      "platform_tags": [
+        "pl_blockchain"
+      ]
+    },
+    {
+      "ticker": "TSM",
+      "name": "TAIWAN SEMICONDUCTOR MFG CO",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "T002234",
+      "source": "positions",
+      "platform_tags": [
+        "pl_ai"
+      ]
+    },
+    {
+      "ticker": "FSLR",
+      "name": "FIRST SOLAR INC",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "F008530",
+      "source": "positions",
+      "platform_tags": [
+        "pl_energy_storage"
+      ]
+    },
+    {
+      "ticker": "ORCL",
+      "name": "ORACLE CORPORATION",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "P080218",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "APH",
+      "name": "AMPHENOL CORPORATION CLASS A COM",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "A002996",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "AMAT",
+      "name": "APPLIED MATERIALS INC",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "A606357",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "INTU",
+      "name": "INTUIT INC",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "H664828",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "NOW",
+      "name": "SERVICENOW INC COM",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "S033610",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "ADBE",
+      "name": "ADOBE INC COMMON STOCK",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "A073565",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "CRM",
+      "name": "SALESFORCE INC COMMON STOCK",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "S015697",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "TU",
+      "name": "TELUS CORPORATION",
+      "sector": "Communication Services",
+      "cad_symbol": "T",
+      "security_no": "T101491",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "GOOG",
+      "name": "ALPHABET INC CLASS C CAPITAL STOCK",
+      "sector": "Communication Services",
+      "cad_symbol": null,
+      "security_no": "A040553",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "GOOGL",
+      "name": "ALPHABET INC",
+      "sector": "Communication Services",
+      "cad_symbol": null,
+      "security_no": "A036970",
+      "source": "positions",
+      "platform_tags": [
+        "pl_ai"
+      ]
+    },
+    {
+      "ticker": "META",
+      "name": "META PLATFORMS INC CLASS A COMMON STOCK",
+      "sector": "Communication Services",
+      "cad_symbol": null,
+      "security_no": "F013992",
+      "source": "positions",
+      "platform_tags": [
+        "pl_ai"
+      ]
+    },
+    {
+      "ticker": "NFLX",
+      "name": "NETFLIX INC COM",
+      "sector": "Communication Services",
+      "cad_symbol": null,
+      "security_no": "N005824",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "SPOT",
+      "name": "SPOTIFY TECHNOLOGY S A SHS SPOTIFY TECH SA ORD REG",
+      "sector": "Communication Services",
+      "cad_symbol": null,
+      "security_no": "S072671",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "ABNB",
+      "name": "AIRBNB INC CLASS A COMMON STOCK",
+      "sector": "Communication Services",
+      "cad_symbol": null,
+      "security_no": "A055311",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "DTEGY",
+      "name": "DEUTSCHE TELEKOM AG SPONSORED ADR",
+      "sector": "Communication Services",
+      "cad_symbol": null,
+      "security_no": "D001043",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "VZ",
+      "name": "VERIZON COMMUNICATIONS",
+      "sector": "Communication Services",
+      "cad_symbol": null,
+      "security_no": "V004057",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "RCI",
+      "name": "ROGERS COMMUNICATIONS INC CL B NON-VTG",
+      "sector": "Communication Services",
+      "cad_symbol": null,
+      "security_no": "R560011",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "QBCRF",
+      "name": "QUEBECOR INC CL-B SUBORDINATE VOTING SHARES",
+      "sector": "Communication Services",
+      "cad_symbol": null,
+      "security_no": "P854016",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "BCE",
+      "name": "BCE INC COM NEW",
+      "sector": "Communication Services",
+      "cad_symbol": null,
+      "security_no": "B103282",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "ROKU",
+      "name": "ROKU INC CLASS A COMMON STOCK",
+      "sector": "Communication Services",
+      "cad_symbol": null,
+      "security_no": "R031192",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "BEP",
+      "name": "BROOKFIELD RENEWABLE PARTNERS L P",
+      "sector": "Utilities",
+      "cad_symbol": "BEP.UN",
+      "security_no": "B021087",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "BEPC",
+      "name": "BROOKFIELD RENEWABLE CORP NEW CL A EXCHANGEABLE SUBORDINATE VOTING SHARES",
+      "sector": "Utilities",
+      "cad_symbol": "BEPC",
+      "security_no": "B132084",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "EMA",
+      "name": "EMERA INC",
+      "sector": "Utilities",
+      "cad_symbol": "EMA",
+      "security_no": "E100669",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "FTS",
+      "name": "FORTIS INC",
+      "sector": "Utilities",
+      "cad_symbol": "FTS",
+      "security_no": "F538065",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "HRNNF",
+      "name": "HYDRO ONE LTD COM",
+      "sector": "Utilities",
+      "cad_symbol": "H",
+      "security_no": "H045208",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "BIP",
+      "name": "BROOKFIELD INFRASTRUCTURE PARTNERS L P UNITS",
+      "sector": "Utilities",
+      "cad_symbol": null,
+      "security_no": "B015698",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "NEE",
+      "name": "NEXTERA ENERGY INC",
+      "sector": "Utilities",
+      "cad_symbol": null,
+      "security_no": "N012238",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "CMS",
+      "name": "CMS ENERGY CORP",
+      "sector": "Utilities",
+      "cad_symbol": null,
+      "security_no": "C006558",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "DUK",
+      "name": "DUKE ENERGY CORPORATION HOLDING COMPANY",
+      "sector": "Utilities",
+      "cad_symbol": null,
+      "security_no": "D027175",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "VST",
+      "name": "VISTRA CORP",
+      "sector": "Utilities",
+      "cad_symbol": null,
+      "security_no": "V009967",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "QSR",
+      "name": "RESTAURANT BRANDS INTERNATIONAL INC COM",
+      "sector": "Consumer Discretionary",
+      "cad_symbol": "QSR",
+      "security_no": "R020958",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "MCD",
+      "name": "MCDONALDS CORP",
+      "sector": "Consumer Discretionary",
+      "cad_symbol": null,
+      "security_no": "M238353",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "DLMAF",
+      "name": "DOLLARAMA INC",
+      "sector": "Consumer Discretionary",
+      "cad_symbol": null,
+      "security_no": "D106280",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "CDNAF",
+      "name": "CANADIAN TIRE CORP LTD CL A NON-VTG",
+      "sector": "Consumer Discretionary",
+      "cad_symbol": null,
+      "security_no": "C166000",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "AMZN",
+      "name": "AMAZON.COM INC",
+      "sector": "Consumer Discretionary",
+      "cad_symbol": null,
+      "security_no": "A003829",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "MELI",
+      "name": "MERCADOLIBRE INC",
+      "sector": "Consumer Discretionary",
+      "cad_symbol": null,
+      "security_no": "M013821",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "TSLA",
+      "name": "TESLA INC",
+      "sector": "Consumer Discretionary",
+      "cad_symbol": null,
+      "security_no": "T013220",
+      "source": "positions",
+      "platform_tags": [
+        "pl_energy_storage",
+        "pl_robotics"
+      ]
+    },
+    {
+      "ticker": "HD",
+      "name": "HOME DEPOT INC",
+      "sector": "Consumer Discretionary",
+      "cad_symbol": null,
+      "security_no": "H291400",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "TJX",
+      "name": "TJX COMPANIES INC NEW",
+      "sector": "Consumer Discretionary",
+      "cad_symbol": null,
+      "security_no": "T007762",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "NKE",
+      "name": "NIKE INC CLASS B COM",
+      "sector": "Consumer Discretionary",
+      "cad_symbol": null,
+      "security_no": "N460003",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "JNJ",
+      "name": "JOHNSON & JOHNSON COMMON STOCK",
+      "sector": "Health Care",
+      "cad_symbol": null,
+      "security_no": "J477013",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "UNH",
+      "name": "UNITEDHEALTH GROUP INC",
+      "sector": "Health Care",
+      "cad_symbol": null,
+      "security_no": "U001694",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "ISRG",
+      "name": "INTUITIVE SURGICAL INC",
+      "sector": "Health Care",
+      "cad_symbol": null,
+      "security_no": "H012708",
+      "source": "positions",
+      "platform_tags": [
+        "pl_robotics"
+      ]
+    },
+    {
+      "ticker": "CRSP",
+      "name": "CRISPR THERAPEUTICS AG NAMEN AKT CHF0.03",
+      "sector": "Health Care",
+      "cad_symbol": null,
+      "security_no": "C059433",
+      "source": "positions",
+      "platform_tags": [
+        "pl_multi_omics"
+      ]
+    },
+    {
+      "ticker": "LLY",
+      "name": "ELI LILLY & CO",
+      "sector": "Health Care",
+      "cad_symbol": null,
+      "security_no": "L415517",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "MDT",
+      "name": "MEDTRONIC PLC COM",
+      "sector": "Health Care",
+      "cad_symbol": null,
+      "security_no": "M039728",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "SYK",
+      "name": "STRYKER CORP",
+      "sector": "Health Care",
+      "cad_symbol": null,
+      "security_no": "S644468",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "ABT",
+      "name": "ABBOTT LABORATORIES",
+      "sector": "Health Care",
+      "cad_symbol": null,
+      "security_no": "A022610",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "BSX",
+      "name": "BOSTON SCIENTIFIC CORP",
+      "sector": "Health Care",
+      "cad_symbol": null,
+      "security_no": "B411129",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "DHR",
+      "name": "DANAHER CORPORATION",
+      "sector": "Health Care",
+      "cad_symbol": null,
+      "security_no": "D052506",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "TMO",
+      "name": "THERMO FISHER SCIENTIFIC INC",
+      "sector": "Health Care",
+      "cad_symbol": null,
+      "security_no": "T300757",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "VEEV",
+      "name": "VEEVA SYSTEMS INC CL A COM",
+      "sector": "Health Care",
+      "cad_symbol": null,
+      "security_no": "V007592",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "ZTS",
+      "name": "ZOETIS INC CL A",
+      "sector": "Health Care",
+      "cad_symbol": null,
+      "security_no": "Y004092",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "ARKK",
+      "name": "ARK ETF TRUST ARK INNOVATION ETF",
+      "sector": "Investment Funds",
+      "cad_symbol": null,
+      "security_no": "A037331",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "ARKG",
+      "name": "ARK ETF TRUST ARK GENOMIC REVOLUTION ETF",
+      "sector": "Investment Funds",
+      "cad_symbol": null,
+      "security_no": "A037333",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "CCDBF",
+      "name": "CCL INDUSTRIES INC CL-B NON-VOTING SHARES",
+      "sector": "Materials",
+      "cad_symbol": "CCL.B",
+      "security_no": "C000386",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "TECK",
+      "name": "TECK RESOURCES LIMITED SUB VOTING CL B",
+      "sector": "Materials",
+      "cad_symbol": "TECK.B",
+      "security_no": "T104023",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "WPM",
+      "name": "WHEATON PRECIOUS METALS CORP COM",
+      "sector": "Materials",
+      "cad_symbol": "WPM",
+      "security_no": "W014497",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "AEM",
+      "name": "AGNICO EAGLE MINES LIMITED",
+      "sector": "Materials",
+      "cad_symbol": "AEM",
+      "security_no": "A112602",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "NTR",
+      "name": "NUTRIEN LTD COM",
+      "sector": "Materials",
+      "cad_symbol": "NTR",
+      "security_no": "N027533",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "FNV",
+      "name": "FRANCO-NEVADA CORPORATION",
+      "sector": "Materials",
+      "cad_symbol": "FNV",
+      "security_no": "F106990",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "B",
+      "name": "BARRICK MNG CORP COM",
+      "sector": "Materials",
+      "cad_symbol": "ABX",
+      "security_no": "B131797",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "ICOP",
+      "name": "ISHARES TR ISHARES COPPER AND METALS MINING ETF",
+      "sector": "Materials",
+      "cad_symbol": null,
+      "security_no": "H111023",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "ECL",
+      "name": "ECOLAB INC",
+      "sector": "Materials",
+      "cad_symbol": null,
+      "security_no": "E127794",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "LIN",
+      "name": "LINDE PLC ORDINARY SHARES",
+      "sector": "Materials",
+      "cad_symbol": null,
+      "security_no": "L027600",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "CYBR",
+      "name": "EVOLVE CYBER SECURITY INDEX FUND HEDGED UNITS",
+      "sector": "Index Replicating Vehicles",
+      "cad_symbol": "CYBR",
+      "security_no": "E021772",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "XIU",
+      "name": "ISHARES S&P/TSX 60 INDEX ETF",
+      "sector": "Index Replicating Vehicles",
+      "cad_symbol": "XIU",
+      "security_no": "H108952",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "XUS",
+      "name": "ISHARES CORE S&P 500 INDEX ETF UNIT",
+      "sector": "Index Replicating Vehicles",
+      "cad_symbol": "XUS",
+      "security_no": "H033526",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "IFRA",
+      "name": "ISHARES TR U S INFRASTRUCTURE ETF",
+      "sector": "Index Replicating Vehicles",
+      "cad_symbol": null,
+      "security_no": "H061147",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "SPY",
+      "name": "STATE STREET SPDR S&P 500 ETF TRUST UNITS",
+      "sector": "Index Replicating Vehicles",
+      "cad_symbol": null,
+      "security_no": "S690540",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "IAU",
+      "name": "ISHARES GOLD TRUST",
+      "sector": "Commodities",
+      "cad_symbol": null,
+      "security_no": "H087140",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "CGL.C",
+      "name": "ISHARES GOLD BULLION ETF NON HEDGED COM UNIT",
+      "sector": "Commodities",
+      "cad_symbol": "CGL.C",
+      "security_no": "H028568",
+      "source": "positions",
+      "platform_tags": []
+    },
+    {
+      "ticker": "CAPS",
+      "name": "CAPSTONE COPPER CORP COM",
+      "sector": "Materials",
+      "cad_symbol": null,
+      "security_no": "C117118",
+      "source": "data_list",
+      "platform_tags": []
+    },
+    {
+      "ticker": "FPLSF",
+      "name": "FIRST PACIFIC CO LTD",
+      "sector": "Industrials",
+      "cad_symbol": null,
+      "security_no": "TBD",
+      "source": "user_add_2026-04-27",
+      "platform_tags": []
+    },
+    {
+      "ticker": "RIO",
+      "name": "RIO TINTO PLC SPONSORED ADR",
+      "sector": "Materials",
+      "cad_symbol": null,
+      "security_no": "TBD",
+      "source": "user_add_2026-04-27",
+      "platform_tags": []
+    },
+    {
+      "ticker": "CRWV",
+      "name": "COREWEAVE INC CLASS A COMMON STOCK",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "TBD",
+      "source": "user_add_2026-05-01",
+      "platform_tags": []
+    },
+    {
+      "ticker": "IREN",
+      "name": "IREN LTD ORDINARY SHARES",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "TBD",
+      "source": "user_add_2026-05-01",
+      "platform_tags": []
+    },
+    {
+      "ticker": "NBIS",
+      "name": "NEBIUS GROUP NV CLASS A ORDINARY SHARES",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "TBD",
+      "source": "user_add_2026-05-01",
+      "platform_tags": []
+    },
+    {
+      "ticker": "BE",
+      "name": "BLOOM ENERGY CORP CLASS A COMMON STOCK",
+      "sector": "Industrials",
+      "cad_symbol": null,
+      "security_no": "TBD",
+      "source": "user_add_2026-05-01",
+      "platform_tags": []
+    },
+    {
+      "ticker": "SMH",
+      "name": "VANECK SEMICONDUCTOR ETF",
+      "sector": "Index Replicating Vehicles",
+      "cad_symbol": null,
+      "security_no": "TBD",
+      "source": "user_add_2026-05-01",
+      "platform_tags": []
+    },
+    {
+      "ticker": "SNDK",
+      "name": "SANDISK CORP COMMON STOCK",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "TBD",
+      "source": "user_add_2026-05-01",
+      "platform_tags": []
+    },
+    {
+      "ticker": "TXN",
+      "name": "TEXAS INSTRUMENTS INC",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "TBD",
+      "source": "user_add_2026-05-01",
+      "platform_tags": []
+    },
+    {
+      "ticker": "INTC",
+      "name": "INTEL CORP",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "TBD",
+      "source": "user_add_2026-05-01",
+      "platform_tags": []
+    },
+    {
+      "ticker": "MU",
+      "name": "MICRON TECHNOLOGY INC",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "TBD",
+      "source": "user_add_2026-05-01",
+      "platform_tags": []
+    },
+    {
+      "ticker": "ASML",
+      "name": "ASML HOLDING NV NEW YORK REGISTRY SHARES",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "TBD",
+      "source": "user_add_2026-05-01",
+      "platform_tags": [
+        "pl_ai"
+      ]
+    },
+    {
+      "ticker": "QCOM",
+      "name": "QUALCOMM INC",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "TBD",
+      "source": "user_add_2026-05-01",
+      "platform_tags": []
+    },
+    {
+      "ticker": "TER",
+      "name": "TERADYNE INC",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "TBD",
+      "source": "user_add_2026-05-01",
+      "platform_tags": []
+    },
+    {
+      "ticker": "KLAC",
+      "name": "KLA CORP",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "TBD",
+      "source": "user_add_2026-05-01",
+      "platform_tags": []
+    },
+    {
+      "ticker": "ADI",
+      "name": "ANALOG DEVICES INC",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "TBD",
+      "source": "user_add_2026-05-01",
+      "platform_tags": []
+    },
+    {
+      "ticker": "LRCX",
+      "name": "LAM RESEARCH CORP",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "TBD",
+      "source": "user_add_2026-05-01",
+      "platform_tags": []
+    },
+    {
+      "ticker": "MRVL",
+      "name": "MARVELL TECHNOLOGY INC",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "TBD",
+      "source": "user_add_2026-05-01",
+      "platform_tags": []
+    },
+    {
+      "ticker": "SNPS",
+      "name": "SYNOPSYS INC",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "TBD",
+      "source": "user_add_2026-05-01",
+      "platform_tags": []
+    },
+    {
+      "ticker": "CDNS",
+      "name": "CADENCE DESIGN SYSTEMS INC",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "TBD",
+      "source": "user_add_2026-05-01",
+      "platform_tags": []
+    },
+    {
+      "ticker": "MPWR",
+      "name": "MONOLITHIC POWER SYSTEMS INC",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "TBD",
+      "source": "user_add_2026-05-01",
+      "platform_tags": []
+    },
+    {
+      "ticker": "NXPI",
+      "name": "NXP SEMICONDUCTORS NV",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "TBD",
+      "source": "user_add_2026-05-01",
+      "platform_tags": []
+    },
+    {
+      "ticker": "MCHP",
+      "name": "MICROCHIP TECHNOLOGY INC",
+      "sector": "Information Technology",
+      "cad_symbol": null,
+      "security_no": "TBD",
+      "source": "user_add_2026-05-01",
+      "platform_tags": []
+    }
+  ],
+  "etf_holdings": {
+    "ARKK": [
+      {
+        "ticker": "TSLA",
+        "name": "Tesla Inc",
+        "weight": 0.0946,
+        "platform_tags": [
+          "pl_energy_storage",
+          "pl_robotics"
+        ]
+      },
+      {
+        "ticker": "CRSP",
+        "name": "CRISPR Therapeutics AG",
+        "weight": 0.0629,
+        "platform_tags": [
+          "pl_multi_omics"
+        ]
+      },
+      {
+        "ticker": "TEM",
+        "name": "Tempus AI Inc",
+        "weight": 0.0513,
+        "platform_tags": []
+      },
+      {
+        "ticker": "AMD",
+        "name": "Advanced Micro Devices",
+        "weight": 0.0494,
+        "platform_tags": [
+          "pl_ai"
+        ]
+      },
+      {
+        "ticker": "SHOP",
+        "name": "Shopify Inc",
+        "weight": 0.0456,
+        "platform_tags": []
+      },
+      {
+        "ticker": "COIN",
+        "name": "Coinbase Global Inc",
+        "weight": 0.0445,
+        "platform_tags": [
+          "pl_blockchain"
+        ]
+      },
+      {
+        "ticker": "HOOD",
+        "name": "Robinhood Markets Inc",
+        "weight": 0.0439,
+        "platform_tags": []
+      },
+      {
+        "ticker": "CRCL",
+        "name": "Circle Internet Group Inc",
+        "weight": 0.0422,
+        "platform_tags": []
+      },
+      {
+        "ticker": "ROKU",
+        "name": "Roku Inc",
+        "weight": 0.0421,
+        "platform_tags": []
+      },
+      {
+        "ticker": "BEAM",
+        "name": "Beam Therapeutics Inc",
+        "weight": 0.0381,
+        "platform_tags": [
+          "pl_multi_omics"
+        ]
+      },
+      {
+        "ticker": "PLTR",
+        "name": "Palantir Technologies Inc",
+        "weight": 0.0329,
+        "platform_tags": [
+          "pl_ai"
+        ]
+      },
+      {
+        "ticker": "RBLX",
+        "name": "Roblox Corp",
+        "weight": 0.0317,
+        "platform_tags": []
+      },
+      {
+        "ticker": "TWST",
+        "name": "Twist Bioscience Corp",
+        "weight": 0.0316,
+        "platform_tags": []
+      },
+      {
+        "ticker": "CRWV",
+        "name": "Coreweave Inc (Private)",
+        "weight": 0.0276,
+        "platform_tags": []
+      },
+      {
+        "ticker": "BLSH",
+        "name": "Bullish (Private)",
+        "weight": 0.0255,
+        "platform_tags": []
+      },
+      {
+        "ticker": "TXG",
+        "name": "10x Genomics Inc",
+        "weight": 0.0229,
+        "platform_tags": []
+      },
+      {
+        "ticker": "OPENAI",
+        "name": "OpenAI Group PBC (Private)",
+        "weight": 0.0229,
+        "platform_tags": []
+      },
+      {
+        "ticker": "NTLA",
+        "name": "Intellia Therapeutics Inc",
+        "weight": 0.0221,
+        "platform_tags": [
+          "pl_multi_omics"
+        ]
+      },
+      {
+        "ticker": "AMZN",
+        "name": "Amazon.com Inc",
+        "weight": 0.0216,
+        "platform_tags": []
+      },
+      {
+        "ticker": "BMNR",
+        "name": "Bitmine Immersion Tech",
+        "weight": 0.0211,
+        "platform_tags": []
+      },
+      {
+        "ticker": "TER",
+        "name": "Teradyne Inc",
+        "weight": 0.021,
+        "platform_tags": []
+      },
+      {
+        "ticker": "ACHR",
+        "name": "Archer Aviation Inc",
+        "weight": 0.0157,
+        "platform_tags": []
+      },
+      {
+        "ticker": "SQ",
+        "name": "Block Inc",
+        "weight": 0.0151,
+        "platform_tags": []
+      },
+      {
+        "ticker": "TSM",
+        "name": "Taiwan Semiconductor",
+        "weight": 0.0136,
+        "platform_tags": [
+          "pl_ai"
+        ]
+      },
+      {
+        "ticker": "RXRX",
+        "name": "Recursion Pharmaceuticals",
+        "weight": 0.012,
+        "platform_tags": []
+      },
+      {
+        "ticker": "ILMN",
+        "name": "Illumina Inc",
+        "weight": 0.0118,
+        "platform_tags": [
+          "pl_multi_omics"
+        ]
+      },
+      {
+        "ticker": "DE",
+        "name": "Deere & Co",
+        "weight": 0.0115,
+        "platform_tags": []
+      },
+      {
+        "ticker": "NVDA",
+        "name": "Nvidia Corp",
+        "weight": 0.0115,
+        "platform_tags": [
+          "pl_ai"
+        ]
+      },
+      {
+        "ticker": "AVGO",
+        "name": "Broadcom Inc",
+        "weight": 0.0113,
+        "platform_tags": [
+          "pl_ai"
+        ]
+      },
+      {
+        "ticker": "NTRA",
+        "name": "Natera Inc",
+        "weight": 0.0113,
+        "platform_tags": []
+      },
+      {
+        "ticker": "BWXT",
+        "name": "BWX Technologies Inc",
+        "weight": 0.0097,
+        "platform_tags": []
+      },
+      {
+        "ticker": "BIDU",
+        "name": "Baidu Inc",
+        "weight": 0.0096,
+        "platform_tags": []
+      },
+      {
+        "ticker": "BABA",
+        "name": "Alibaba Group Holding",
+        "weight": 0.0091,
+        "platform_tags": []
+      },
+      {
+        "ticker": "VCYT",
+        "name": "Veracyte Inc",
+        "weight": 0.0088,
+        "platform_tags": []
+      },
+      {
+        "ticker": "WGS",
+        "name": "GeneDx Holdings Corp",
+        "weight": 0.0086,
+        "platform_tags": []
+      },
+      {
+        "ticker": "GOOG",
+        "name": "Alphabet Inc",
+        "weight": 0.0084,
+        "platform_tags": []
+      },
+      {
+        "ticker": "KTOS",
+        "name": "Kratos Defense & Security",
+        "weight": 0.0081,
+        "platform_tags": []
+      },
+      {
+        "ticker": "SOFI",
+        "name": "SoFi Technologies Inc",
+        "weight": 0.0061,
+        "platform_tags": []
+      },
+      {
+        "ticker": "PACB",
+        "name": "Pacific Biosciences",
+        "weight": 0.0051,
+        "platform_tags": [
+          "pl_multi_omics"
+        ]
+      },
+      {
+        "ticker": "FIGMA",
+        "name": "Figma Inc (Private)",
+        "weight": 0.005,
+        "platform_tags": []
+      }
+    ],
+    "ARKG": [
+      {
+        "ticker": "CRSP",
+        "name": "CRISPR Therapeutics AG",
+        "weight": 0.0947,
+        "platform_tags": [
+          "pl_multi_omics"
+        ]
+      },
+      {
+        "ticker": "TWST",
+        "name": "Twist Bioscience Corp",
+        "weight": 0.0946,
+        "platform_tags": []
+      },
+      {
+        "ticker": "TEM",
+        "name": "Tempus AI Inc",
+        "weight": 0.0926,
+        "platform_tags": []
+      },
+      {
+        "ticker": "TXG",
+        "name": "10x Genomics Inc",
+        "weight": 0.0618,
+        "platform_tags": []
+      },
+      {
+        "ticker": "BEAM",
+        "name": "Beam Therapeutics Inc",
+        "weight": 0.0538,
+        "platform_tags": [
+          "pl_multi_omics"
+        ]
+      },
+      {
+        "ticker": "ILMN",
+        "name": "Illumina Inc",
+        "weight": 0.0406,
+        "platform_tags": [
+          "pl_multi_omics"
+        ]
+      },
+      {
+        "ticker": "PSNL",
+        "name": "Personalis Inc",
+        "weight": 0.0395,
+        "platform_tags": []
+      },
+      {
+        "ticker": "NTRA",
+        "name": "Natera Inc",
+        "weight": 0.0394,
+        "platform_tags": []
+      },
+      {
+        "ticker": "ABSI",
+        "name": "Absci Corp",
+        "weight": 0.0365,
+        "platform_tags": []
+      },
+      {
+        "ticker": "RXRX",
+        "name": "Recursion Pharmaceuticals",
+        "weight": 0.036,
+        "platform_tags": []
+      },
+      {
+        "ticker": "NTLA",
+        "name": "Intellia Therapeutics Inc",
+        "weight": 0.0359,
+        "platform_tags": [
+          "pl_multi_omics"
+        ]
+      },
+      {
+        "ticker": "GH",
+        "name": "Guardant Health Inc",
+        "weight": 0.0351,
+        "platform_tags": []
+      },
+      {
+        "ticker": "CDNA",
+        "name": "CareDx Inc",
+        "weight": 0.0333,
+        "platform_tags": []
+      },
+      {
+        "ticker": "VCYT",
+        "name": "Veracyte Inc",
+        "weight": 0.026,
+        "platform_tags": []
+      },
+      {
+        "ticker": "CMPS",
+        "name": "Compass Pathways Plc",
+        "weight": 0.0244,
+        "platform_tags": []
+      },
+      {
+        "ticker": "ADPT",
+        "name": "Adaptive Biotechnologies",
+        "weight": 0.0241,
+        "platform_tags": []
+      },
+      {
+        "ticker": "NRIX",
+        "name": "Nurix Therapeutics Inc",
+        "weight": 0.0228,
+        "platform_tags": []
+      },
+      {
+        "ticker": "WGS",
+        "name": "GeneDx Holdings Corp",
+        "weight": 0.0217,
+        "platform_tags": []
+      },
+      {
+        "ticker": "BFLY",
+        "name": "Butterfly Network Inc",
+        "weight": 0.0209,
+        "platform_tags": []
+      },
+      {
+        "ticker": "SDGR",
+        "name": "Schrodinger Inc",
+        "weight": 0.0208,
+        "platform_tags": []
+      },
+      {
+        "ticker": "ARCT",
+        "name": "Arcturus Therapeutics",
+        "weight": 0.0194,
+        "platform_tags": []
+      },
+      {
+        "ticker": "IONS",
+        "name": "Ionis Pharmaceuticals Inc",
+        "weight": 0.0168,
+        "platform_tags": []
+      },
+      {
+        "ticker": "ATAI",
+        "name": "atai Life Sciences",
+        "weight": 0.0167,
+        "platform_tags": []
+      },
+      {
+        "ticker": "PACB",
+        "name": "Pacific Biosciences",
+        "weight": 0.0149,
+        "platform_tags": [
+          "pl_multi_omics"
+        ]
+      },
+      {
+        "ticker": "PRME",
+        "name": "Prime Medicine Inc",
+        "weight": 0.0149,
+        "platform_tags": []
+      },
+      {
+        "ticker": "CERS",
+        "name": "Cerus Corp",
+        "weight": 0.0119,
+        "platform_tags": []
+      },
+      {
+        "ticker": "MASS",
+        "name": "908 Devices Inc",
+        "weight": 0.0111,
+        "platform_tags": []
+      },
+      {
+        "ticker": "BNTX",
+        "name": "BioNTech SE",
+        "weight": 0.0104,
+        "platform_tags": []
+      },
+      {
+        "ticker": "ALAMAR",
+        "name": "Alamar Biosciences Inc (Private)",
+        "weight": 0.0102,
+        "platform_tags": []
+      },
+      {
+        "ticker": "LLY",
+        "name": "Eli Lilly & Co",
+        "weight": 0.009,
+        "platform_tags": []
+      },
+      {
+        "ticker": "QSI",
+        "name": "Quantum-Si Inc",
+        "weight": 0.0054,
+        "platform_tags": []
+      }
+    ],
+    "XLE": [
+      {
+        "ticker": "XOM",
+        "name": "Exxon Mobil Corp",
+        "weight": 0.227,
+        "platform_tags": []
+      },
+      {
+        "ticker": "CVX",
+        "name": "Chevron Corp",
+        "weight": 0.17,
+        "platform_tags": []
+      },
+      {
+        "ticker": "COP",
+        "name": "ConocoPhillips",
+        "weight": 0.073,
+        "platform_tags": []
+      },
+      {
+        "ticker": "SLB",
+        "name": "SLB Ltd",
+        "weight": 0.047,
+        "platform_tags": []
+      },
+      {
+        "ticker": "WMB",
+        "name": "Williams Companies Inc",
+        "weight": 0.043,
+        "platform_tags": []
+      },
+      {
+        "ticker": "EOG",
+        "name": "EOG Resources Inc",
+        "weight": 0.041,
+        "platform_tags": []
+      },
+      {
+        "ticker": "VLO",
+        "name": "Valero Energy Corp",
+        "weight": 0.041,
+        "platform_tags": []
+      },
+      {
+        "ticker": "MPC",
+        "name": "Marathon Petroleum Corp",
+        "weight": 0.037,
+        "platform_tags": []
+      },
+      {
+        "ticker": "PSX",
+        "name": "Phillips 66",
+        "weight": 0.037,
+        "platform_tags": []
+      },
+      {
+        "ticker": "KMI",
+        "name": "Kinder Morgan Inc",
+        "weight": 0.036,
+        "platform_tags": []
+      },
+      {
+        "ticker": "BKR",
+        "name": "Baker Hughes Co",
+        "weight": 0.035,
+        "platform_tags": []
+      },
+      {
+        "ticker": "OKE",
+        "name": "ONEOK Inc",
+        "weight": 0.031,
+        "platform_tags": []
+      },
+      {
+        "ticker": "TRGP",
+        "name": "Targa Resources Corp",
+        "weight": 0.029,
+        "platform_tags": []
+      },
+      {
+        "ticker": "OXY",
+        "name": "Occidental Petroleum Corp",
+        "weight": 0.023,
+        "platform_tags": []
+      },
+      {
+        "ticker": "EQT",
+        "name": "EQT Corp",
+        "weight": 0.021,
+        "platform_tags": []
+      },
+      {
+        "ticker": "FANG",
+        "name": "Diamondback Energy Inc",
+        "weight": 0.021,
+        "platform_tags": []
+      },
+      {
+        "ticker": "HAL",
+        "name": "Halliburton Co",
+        "weight": 0.018,
+        "platform_tags": []
+      },
+      {
+        "ticker": "DVN",
+        "name": "Devon Energy Corp",
+        "weight": 0.016,
+        "platform_tags": []
+      },
+      {
+        "ticker": "TPL",
+        "name": "Texas Pacific Land Corp",
+        "weight": 0.014,
+        "platform_tags": []
+      },
+      {
+        "ticker": "CTRA",
+        "name": "Coterra Energy Inc",
+        "weight": 0.014,
+        "platform_tags": []
+      },
+      {
+        "ticker": "EXE",
+        "name": "Expand Energy Corp",
+        "weight": 0.013,
+        "platform_tags": []
+      },
+      {
+        "ticker": "APA",
+        "name": "APA Corp",
+        "weight": 0.007,
+        "platform_tags": []
+      }
+    ],
+    "SMH": [
+      {
+        "ticker": "NVDA",
+        "name": "NVIDIA Corp",
+        "weight": 0.1873,
+        "platform_tags": [
+          "pl_ai"
+        ]
+      },
+      {
+        "ticker": "TSM",
+        "name": "Taiwan Semiconductor Manufacturing ADR",
+        "weight": 0.1072,
+        "platform_tags": [
+          "pl_ai"
+        ]
+      },
+      {
+        "ticker": "AVGO",
+        "name": "Broadcom Inc",
+        "weight": 0.0785,
+        "platform_tags": [
+          "pl_ai"
+        ]
+      },
+      {
+        "ticker": "INTC",
+        "name": "Intel Corp",
+        "weight": 0.0648,
+        "platform_tags": []
+      },
+      {
+        "ticker": "AMD",
+        "name": "Advanced Micro Devices Inc",
+        "weight": 0.058,
+        "platform_tags": [
+          "pl_ai"
+        ]
+      },
+      {
+        "ticker": "MU",
+        "name": "Micron Technology Inc",
+        "weight": 0.0492,
+        "platform_tags": []
+      },
+      {
+        "ticker": "TXN",
+        "name": "Texas Instruments Inc",
+        "weight": 0.049,
+        "platform_tags": []
+      },
+      {
+        "ticker": "KLAC",
+        "name": "KLA Corp",
+        "weight": 0.0454,
+        "platform_tags": []
+      },
+      {
+        "ticker": "ADI",
+        "name": "Analog Devices Inc",
+        "weight": 0.0441,
+        "platform_tags": []
+      },
+      {
+        "ticker": "LRCX",
+        "name": "Lam Research Corp",
+        "weight": 0.0422,
+        "platform_tags": []
+      },
+      {
+        "ticker": "ASML",
+        "name": "ASML Holding NV ADR",
+        "weight": 0.0408,
+        "platform_tags": [
+          "pl_ai"
+        ]
+      },
+      {
+        "ticker": "AMAT",
+        "name": "Applied Materials Inc",
+        "weight": 0.0399,
+        "platform_tags": []
+      },
+      {
+        "ticker": "QCOM",
+        "name": "Qualcomm Inc",
+        "weight": 0.0371,
+        "platform_tags": []
+      },
+      {
+        "ticker": "MRVL",
+        "name": "Marvell Technology Inc",
+        "weight": 0.0284,
+        "platform_tags": []
+      },
+      {
+        "ticker": "SNPS",
+        "name": "Synopsys Inc",
+        "weight": 0.0238,
+        "platform_tags": []
+      },
+      {
+        "ticker": "CDNS",
+        "name": "Cadence Design Systems Inc",
+        "weight": 0.0222,
+        "platform_tags": []
+      },
+      {
+        "ticker": "TER",
+        "name": "Teradyne Inc",
+        "weight": 0.0141,
+        "platform_tags": []
+      },
+      {
+        "ticker": "MPWR",
+        "name": "Monolithic Power Systems Inc",
+        "weight": 0.0132,
+        "platform_tags": []
+      },
+      {
+        "ticker": "NXPI",
+        "name": "NXP Semiconductors NV",
+        "weight": 0.0113,
+        "platform_tags": []
+      },
+      {
+        "ticker": "MCHP",
+        "name": "Microchip Technology Inc",
+        "weight": 0.0102,
+        "platform_tags": []
+      }
+    ]
+  }
+}
