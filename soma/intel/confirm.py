@@ -185,6 +185,9 @@ def classify_signal(
     daily_p1_count:       int = 0,
     daily_p2_count:       int = 0,
     daily_early_warning_count: int = 0,
+    # Meta-learner §I.4: cell-specific threshold overrides
+    cell_p1_threshold:    Optional[float] = None,
+    cell_p2_threshold:    Optional[float] = None,
 ) -> tuple[Optional[str], int, str]:
     """
     Apply §I.1 gate. Returns (priority, half_life_days, notes).
@@ -192,9 +195,17 @@ def classify_signal(
 
     `top_source_confidence`: confidence of the single highest-confidence source
                               (used for High-confidence single-source path)
+
+    `cell_p1_threshold` / `cell_p2_threshold`: optional per-cell overrides from
+    the meta-learner (soma_intel_threshold_history). When provided, these replace
+    the regime-derived thresholds. Call store.get_cell_threshold() to obtain them.
     """
-    p1_z, p2_z = regime_thresholds(regime_label)
+    base_p1_z, base_p2_z = regime_thresholds(regime_label)
+    p1_z = cell_p1_threshold if cell_p1_threshold is not None else base_p1_z
+    p2_z = cell_p2_threshold if cell_p2_threshold is not None else base_p2_z
     notes_parts: list[str] = []
+    if cell_p1_threshold is not None:
+        notes_parts.append(f"cell_adj_p1={cell_p1_threshold:.2f}")
 
     # --- P1 path 1: Standard ---
     if (
@@ -253,3 +264,93 @@ def classify_signal(
             return "P-X", HALF_LIFE["P-X"], "; ".join(notes_parts)
 
     return None, 0, ""
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Multi-horizon boost (§J)
+# ══════════════════════════════════════════════════════════════════════════════
+
+MULTI_HORIZON_BOOST   = 1.5    # multiplier when ≥2 horizons fire same ticker
+MULTI_HORIZON_CAP     = 10.0   # anomaly_score ceiling after boost
+MULTI_HORIZON_MIN     = 2      # minimum distinct horizons to trigger boost
+
+
+def apply_multi_horizon_boost(
+    store:      "IntelStore",
+    as_of_date: str,
+) -> list[dict]:
+    """
+    §J boost: if a ticker has active signals on ≥2 distinct horizons today,
+    multiply anomaly_score × 1.5 (capped at MULTI_HORIZON_CAP) and append
+    'multi_horizon:<h1,h2,...>' to the signal notes.
+
+    Only boosts signals that have NOT already been boosted (notes must not
+    already contain 'multi_horizon:').
+
+    Returns list of dicts for each boosted signal:
+      {signal_id, ticker, horizons, old_score, new_score}
+    """
+    boosted: list[dict] = []
+
+    # Collect all active signals today grouped by ticker
+    try:
+        rows = store._c.execute(
+            """
+            SELECT signal_id, ticker, horizon, anomaly_score, notes
+            FROM soma_intel_signal
+            WHERE date = ? AND status = 'active'
+              AND horizon IS NOT NULL
+              AND notes NOT LIKE '%multi_horizon:%'
+            """,
+            (as_of_date,),
+        ).fetchall()
+    except Exception:
+        return []
+
+    # Group by ticker → {horizon: [signal_id, ...]}
+    from collections import defaultdict
+    ticker_horizons: dict[str, dict[str, list]] = defaultdict(lambda: defaultdict(list))
+    for row in rows:
+        h = row["horizon"]
+        if h:
+            ticker_horizons[row["ticker"]][h].append(
+                {"signal_id": row["signal_id"],
+                 "anomaly_score": row["anomaly_score"],
+                 "notes": row["notes"] or ""}
+            )
+
+    for ticker, horizon_map in ticker_horizons.items():
+        distinct_horizons = list(horizon_map.keys())
+        if len(distinct_horizons) < MULTI_HORIZON_MIN:
+            continue
+
+        horizons_tag = ",".join(sorted(distinct_horizons))
+        # Boost every signal for this ticker today
+        for h, sigs in horizon_map.items():
+            for sig in sigs:
+                old_score = sig["anomaly_score"]
+                new_score = round(min(MULTI_HORIZON_CAP, old_score * MULTI_HORIZON_BOOST), 4)
+                new_notes = (sig["notes"].rstrip("; ") + f"; multi_horizon:{horizons_tag}").lstrip("; ")
+                try:
+                    store._c.execute(
+                        "UPDATE soma_intel_signal "
+                        "SET anomaly_score=?, notes=? WHERE signal_id=?",
+                        (new_score, new_notes, sig["signal_id"]),
+                    )
+                    boosted.append({
+                        "signal_id": sig["signal_id"],
+                        "ticker":    ticker,
+                        "horizons":  horizons_tag,
+                        "old_score": old_score,
+                        "new_score": new_score,
+                    })
+                except Exception:
+                    pass
+
+    if boosted:
+        try:
+            store._conn.commit()
+        except Exception:
+            pass
+
+    return boosted

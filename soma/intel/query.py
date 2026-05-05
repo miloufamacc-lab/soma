@@ -333,6 +333,62 @@ def cmd_path(store: IntelStore, args: argparse.Namespace) -> None:
             print(f"    {_fmt_edge(e2, relative_to=mid)}")
 
 
+def cmd_signals(store: IntelStore, args: argparse.Namespace) -> None:
+    """List active signals, with optional horizon/priority/ticker filters."""
+    clauses = ["status = 'active'"]
+    params: list = []
+
+    if args.horizon:
+        clauses.append("horizon = ?")
+        params.append(args.horizon)
+    if args.priority:
+        clauses.append("priority = ?")
+        params.append(args.priority.upper())
+    if args.ticker:
+        clauses.append("ticker = ?")
+        params.append(args.ticker.upper())
+    if args.date:
+        clauses.append("date = ?")
+        params.append(args.date)
+
+    where = " AND ".join(clauses)
+    sql   = f"SELECT * FROM soma_intel_signal WHERE {where} ORDER BY date DESC, anomaly_score DESC"
+
+    try:
+        rows = store._c.execute(sql, params).fetchall()
+    except Exception as exc:
+        print(_red(f"Query failed: {exc}"))
+        return
+
+    limit = args.limit
+    print(f"\n{_bold(str(len(rows)))} signal(s) (showing up to {limit}):")
+    if not rows:
+        print(_dim("  (none)"))
+        return
+
+    header = (f"  {'ID':>6}  {'Ticker':<8}  {'Date':<10}  {'Pri':<4}  "
+              f"{'Score':>6}  {'Horizon':<12}  Notes")
+    print(header)
+    print("  " + "─" * 80)
+    for row in rows[:limit]:
+        score_s  = _green(f"{row['anomaly_score']:>6.3f}") if row["anomaly_score"] >= 3.0 else \
+                   _yellow(f"{row['anomaly_score']:>6.3f}") if row["anomaly_score"] >= 2.0 else \
+                   f"{row['anomaly_score']:>6.3f}"
+        priority = row["priority"] or "—"
+        pri_s    = _green(priority) if priority == "P1" else \
+                   _yellow(priority) if priority in ("P2", "P3") else _dim(priority)
+        notes    = (row["notes"] or "")[:55]
+        horizon  = row["horizon"] or "—"
+        h_s      = _blue(f"{horizon:<12}") if horizon == "structural" else \
+                   _cyan(f"{horizon:<12}") if horizon == "thematic" else \
+                   f"{horizon:<12}"
+        print(f"  [{row['signal_id']:>5}]  {row['ticker']:<8}  {row['date']:<10}  "
+              f"{pri_s:<4}  {score_s}  {h_s}  {notes}")
+
+    if len(rows) > limit:
+        print(_dim(f"  ... {len(rows) - limit} more (increase --limit)"))
+
+
 def cmd_audit(store: IntelStore, args: argparse.Namespace) -> None:
     """Show unaudited edges sorted by confidence (lowest first)."""
     stratify = getattr(args, "stratify", "confidence")
@@ -400,6 +456,18 @@ def main() -> None:
     p_path.add_argument("dst")
     p_path.add_argument("--limit", type=int, default=10)
 
+    # signals
+    p_sig = sub.add_parser("signals", help="List active signals (filterable by horizon/priority/ticker)")
+    p_sig.add_argument("--horizon",  choices=["tactical", "thematic", "structural"],
+                       default=None, help="Filter by horizon track")
+    p_sig.add_argument("--priority", default=None, metavar="P",
+                       help="Filter by priority (P1, P2, P3, P-X)")
+    p_sig.add_argument("--ticker",   default=None, metavar="TICKER",
+                       help="Filter by ticker symbol")
+    p_sig.add_argument("--date",     default=None, metavar="YYYY-MM-DD",
+                       help="Filter by signal date")
+    p_sig.add_argument("--limit",    type=int, default=50)
+
     # audit
     p_audit = sub.add_parser("audit", help="Show unaudited edge queue")
     p_audit.add_argument("--limit",    type=int, default=25)
@@ -416,6 +484,7 @@ def main() -> None:
         "edges":    cmd_edges,
         "platform": cmd_platform,
         "path":     cmd_path,
+        "signals":  cmd_signals,
         "audit":    cmd_audit,
     }
 
