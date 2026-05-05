@@ -181,6 +181,46 @@ AFTER UPDATE ON soma_intel_node BEGIN
 END;
 """
 
+# Capability registry DDL (mirrors migration 029 — used in test/dev bootstrap only)
+_DDL_CAPABILITY = """
+CREATE TABLE IF NOT EXISTS soma_intel_capability (
+  capability_id  TEXT PRIMARY KEY,
+  status         TEXT NOT NULL CHECK(status IN ('enabled','disabled','experimental')),
+  enabled_ts     TEXT,
+  version        TEXT NOT NULL,
+  depends_on     TEXT
+);
+
+CREATE TABLE IF NOT EXISTS soma_intel_capability_history (
+  history_id     INTEGER PRIMARY KEY AUTOINCREMENT,
+  capability_id  TEXT    NOT NULL,
+  old_status     TEXT    NOT NULL,
+  new_status     TEXT    NOT NULL,
+  changed_ts     TEXT    NOT NULL,
+  changed_by     TEXT    NOT NULL DEFAULT 'system',
+  notes          TEXT,
+  FOREIGN KEY (capability_id) REFERENCES soma_intel_capability(capability_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_capability_status
+  ON soma_intel_capability(status);
+
+CREATE INDEX IF NOT EXISTS idx_capability_history_cap
+  ON soma_intel_capability_history(capability_id, changed_ts DESC);
+
+CREATE TRIGGER IF NOT EXISTS trg_capability_history_no_update
+BEFORE UPDATE ON soma_intel_capability_history
+BEGIN
+  SELECT RAISE(ABORT, 'soma_intel_capability_history is append-only: UPDATE not allowed');
+END;
+
+CREATE TRIGGER IF NOT EXISTS trg_capability_history_no_delete
+BEFORE DELETE ON soma_intel_capability_history
+BEGIN
+  SELECT RAISE(ABORT, 'soma_intel_capability_history is append-only: DELETE not allowed');
+END;
+"""
+
 
 # ════════════════════════════════════════════════════════════════════════════
 # IntelStore
@@ -256,6 +296,7 @@ class IntelStore:
             _DDL_FTS,
             _DDL_FTS_INSERT_TRIGGER,
             _DDL_FTS_UPDATE_TRIGGER,
+            _DDL_CAPABILITY,
         ):
             self._c.executescript(ddl)
         self._c.commit()
@@ -1109,6 +1150,8 @@ class IntelStore:
             "soma_intel_scurve_history",
             "soma_intel_baseline",
             "soma_intel_audit_log",
+            "soma_intel_capability",
+            "soma_intel_capability_history",
         }
         if table_name not in _ALLOWED:
             raise ValueError(
@@ -2447,3 +2490,199 @@ class IntelStore:
             (cell_key, prior_threshold, new_threshold, adjustment, reason, applied_ts),
         )
         self._conn.commit()
+
+    # ── Capability registry (Migration 029 — Phase 7.H3) ─────────────────────
+
+    def register_capability(
+        self,
+        capability_id: str,
+        version: str,
+        status: str = "disabled",
+        depends_on: Optional[list[str]] = None,
+    ) -> None:
+        """
+        Register a feature capability. Idempotent — safe to call multiple times.
+
+        If the capability already exists, this is a no-op (INSERT OR IGNORE).
+        To change status on an existing capability, use set_capability_status().
+
+        Args:
+            capability_id: Snake_case identifier (e.g. 'weekly_brief').
+            version:       Semver string (e.g. '1.0').
+            status:        'enabled' | 'disabled' | 'experimental'. Default 'disabled'.
+            depends_on:    List of capability_ids this one depends on. Stored as JSON.
+
+        Raises:
+            ValueError: if status is not one of the three valid values.
+        """
+        _valid_statuses = {"enabled", "disabled", "experimental"}
+        if status not in _valid_statuses:
+            raise ValueError(
+                f"status must be one of {_valid_statuses}, got {status!r}"
+            )
+        enabled_ts = self._now_iso() if status == "enabled" else None
+        depends_json = json.dumps(depends_on or [])
+        self._c.execute(
+            """
+            INSERT OR IGNORE INTO soma_intel_capability
+              (capability_id, status, enabled_ts, version, depends_on)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (capability_id, status, enabled_ts, version, depends_json),
+        )
+        self._c.commit()
+        log.debug("register_capability: %s status=%s version=%s", capability_id, status, version)
+
+    def set_capability_status(
+        self,
+        capability_id: str,
+        status: str,
+        notes: Optional[str] = None,
+        changed_by: str = "system",
+    ) -> None:
+        """
+        Update a capability's status and append a history row.
+
+        History is append-only (guarded by database triggers). Each call writes
+        one row to soma_intel_capability_history recording old and new status.
+
+        Args:
+            capability_id: Must already exist (registered via register_capability).
+            status:        'enabled' | 'disabled' | 'experimental'.
+            notes:         Optional free-text reason for the change.
+            changed_by:    Identity of caller (default 'system').
+
+        Raises:
+            ValueError: if status is not valid or capability_id does not exist.
+        """
+        _valid_statuses = {"enabled", "disabled", "experimental"}
+        if status not in _valid_statuses:
+            raise ValueError(
+                f"status must be one of {_valid_statuses}, got {status!r}"
+            )
+
+        # Fetch current status for history row.
+        row = self._c.execute(
+            "SELECT status FROM soma_intel_capability WHERE capability_id=?",
+            (capability_id,),
+        ).fetchone()
+        if row is None:
+            raise ValueError(
+                f"capability_id {capability_id!r} not found. "
+                "Call register_capability() first."
+            )
+        old_status: str = row["status"]
+
+        now = self._now_iso()
+        enabled_ts_update = (
+            "enabled_ts = COALESCE(enabled_ts, ?), " if status == "enabled" else ""
+        )
+
+        if status == "enabled":
+            self._c.execute(
+                """
+                UPDATE soma_intel_capability
+                SET status     = ?,
+                    enabled_ts = COALESCE(enabled_ts, ?)
+                WHERE capability_id = ?
+                """,
+                (status, now, capability_id),
+            )
+        else:
+            self._c.execute(
+                "UPDATE soma_intel_capability SET status=? WHERE capability_id=?",
+                (status, capability_id),
+            )
+
+        # Append history row (history table is append-only by trigger).
+        self._c.execute(
+            """
+            INSERT INTO soma_intel_capability_history
+              (capability_id, old_status, new_status, changed_ts, changed_by, notes)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (capability_id, old_status, status, now, changed_by, notes),
+        )
+        self._c.commit()
+        log.debug(
+            "set_capability_status: %s %s -> %s by %s",
+            capability_id, old_status, status, changed_by,
+        )
+
+    def is_capability_enabled(self, capability_id: str) -> bool:
+        """
+        Return True if the capability exists and has status='enabled'.
+
+        Returns False for unknown capability_ids (fail-safe: unknown = disabled).
+
+        Args:
+            capability_id: Capability to check.
+
+        Returns:
+            bool: True only if status='enabled'.
+        """
+        row = self._c.execute(
+            "SELECT status FROM soma_intel_capability WHERE capability_id=?",
+            (capability_id,),
+        ).fetchone()
+        if row is None:
+            return False
+        return row["status"] == "enabled"
+
+    def get_capability(self, capability_id: str) -> Optional[dict]:
+        """
+        Return a capability row as a dict, or None if not found.
+
+        Keys: capability_id, status, enabled_ts, version, depends_on (list).
+
+        Args:
+            capability_id: Capability to fetch.
+
+        Returns:
+            dict | None
+        """
+        row = self._c.execute(
+            "SELECT * FROM soma_intel_capability WHERE capability_id=?",
+            (capability_id,),
+        ).fetchone()
+        if row is None:
+            return None
+        d = dict(row)
+        d["depends_on"] = json.loads(d["depends_on"] or "[]")
+        return d
+
+    def list_capabilities(
+        self,
+        status_filter: Optional[str] = None,
+    ) -> list[dict]:
+        """
+        Return all capability rows as a list of dicts.
+
+        Args:
+            status_filter: if provided, restrict to this status value
+                           ('enabled' | 'disabled' | 'experimental').
+
+        Returns:
+            List of dicts with keys: capability_id, status, enabled_ts,
+            version, depends_on (list). Ordered by capability_id ASC.
+        """
+        if status_filter:
+            rows = self._c.execute(
+                """
+                SELECT * FROM soma_intel_capability
+                WHERE status=?
+                ORDER BY capability_id ASC
+                """,
+                (status_filter,),
+            ).fetchall()
+        else:
+            rows = self._c.execute(
+                "SELECT * FROM soma_intel_capability ORDER BY capability_id ASC"
+            ).fetchall()
+
+        result = []
+        for r in rows:
+            d = dict(r)
+            d["depends_on"] = json.loads(d["depends_on"] or "[]")
+            result.append(d)
+        return result

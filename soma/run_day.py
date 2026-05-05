@@ -477,6 +477,16 @@ def step_weekly_brief_friday():
     if today.weekday() != 4:   # 4 = Friday
         return   # silent no-op — not Friday
 
+    # Capability gate (Phase 7.H3): skip if weekly_brief is disabled or unknown.
+    try:
+        from shared.soma.intel.store import IntelStore
+        with IntelStore() as _cap_store:
+            if not _cap_store.is_capability_enabled("weekly_brief"):
+                log.info("weekly_brief capability disabled, skipping")
+                return
+    except Exception as _cap_err:
+        log.warning("capability check failed (non-fatal, proceeding): %s", _cap_err)
+
     _header("1f", "Weekly Intelligence Brief (Friday)")
 
     try:
