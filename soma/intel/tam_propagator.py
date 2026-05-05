@@ -13,12 +13,12 @@ Algorithm:
        extra_platforms = platform_count − 1 (convergence bonus)
     4. Write soma_intel_belief: predicate='tam_score', supersedes prior
 
-Position multipliers (reflect TAM growth optionality):
-  pre-takeoff   → 2.5×   (massive runway, early mover advantage)
-  acceleration  → 2.0×   (strong momentum, TAM expanding rapidly)
-  inflection    → 1.5×   (at peak growth rate, high visibility)
+Position multipliers (reflect TAM growth optionality) — Option B, approved 2026-05-05:
+  pre-takeoff   → 2.0×   (strong runway, early mover advantage)
+  acceleration  → 1.7×   (momentum, TAM expanding rapidly)
+  inflection    → 1.3×   (at peak growth rate, high visibility)
   deceleration  → 1.0×   (neutral — past peak growth, market maturing)
-  saturation    → 0.7×   (crowded, limited organic TAM expansion)
+  saturation    → 0.8×   (crowded, limited organic TAM expansion)
 
 Usage:
   python3 soma/intel/tam_propagator.py           # dry run
@@ -56,11 +56,11 @@ NOW = datetime.now(timezone.utc).isoformat()
 
 # ── Position → TAM multiplier ──────────────────────────────────────────────────
 POSITION_MULTIPLIERS: dict[str, float] = {
-    "pre-takeoff":  2.5,
-    "acceleration": 2.0,
-    "inflection":   1.5,
+    "pre-takeoff":  2.0,   # Option B — approved 2026-05-05
+    "acceleration": 1.7,
+    "inflection":   1.3,
     "deceleration": 1.0,
-    "saturation":   0.7,
+    "saturation":   0.8,
 }
 DEFAULT_MULTIPLIER  = 1.0
 CONVERGENCE_BONUS   = 0.15   # +15% per additional platform beyond the first
