@@ -808,10 +808,13 @@ def step_5b_raptor():
     try:
         from soma.soma_bridge import SomaBridge
         from soma.raptor_engine import RaptorEngine
+        from soma.raptor_onboarding import RaptorOnboarding
 
         with SomaBridge() as db:
-            engine  = RaptorEngine(db)
-            status  = engine.raptor_status()
+            engine     = RaptorEngine(db)
+            onboarding = RaptorOnboarding(db)
+            status     = engine.raptor_status()
+            overdue_ms = onboarding.check_milestone_due()
 
             # ── Print banner ──────────────────────────────────────────
             W_R = 50
@@ -820,7 +823,7 @@ def step_5b_raptor():
             # Pipeline
             pip = status["pipeline"]
             stages = ["identified", "researched", "contacted",
-                      "meeting_set", "proposal_sent", "active"]
+                      "meeting_set", "proposal_sent", "onboarding", "active"]
             pip_parts = " | ".join(
                 f"{s.replace('_',' ')}: {pip.get(s, 0)}" for s in stages
             )
@@ -864,6 +867,19 @@ def step_5b_raptor():
                 f"{cs['deletion_pending']} deletion pending{RESET}"
             )
 
+            # Onboarding milestones
+            ob_count   = pip.get("onboarding", 0)
+            ms_color   = RED if overdue_ms else GREEN
+            print(
+                f"  Onboarding {ob_count} in progress | "
+                f"{ms_color}{len(overdue_ms)} milestone(s) overdue{RESET}"
+            )
+            for ms in overdue_ms[:3]:   # show top 3
+                print(
+                    f"    {RED}[OVERDUE +{ms['days_overdue']}d]{RESET} "
+                    f"{ms['prospect_id'][:8]}… {ms['label']}"
+                )
+
             print(f"  {BOLD}{'=' * W_R}{RESET}")
 
             # Log to SOMA events
@@ -871,11 +887,12 @@ def step_5b_raptor():
             db.publish_event(
                 "raptor_daily_pulse",
                 {
-                    "pipeline":  status["pipeline"],
-                    "scores":    status["scores"],
-                    "actions":   status["actions"],
-                    "coi":       status["coi"],
-                    "consent":   status["consent"],
+                    "pipeline":          status["pipeline"],
+                    "scores":            status["scores"],
+                    "actions":           status["actions"],
+                    "coi":               status["coi"],
+                    "consent":           status["consent"],
+                    "overdue_milestones": len(overdue_ms),
                 },
                 source_module="RAPTOR",
             )

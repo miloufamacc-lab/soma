@@ -2080,6 +2080,61 @@ class SomaBridge:
         ).fetchall()
         return [dict(r) for r in rows]
 
+    # ── Onboarding milestones (Phase 7) ───────────────────────────
+
+    def write_onboarding_milestone(
+        self,
+        prospect_id: str,
+        milestone: str,
+        due_date: str,
+        completed_date: str = None,
+        notes: str = None,
+    ) -> int:
+        """Insert or update a milestone row. Returns milestone_id.
+
+        Upsert on (prospect_id, milestone) — safe to call repeatedly.
+        """
+        existing = self.conn.execute(
+            "SELECT milestone_id FROM raptor_onboarding_milestones "
+            "WHERE prospect_id = ? AND milestone = ?",
+            (prospect_id, milestone),
+        ).fetchone()
+        now = self._now()
+        if existing:
+            self.conn.execute(
+                """UPDATE raptor_onboarding_milestones
+                   SET due_date=?, completed_date=?, notes=?, write_timestamp=?
+                   WHERE prospect_id=? AND milestone=?""",
+                (due_date, completed_date, notes, now, prospect_id, milestone),
+            )
+            self._maybe_commit()
+            return existing["milestone_id"]
+        else:
+            cur = self.conn.execute(
+                """INSERT INTO raptor_onboarding_milestones
+                   (prospect_id, milestone, due_date, completed_date, notes, write_timestamp)
+                   VALUES (?, ?, ?, ?, ?, ?)""",
+                (prospect_id, milestone, due_date, completed_date, notes, now),
+            )
+            self._maybe_commit()
+            return cur.lastrowid
+
+    def get_onboarding_milestones(self, prospect_id: str) -> list:
+        """Return all milestone rows for a prospect, ordered by due_date."""
+        rows = self.conn.execute(
+            "SELECT * FROM raptor_onboarding_milestones "
+            "WHERE prospect_id = ? ORDER BY due_date ASC",
+            (prospect_id,),
+        ).fetchall()
+        return [dict(r) for r in rows]
+
+    def get_all_onboarding_milestones(self) -> list:
+        """Return all milestone rows (all prospects), ordered by due_date."""
+        rows = self.conn.execute(
+            "SELECT * FROM raptor_onboarding_milestones ORDER BY due_date ASC"
+        ).fetchall()
+        return [dict(r) for r in rows]
+
     # ── soma_events pub/sub (Phase 6.1) ───────────────────────────
 
     def publish_event(
