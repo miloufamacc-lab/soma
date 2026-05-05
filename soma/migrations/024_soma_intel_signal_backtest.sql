@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS soma_intel_signal_backtest (
   sim_date             TEXT    NOT NULL,  -- YYYY-MM-DD — the day being replayed
 
   -- mirror of soma_intel_signal columns (snapshot at sim_date)
-  signal_id            INTEGER NOT NULL,  -- original signal_id
+  signal_id            INTEGER,           -- original signal_id; NULL for v2 generated signals
   ticker               TEXT    NOT NULL,
   date                 TEXT    NOT NULL,  -- same as sim_date for day-of signals
   priority             TEXT    NOT NULL,

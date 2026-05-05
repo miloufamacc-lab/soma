@@ -266,8 +266,8 @@ def _section_by_signal_type(rows: list[dict]) -> str:
 
 def _build_calibration_plot(rows: list[dict], out_path: Path) -> bool:
     """
-    Scatter plot: anomaly_score bucket → observed hit rate.
-    Buckets: [0-0.2), [0.2-0.4), [0.4-0.6), [0.6-0.8), [0.8-1.0].
+    Bar chart: anomaly_score (z-score) bucket → observed hit rate.
+    Buckets are z-score bands: [1.5-2.0), [2.0-2.5), [2.5-3.0), [3.0-4.0), [4.0-6.0), [6.0+).
     Only includes rows with outcome hit or miss (excludes data_unavailable).
     Returns True if PNG written, False if matplotlib unavailable.
     """
@@ -284,16 +284,26 @@ def _build_calibration_plot(rows: list[dict], out_path: Path) -> bool:
         log.info("No scored signals — skipping calibration plot.")
         return False
 
-    buckets = [(i * 0.2, (i + 1) * 0.2) for i in range(5)]
+    # Z-score bands suited to actual anomaly_score range (all signals ≥ 1.5)
+    import math
+    _INF = math.inf
+    bucket_defs = [
+        (1.5, 2.0, "1.5-2.0"),
+        (2.0, 2.5, "2.0-2.5"),
+        (2.5, 3.0, "2.5-3.0"),
+        (3.0, 4.0, "3.0-4.0"),
+        (4.0, 6.0, "4.0-6.0"),
+        (6.0, _INF, "6.0+"),
+    ]
     bucket_labels, hit_rates, bucket_sizes = [], [], []
 
-    for lo, hi in buckets:
-        bucket_rows = [r for r in scored if lo <= r.get("anomaly_score", 0) < hi]
+    for lo, hi, label in bucket_defs:
+        bucket_rows = [r for r in scored if lo <= (r.get("anomaly_score") or 0) < hi]
         if not bucket_rows:
             continue
         h = sum(1 for r in bucket_rows if r["outcome"] == "hit")
         rate = h / len(bucket_rows)
-        bucket_labels.append(f"{lo:.1f}-{hi:.1f}")
+        bucket_labels.append(label)
         hit_rates.append(rate)
         bucket_sizes.append(len(bucket_rows))
 
@@ -317,9 +327,9 @@ def _build_calibration_plot(rows: list[dict], out_path: Path) -> bool:
 
     ax.set_xticks(list(x))
     ax.set_xticklabels(bucket_labels)
-    ax.set_xlabel("Anomaly Score Bucket")
+    ax.set_xlabel("Anomaly Score (Z-score Band)")
     ax.set_ylabel("Observed Hit Rate")
-    ax.set_title("Signal Calibration — Hit Rate by Anomaly Score")
+    ax.set_title("Signal Calibration — Hit Rate by Z-score Band")
     ax.set_ylim(0, 1.1)
     ax.legend(loc="upper left")
     ax.grid(axis="y", alpha=0.3)

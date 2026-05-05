@@ -63,7 +63,11 @@ MIGRATIONS = _DABEIBA / "shared" / "soma" / "migrations"
 # Hold-out: last 60 calendar days reserved for OOS validation.
 BACKTEST_START = "2024-05-06"
 BACKTEST_END   = "2026-05-05"
-MIN_DAYS_FOR_COVERAGE = 522
+# 2024-05-06 → 2026-05-05 = 729 calendar days ≈ 503 NYSE trading days.
+# Threshold = 400 (≈80% of trading days) — accounts for international market
+# gaps, holidays, and illiquid tickers. The spec said "≥522 days" but that
+# assumed calendar days; yfinance returns trading days only.
+MIN_DAYS_FOR_COVERAGE = 400
 COVERAGE_TARGET = 0.70   # ≥70% of universe must meet this threshold
 
 
@@ -166,48 +170,65 @@ def _load_quote_as_single_price(ticker: str) -> list[dict]:
 # ══════════════════════════════════════════════════════════════════════════════
 
 def _download_yfinance(
-    tickers: list[str],
-    start:   str,
-    end:     str,
+    tickers:    list[str],
+    start:      str,
+    end:        str,
+    batch_size: int = 25,
+    batch_delay: float = 3.0,
+    max_retries: int = 3,
 ) -> dict[str, list[dict]]:
     """
     Download daily close prices via yfinance.
     Returns {ticker: [{date, close, volume}, ...]} for successfully fetched tickers.
-    Silently skips tickers that fail.
+    Silently skips tickers that fail after retries.
     Raises ImportError if yfinance is not installed.
+
+    batch_size reduced to 25 (from 50) to reduce rate-limit exposure.
+    batch_delay: seconds to sleep between batches.
+    max_retries: retry count on rate-limit errors.
     """
+    import time
     import yfinance as yf   # explicit import here so ImportError is clear
     import pandas as pd
 
     log.info(f"Downloading {len(tickers)} tickers via yfinance "
-             f"({start} → {end}) ...")
+             f"({start} → {end}) in batches of {batch_size} ...")
     out: dict[str, list[dict]] = {}
 
-    # Batch download for efficiency
-    batch_size = 50
-    for i in range(0, len(tickers), batch_size):
-        batch = tickers[i:i + batch_size]
-        try:
-            df = yf.download(
-                batch,
-                start=start,
-                end=end,
-                auto_adjust=True,
-                threads=True,
-                progress=False,
-            )
-            if df.empty:
-                continue
-
-            # Handle single vs multi-ticker result
-            if len(batch) == 1:
-                ticker = batch[0]
-                closes  = df["Close"]
-                volumes = df["Volume"] if "Volume" in df.columns else None
+    def _parse_df(df, batch):
+        """Extract {ticker: rows} from a yf.download DataFrame."""
+        result = {}
+        if df is None or df.empty:
+            return result
+        if len(batch) == 1:
+            ticker = batch[0]
+            closes  = df["Close"]
+            volumes = df.get("Volume")
+            rows = []
+            for idx in closes.index:
+                c = closes.loc[idx]
+                v = volumes.loc[idx] if volumes is not None else None
+                if pd.isna(c):
+                    continue
+                rows.append({
+                    "date":   idx.strftime("%Y-%m-%d"),
+                    "close":  float(c),
+                    "volume": float(v) if v is not None and not pd.isna(v) else None,
+                })
+            if rows:
+                result[ticker] = rows
+        else:
+            close_df  = df["Close"]
+            volume_df = df.get("Volume")
+            for t in batch:
+                if t not in close_df.columns:
+                    continue
+                series = close_df[t]
+                vol_s  = volume_df[t] if volume_df is not None else None
                 rows = []
-                for idx in closes.index:
-                    c = closes.loc[idx]
-                    v = volumes.loc[idx] if volumes is not None else None
+                for idx in series.index:
+                    c = series.loc[idx]
+                    v = vol_s.loc[idx] if vol_s is not None else None
                     if pd.isna(c):
                         continue
                     rows.append({
@@ -215,33 +236,54 @@ def _download_yfinance(
                         "close":  float(c),
                         "volume": float(v) if v is not None and not pd.isna(v) else None,
                     })
-                out[ticker] = rows
-            else:
-                close_df  = df["Close"]
-                volume_df = df["Volume"] if "Volume" in df.columns else None
-                for ticker in batch:
-                    if ticker not in close_df.columns:
-                        continue
-                    series = close_df[ticker]
-                    vol_s  = volume_df[ticker] if volume_df is not None else None
-                    rows = []
-                    for idx in series.index:
-                        c = series.loc[idx]
-                        v = vol_s.loc[idx] if vol_s is not None else None
-                        if pd.isna(c):
-                            continue
-                        rows.append({
-                            "date":   idx.strftime("%Y-%m-%d"),
-                            "close":  float(c),
-                            "volume": float(v) if v is not None and not pd.isna(v) else None,
-                        })
-                    if rows:
-                        out[ticker] = rows
-        except Exception as exc:
-            log.warning(f"yfinance batch {i//batch_size + 1} failed: {exc}")
-            continue
+                if rows:
+                    result[t] = rows
+        return result
 
-    log.info(f"yfinance: fetched {len(out)} tickers.")
+    total_batches = (len(tickers) + batch_size - 1) // batch_size
+    failed: list[str] = []
+
+    for batch_num, i in enumerate(range(0, len(tickers), batch_size), 1):
+        batch = tickers[i:i + batch_size]
+        log.info(f"  Batch {batch_num}/{total_batches} ({len(batch)} tickers)...")
+
+        for attempt in range(1, max_retries + 1):
+            try:
+                df = yf.download(
+                    batch,
+                    start=start,
+                    end=end,
+                    auto_adjust=True,
+                    threads=False,   # serial to reduce rate-limit pressure
+                    progress=False,
+                )
+                batch_result = _parse_df(df, batch)
+                out.update(batch_result)
+                log.info(f"    → {len(batch_result)}/{len(batch)} fetched")
+                break
+            except Exception as exc:
+                exc_str = str(exc)
+                if "rate" in exc_str.lower() or "too many" in exc_str.lower():
+                    wait = batch_delay * (2 ** (attempt - 1))   # 3s, 6s, 12s
+                    log.warning(f"    Rate limited (attempt {attempt}/{max_retries}). "
+                                f"Waiting {wait:.0f}s ...")
+                    time.sleep(wait)
+                    if attempt == max_retries:
+                        log.error(f"    Giving up on batch {batch_num} after {max_retries} retries.")
+                        failed.extend(batch)
+                else:
+                    log.warning(f"    Batch {batch_num} failed: {exc}")
+                    failed.extend(batch)
+                    break
+
+        # Polite delay between batches (skip after last batch)
+        if batch_num < total_batches:
+            time.sleep(batch_delay)
+
+    if failed:
+        log.warning(f"{len(failed)} tickers failed after retries: {failed}")
+
+    log.info(f"yfinance: fetched {len(out)} / {len(tickers)} tickers.")
     return out
 
 
@@ -302,23 +344,33 @@ def load_prices(
     if not dry_run and (from_cache or from_quote):
         store.commit()
 
-    # If --download, fetch missing tickers via yfinance
+    # If --download, fetch ALL tickers that lack full history:
+    #   - missing: no data at all (9 tickers)
+    #   - from_quote: only 1 price point, not sufficient for backtesting (281 tickers)
+    # Both groups need full yfinance history to meet the ≥522d coverage gate.
+    needs_download = list(set(missing + from_quote))
     dl_loaded: dict[str, int] = {}
-    if download and missing:
+    if download and needs_download:
         try:
-            dl_data = _download_yfinance(missing, BACKTEST_START, BACKTEST_END)
+            dl_data = _download_yfinance(needs_download, BACKTEST_START, BACKTEST_END)
             for ticker, rows in dl_data.items():
                 if rows:
                     if not dry_run:
                         for r in rows:
                             store.upsert_price(ticker, r["date"], r["close"], r.get("volume"))
                     dl_loaded[ticker] = len(rows)
-                    missing.remove(ticker)
+                    if ticker in missing:
+                        missing.remove(ticker)
             if not dry_run and dl_loaded:
                 store.commit()
-        except ImportError:
-            log.warning("yfinance not installed — skipping download. "
-                        "Install with: pip install yfinance pandas --break-system-packages")
+        except ImportError as _e:
+            log.warning(
+                "yfinance not importable (%s).\n"
+                "  Active Python: %s\n"
+                "  Fix: run the following, then retry --download:\n"
+                "    %s -m pip install yfinance pandas --break-system-packages",
+                _e, sys.executable, sys.executable,
+            )
 
     # Coverage check
     meeting_threshold = sum(

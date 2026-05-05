@@ -593,3 +593,84 @@ shared/soma/
 
 ## Lessons
 (to be filled after corrections — per project instruction #3)
+
+---
+
+---
+
+# SOMA-INTEL Phase 6 — Build Log (2026-05-05)
+
+## Steps Completed
+
+| Step | File(s) | Tests | Notes |
+|------|---------|-------|-------|
+| P6.0 | `backtest_report.py` (fixed calibration PNG), 3 report MDs | — | Bucket fix: [0,1] → z-score bands [1.5,2.0,...,6+] |
+| P6.1 | `PHASE5_5_REBACKTEST_SCHEDULED.md`, `CLAUDE.md` | — | Re-backtest scheduled 2026-08-15 |
+| P6.2 | `novelty.py`, `store.py` (+3 methods) | 14 green | count_signals_by_ticker_type, get_cell_threshold, append_threshold_adjustment |
+| P6.3 | `exploration.py` | 15 green | Roulette-wheel weighted sampling, P-X tag, 1-2 samples/day |
+| P6.4 | `meta_learner.py`, `migrations/025_...sql` | 16 green | Append-only threshold history, ±0.5 cap, cell key = regime\|sector\|feature |
+| P6.5 | `horizon_tactical.py`, `horizon_thematic.py`, `horizon_structural.py`, `confirm.py` (+boost), `migrate_horizon_labels.py`, `query.py` (+signals cmd) | 34 green | 3 horizon tracks + 1.5x boost + one-shot migration |
+| P6.6 | `weekly_brief.py`, `cipher/outputs/weekly_brief_2026-05-09.html` | — | 6 sections, codename-scrubbed, Friday-gated |
+| P6.7 | `run_day.py` (1d extended, 1e meta-learner Sunday, 1f brief Friday) | 229 total green | Backtest rows unchanged: 44,388 |
+
+## Regression Results (P6.7 gate)
+
+- **229/229 tests passed** (8.93s)
+- Backtest table: 44,388 rows (IS=34,843 / OOS=9,545) — unchanged
+- Schema version: 25 (Migration 025 applied)
+- Signal table: 568 live signals (thematic=288, structural=278, tactical=2)
+- Threshold history rows: 10 (from meta-learner run on 2026-02-10 window)
+
+## Tag
+
+`v22-soma-intel-phase6-green` — to be applied after git commits via `soma/tasks/COMMIT_PHASE6.sh`
+
+## Pending git commits (blocked by stale HEAD.lock from previous session)
+
+Run in Terminal from `~/Desktop/DABEIBA/shared/`:
+```
+bash soma/tasks/COMMIT_PHASE6.sh
+```
+
+---
+
+## Lessons Captured (Phase 6)
+
+**L1: Calibration bucket mismatch — check axis units before plotting**
+Anomaly scores are z-scores (range ~1.5–15), not probabilities [0,1]. The original
+calibration plot used [0,0.2)...[0.8,1.0] buckets → all bars empty. Always verify
+the domain of the metric being bucketed before choosing bin edges.
+
+**L2: IntelStore must be used as context manager in tests**
+`IntelStore(db_path=...)` alone does not open the connection — `__enter__()` must
+be called (or use `with IntelStore(...) as store:`). Tests that create a store and
+call methods on it without entering will fail with cryptic attribute errors.
+
+**L3: `initialize_tables()` only creates the graph tables**
+The signal tables (`soma_intel_signal`, `soma_intel_universe`, `soma_intel_baseline`,
+`soma_intel_regime`) are NOT created by `initialize_tables()`. Tests that need them
+must execute a `_SIGNAL_DDL` script after `initialize_tables()`.
+
+**L4: SQLite RAISE(ABORT) in triggers raises IntegrityError, not OperationalError**
+`pytest.raises(sqlite3.OperationalError)` will miss trigger violations. Use
+`pytest.raises((sqlite3.IntegrityError, sqlite3.OperationalError))` for robustness.
+
+**L5: Meta-learner trailing window must overlap backtest data range**
+With `as_of_date=today` (2026-05-05), trailing 30d = Apr 5–May 5. Backtest OOS
+ends 2026-02-10. No overlap → 0 adjustments. Verified with `as_of_date="2026-02-10"`
+→ 10 adjustments. The live system will self-correct as fresh backtest data accumulates.
+
+**L6: Git HEAD.lock from prior context session blocks sandbox commits**
+Cowork context switches leave stale `.git/HEAD.lock` and `.git/index.lock` files
+that cannot be removed from the sandbox (PermissionError). Solution: write a
+`COMMIT_PHASE6.sh` script for the user to run manually in Terminal.
+
+**L7: Global variable shadowing in CLI with default arguments**
+Assigning `global DB_PATH` in a function that already referenced `DB_PATH` as a
+local (via `args.db`) causes `SyntaxError: name used prior to global declaration`.
+Fix: assign to a local variable first, then use it throughout the function.
+
+**L8: run_day.py horizon date variable must be set before sub-steps**
+The `_today` variable needed by the horizon track sub-steps must be declared
+before the try/except blocks that use it. Hoist `_today = date.today().isoformat()`
+to just after the SOMA bridge block ends.

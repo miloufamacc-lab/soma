@@ -15,6 +15,9 @@ Steps:
     [1b]  COBALT → on-chain intelligence (BTC/SOL metrics, composite signals)
     [1c]  SPECTRE → geopolitical risk scoring (RSS feeds, keyword triage, delta check)
     [1d]  SOMA-INTEL → graph enrichment + signal propagation + sweep + SOMA bridge
+              + horizon tracks (tactical / thematic / structural) + multi-horizon boost
+    [1e]  Meta-learner (Sunday only) — per-cell threshold adjustment via backtest outcomes
+    [1f]  Weekly Brief (Friday only) — HTML brief to cipher/outputs/
     [2/7] What Changed → diffs against previous, flags material shifts
     [2b]  DOCTRINE → thesis engine: belief testing, conviction adjustments, alerts
     [2c]  Narrative Alignment → flags outlook ↔ portfolio contradictions
@@ -391,6 +394,99 @@ def step_soma_intel():
         )
     except Exception as e:
         print(f"  {YELLOW}[WARN]{RESET} soma_intel_bridge failed (non-fatal): {e}")
+
+    # ── 5. Multi-horizon tracks (§J) ─────────────────────────────────
+    _today = date.today().isoformat()
+    try:
+        from soma.intel.horizon_tactical  import TacticalTrack
+        from soma.intel.horizon_thematic  import ThematicTrack
+        from soma.intel.horizon_structural import StructuralTrack
+        with IntelStore(db_path=db_path) as store:
+            tac  = TacticalTrack(store,  _today).run()
+            them = ThematicTrack(store,   _today).run()
+            struc= StructuralTrack(store, _today).run()
+        print(
+            f"  {GREEN}[horizons]{RESET}     "
+            f"tactical={len(tac)}  thematic={len(them)}  structural={len(struc)}"
+        )
+    except Exception as e:
+        print(f"  {YELLOW}[WARN]{RESET} horizon tracks failed (non-fatal): {e}")
+
+    # ── 6. Multi-horizon boost (§J boost) ────────────────────────────
+    try:
+        from soma.intel.confirm import apply_multi_horizon_boost
+        with IntelStore(db_path=db_path) as store:
+            boosted = apply_multi_horizon_boost(store, _today)
+        if boosted:
+            print(
+                f"  {GREEN}[boost]{RESET}        "
+                f"{len(boosted)} signal(s) boosted (multi_horizon 1.5x)"
+            )
+    except Exception as e:
+        print(f"  {YELLOW}[WARN]{RESET} multi_horizon_boost failed (non-fatal): {e}")
+
+
+# ── Step 1e: Meta-learner (Sunday only) ──────────────────────────────
+
+def step_meta_learner_weekly():
+    """
+    Meta-learner — runs once per week on Sunday.
+    Adjusts per-cell z-thresholds based on backtest outcome history.
+    No-op on other days.
+    """
+    from datetime import date as _date
+    today = _date.today()
+    if today.weekday() != 6:   # 6 = Sunday
+        return   # silent no-op — not Sunday
+
+    _header("1e", "Meta-Learner — Weekly Threshold Adjustment (Sunday)")
+
+    from pathlib import Path
+    import os
+    _dabeiba = Path(__file__).resolve().parent.parent.parent
+    db_path  = Path(os.environ.get("SOMA_DB_PATH",
+                    str(_dabeiba / "shared" / "soma" / "data" / "soma.db")))
+
+    try:
+        from soma.intel.store import IntelStore
+        from soma.intel.meta_learner import MetaLearner
+        with IntelStore(db_path=db_path) as store:
+            report = MetaLearner(store, as_of_date=today.isoformat()).run()
+        print(
+            f"  {GREEN}[meta_learner]{RESET}  "
+            f"cells_evaluated={report['cells_evaluated']}  "
+            f"cells_adjusted={report['cells_adjusted']}  "
+            f"down={report['adjustments_down']}  up={report['adjustments_up']}  "
+            f"cap_hits={report['cap_hits']}  skipped={report['skipped_min_data']}"
+        )
+    except Exception as e:
+        print(f"  {YELLOW}[WARN]{RESET} meta_learner failed (non-fatal): {e}")
+
+
+# ── Step 1f: Weekly Brief (Friday only) ──────────────────────────────
+
+def step_weekly_brief_friday():
+    """
+    Weekly intelligence brief — runs once per week on Friday.
+    Generates cipher/outputs/weekly_brief_YYYY-MM-DD.html.
+    No-op on other days.
+    """
+    from datetime import date as _date
+    today = _date.today()
+    if today.weekday() != 4:   # 4 = Friday
+        return   # silent no-op — not Friday
+
+    _header("1f", "Weekly Intelligence Brief (Friday)")
+
+    try:
+        from soma.intel.weekly_brief import run_weekly_brief
+        result = run_weekly_brief(as_of_date=today.isoformat(), force=True)
+        if result.get("skipped"):
+            print(f"  {YELLOW}[SKIP]{RESET} {result.get('reason', '')}")
+        else:
+            print(f"  {GREEN}OK{RESET} Brief written: {result['output_path']}")
+    except Exception as e:
+        print(f"  {YELLOW}[WARN]{RESET} weekly_brief failed (non-fatal): {e}")
 
 
 # ── Step 2: What Changed ─────────────────────────────────────────────
@@ -864,11 +960,23 @@ def main():
     except Exception as e:
         print(f"  {RED}ERROR{RESET} in SPECTRE step: {e}")
 
-    # Step 1d: SOMA-INTEL (Graph + Signal layer)
+    # Step 1d: SOMA-INTEL (Graph + Signal layer + horizon tracks + boost)
     try:
         step_soma_intel()
     except Exception as e:
         print(f"  {RED}ERROR{RESET} in SOMA-INTEL step: {e}")
+
+    # Step 1e: Meta-learner (Sunday only — no-op other days)
+    try:
+        step_meta_learner_weekly()
+    except Exception as e:
+        print(f"  {RED}ERROR{RESET} in Meta-learner step: {e}")
+
+    # Step 1f: Weekly Brief (Friday only — no-op other days)
+    try:
+        step_weekly_brief_friday()
+    except Exception as e:
+        print(f"  {RED}ERROR{RESET} in Weekly Brief step: {e}")
 
     # Step 2: What Changed
     wc_result = None
