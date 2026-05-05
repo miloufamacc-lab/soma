@@ -409,10 +409,7 @@ def main() -> None:
 
     with IntelStore(db_path=DB_PATH) as store:
         # Guard / force-wipe
-        existing = store._c.execute(
-            "SELECT COUNT(*) FROM soma_intel_edge WHERE source_type IN (?,?,?)",
-            _ORACLE_SOURCE_TYPES,
-        ).fetchone()[0]
+        existing = store.count_edges_by_source_types(list(_ORACLE_SOURCE_TYPES))
 
         if existing > 0 and not args.force:
             print(f"\nWARNING: {existing} oracle edges already in DB. Upserting nodes only.")
@@ -420,8 +417,8 @@ def main() -> None:
         elif args.force and existing > 0:
             print(f"\n--force: deleting {existing} existing oracle edges...")
             for st in _ORACLE_SOURCE_TYPES:
-                store._c.execute("DELETE FROM soma_intel_edge WHERE source_type=?", (st,))
-            store._c.commit()
+                store.delete_edges_by_source_type(st)
+            store.commit()
             print("  Deleted.")
 
         skip_edges = (existing > 0 and not args.force)
@@ -456,16 +453,10 @@ def main() -> None:
             print(f"  Categories: {s_stats['category_nodes']}  Regions: {s_stats['region_nodes']}")
 
         # DB summary
-        node_count  = store._c.execute("SELECT COUNT(*) FROM soma_intel_node").fetchone()[0]
-        edge_oracle = store._c.execute(
-            "SELECT COUNT(*) FROM soma_intel_edge WHERE source_type IN (?,?,?)",
-            _ORACLE_SOURCE_TYPES,
-        ).fetchone()[0]
-        edge_total  = store._c.execute("SELECT COUNT(*) FROM soma_intel_edge").fetchone()[0]
-
-        nt = store._c.execute(
-            "SELECT node_type, COUNT(*) c FROM soma_intel_node GROUP BY node_type ORDER BY c DESC"
-        ).fetchall()
+        node_count  = store.count_table("soma_intel_node")
+        edge_oracle = store.count_edges_by_source_types(list(_ORACLE_SOURCE_TYPES))
+        edge_total  = store.count_table("soma_intel_edge")
+        nt          = store.node_type_counts()
 
         print(f"\nDB totals:")
         print(f"  soma_intel_node:    {node_count}")
@@ -473,7 +464,7 @@ def main() -> None:
         print(f"  total edges:        {edge_total}")
         print("  Node types:")
         for r in nt:
-            print(f"    {r[0]:<12} {r[1]}")
+            print(f"    {r['node_type']:<12} {r['c']}")
 
     print("\ningest_oracle: OK")
 

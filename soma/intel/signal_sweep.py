@@ -90,25 +90,7 @@ def run_pass_1(
     """Expire signals whose age exceeds EXPIRY_MULTIPLIER × half_life_days."""
     stats = {"expired": 0, "checked": 0}
 
-    # Build query — optionally filter to specific tickers
-    where_ticker = ""
-    params: list = []
-    if tickers:
-        placeholders = ",".join("?" * len(tickers))
-        where_ticker = f"AND ticker IN ({placeholders})"
-        params.extend(tickers)
-
-    rows = store._c.execute(
-        f"""
-        SELECT signal_id, ticker, date, priority, half_life_days,
-               status, notes, reconfirmation_count
-        FROM soma_intel_signal
-        WHERE status NOT IN ('expired')
-          {where_ticker}
-        ORDER BY date ASC
-        """,
-        params,
-    ).fetchall()
+    rows = store.list_signals_active(tickers=tickers)
 
     today_dt = date.today()
 
@@ -131,14 +113,11 @@ def run_pass_1(
                     f"  hl={hl}d  status={r['status']}"
                 )
             if not dry_run:
-                store._c.execute(
-                    "UPDATE soma_intel_signal SET status='expired' WHERE signal_id=?",
-                    (r["signal_id"],),
-                )
+                store.expire_signal(r["signal_id"])
             stats["expired"] += 1
 
     if not dry_run:
-        store._c.commit()
+        store.commit()
 
     return stats
 
@@ -157,16 +136,7 @@ def run_pass_2(
 
     cutoff = (date.today() - timedelta(days=BELIEF_PRUNE_DAYS)).isoformat()
 
-    rows = store._c.execute(
-        """
-        SELECT belief_id, subject_node_id, predicate, ts
-        FROM soma_intel_belief
-        WHERE superseded_by IS NOT NULL
-          AND ts < ?
-        ORDER BY ts ASC
-        """,
-        (cutoff,),
-    ).fetchall()
+    rows = store.list_superseded_beliefs_before(cutoff)
 
     stats["checked"] = len(rows)
 
@@ -176,15 +146,8 @@ def run_pass_2(
 
     if not dry_run and rows:
         ids = [r["belief_id"] for r in rows]
-        # Delete in batches of 500 to stay within SQLite limits
-        for i in range(0, len(ids), 500):
-            batch = ids[i : i + 500]
-            placeholders = ",".join("?" * len(batch))
-            store._c.execute(
-                f"DELETE FROM soma_intel_belief WHERE belief_id IN ({placeholders})",
-                batch,
-            )
-        store._c.commit()
+        store.delete_beliefs_by_ids(ids)
+        store.commit()
 
     stats["pruned"] = len(rows)
     return stats
@@ -203,26 +166,12 @@ def run_pass_3(
     """Re-score active propagated signals not updated today; refresh or expire."""
     stats = {"reconfirmed": 0, "expired_low": 0, "skipped_today": 0, "checked": 0}
 
-    where_ticker = ""
-    params: list = [TODAY, f"{PROPAGATOR_TAG}%"]
-    if tickers:
-        placeholders = ",".join("?" * len(tickers))
-        where_ticker = f"AND ticker IN ({placeholders})"
-        params.extend(tickers)
-
     # Active propagated signals NOT updated today
-    rows = store._c.execute(
-        f"""
-        SELECT signal_id, ticker, date, half_life_days, reconfirmation_count
-        FROM soma_intel_signal
-        WHERE status IN ('active', 'reconfirmed')
-          AND date != ?
-          AND notes LIKE ?
-          {where_ticker}
-        ORDER BY date ASC
-        """,
-        params,
-    ).fetchall()
+    rows = store.list_active_signals_not_today(
+        today=TODAY,
+        notes_prefix=PROPAGATOR_TAG,
+        tickers=tickers,
+    )
 
     stats["checked"] = len(rows)
 
@@ -235,10 +184,7 @@ def run_pass_3(
             if verbose:
                 print(f"  [P3:expire] {ticker:<8} score<{MIN_SCORE_THRESHOLD} → expired")
             if not dry_run:
-                store._c.execute(
-                    "UPDATE soma_intel_signal SET status='expired' WHERE signal_id=?",
-                    (r["signal_id"],),
-                )
+                store.expire_signal(r["signal_id"])
             stats["expired_low"] += 1
         else:
             # Refresh the existing signal row
@@ -253,10 +199,7 @@ def run_pass_3(
                 # Since this signal's date != today, it will insert a fresh today row.
                 _upsert_signal(store, ts)
                 # Also expire the old (stale-date) row
-                store._c.execute(
-                    "UPDATE soma_intel_signal SET status='expired' WHERE signal_id=?",
-                    (r["signal_id"],),
-                )
+                store.expire_signal(r["signal_id"])
             stats["reconfirmed"] += 1
 
     if not dry_run:
@@ -327,14 +270,13 @@ def main() -> None:
 
         # DB snapshot
         print("\nDB snapshot:")
-        for col, sql in [
-            ("active signals",      "SELECT COUNT(*) FROM soma_intel_signal WHERE status='active'"),
-            ("reconfirmed signals", "SELECT COUNT(*) FROM soma_intel_signal WHERE status='reconfirmed'"),
-            ("expired signals",     "SELECT COUNT(*) FROM soma_intel_signal WHERE status='expired'"),
-            ("active beliefs",      "SELECT COUNT(*) FROM soma_intel_belief WHERE superseded_by IS NULL"),
-            ("superseded beliefs",  "SELECT COUNT(*) FROM soma_intel_belief WHERE superseded_by IS NOT NULL"),
+        for col, cnt in [
+            ("active signals",      store.count_signals_by_status("active")),
+            ("reconfirmed signals", store.count_signals_by_status("reconfirmed")),
+            ("expired signals",     store.count_signals_by_status("expired")),
+            ("active beliefs",      store.count_beliefs_active()),
+            ("superseded beliefs",  store.count_beliefs_superseded()),
         ]:
-            cnt = store._c.execute(sql).fetchone()[0]
             print(f"  {col:<22} {cnt}")
 
     if dry_run:

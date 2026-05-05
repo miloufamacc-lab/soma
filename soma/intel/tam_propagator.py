@@ -73,48 +73,24 @@ MIN_SIGNAL_SCORE    = 0.01   # skip tickers with no meaningful signal belief
 
 def _load_platform_positions(store: IntelStore) -> dict[str, str]:
     """platform_id → position label (or 'unknown' if not yet fitted)."""
-    rows = store._c.execute(
-        "SELECT platform_id, position FROM soma_intel_platform"
-    ).fetchall()
-    return {r["platform_id"]: (r["position"] or "unknown") for r in rows}
+    return store.list_platform_positions()
 
 
 def _load_ticker_platforms(store: IntelStore) -> dict[str, list[str]]:
     """ticker → list of platform_ids (from active belongs_to_platform edges)."""
-    rows = store._c.execute(
-        """
-        SELECT DISTINCT src_node_id, dst_node_id
-        FROM soma_intel_edge
-        WHERE edge_type = 'belongs_to_platform'
-          AND src_node_id LIKE 'co_%'
-          AND dst_node_id LIKE 'pl_%'
-          AND superseded_by IS NULL
-        """
-    ).fetchall()
-    membership: dict[str, set[str]] = {}
-    for r in rows:
-        ticker = r["src_node_id"][3:]  # strip co_
-        membership.setdefault(ticker, set()).add(r["dst_node_id"])
-    return {t: sorted(pls) for t, pls in membership.items()}
+    return store.get_ticker_platforms()
 
 
 def _load_signal_scores(store: IntelStore) -> dict[str, float]:
     """ticker → signal_score from active belief (0.0 if missing)."""
-    rows = store._c.execute(
-        """
-        SELECT subject_node_id, value
-        FROM soma_intel_belief
-        WHERE predicate = 'signal_score'
-          AND superseded_by IS NULL
-        """
-    ).fetchall()
+    beliefs = store.get_active_beliefs("signal_score")
     out: dict[str, float] = {}
-    for r in rows:
-        node_id = r["subject_node_id"]
+    for b in beliefs:
+        node_id = b["subject_node_id"]
         if node_id.startswith("co_"):
             ticker = node_id[3:]
             try:
-                out[ticker] = float(r["value"])
+                out[ticker] = float(b["value"])
             except (ValueError, TypeError):
                 pass
     return out
@@ -192,29 +168,13 @@ def compute_tam_scores(
 def _write_tam_belief(store: IntelStore, ts: TAMScore) -> None:
     """Upsert a tam_score belief for this ticker, superseding the prior."""
     node_id = f"co_{ts.ticker}"
-
-    prior = store._c.execute(
-        """SELECT belief_id FROM soma_intel_belief
-           WHERE subject_node_id=? AND predicate='tam_score'
-             AND superseded_by IS NULL""",
-        (node_id,),
-    ).fetchone()
-    prior_id = prior["belief_id"] if prior else None
-
-    cur = store._c.execute(
-        """
-        INSERT INTO soma_intel_belief
-          (subject_node_id, predicate, value, confidence, ts,
-           source_id, superseded_by)
-        VALUES (?, 'tam_score', ?, ?, ?, 'tam_propagator', NULL)
-        """,
-        (node_id, f"{ts.tam_score:.4f}", ts.confidence, NOW),
+    store.upsert_belief(
+        node_id    = node_id,
+        predicate  = "tam_score",
+        value      = f"{ts.tam_score:.4f}",
+        confidence = ts.confidence,
+        source_id  = "tam_propagator",
     )
-    if prior_id:
-        store._c.execute(
-            "UPDATE soma_intel_belief SET superseded_by=? WHERE belief_id=?",
-            (cur.lastrowid, prior_id),
-        )
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -247,7 +207,7 @@ def run_tam(
     if not dry_run:
         for s in scores:
             _write_tam_belief(store, s)
-        store._c.commit()
+        store.commit()
 
     return {
         "tickers_scored":  len(scores),
@@ -285,9 +245,7 @@ def main() -> None:
         print(f"  Top ticker:       {stats['top_ticker']}  TAM={stats['top_tam']:.2f}")
 
         if not dry_run:
-            total_tam = store._c.execute(
-                "SELECT COUNT(*) FROM soma_intel_belief WHERE predicate='tam_score' AND superseded_by IS NULL"
-            ).fetchone()[0]
+            total_tam = store.count_active_beliefs("tam_score")
             print(f"\nDB: {total_tam} active tam_score beliefs")
 
     if dry_run:

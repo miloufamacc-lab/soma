@@ -161,51 +161,25 @@ def compute_all_signals(store: IntelStore) -> dict[str, TickerSignal]:
 
     Returns dict of ticker → TickerSignal.
     """
-    # Load universe membership
-    universe_rows = store._c.execute(
-        "SELECT ticker, auto_added, tier FROM soma_intel_universe WHERE active=1"
-    ).fetchall()
+    # Load universe membership via IntelStore
     universe_map: dict[str, tuple[bool, str]] = {
         r["ticker"]: (bool(r["auto_added"]), r["tier"] or "core")
-        for r in universe_rows
+        for r in store.list_universe(active_only=True)
     }
 
     # Load ETF membership from universe_v1.json
     etf_map = _load_etf_membership(UNIVERSE_JSON)
 
-    # Load all co_* nodes
-    co_nodes = store._c.execute(
-        "SELECT node_id, name FROM soma_intel_node WHERE node_type='company'"
-    ).fetchall()
+    # Load all co_* nodes via IntelStore
+    co_nodes = store.list_nodes_by_type("company")
 
-    # Load all edges: aggregate by (src_or_dst_ticker, source_type)
-    # We want: for each co_TICKER, how many edges of each source_type
-    edge_rows = store._c.execute(
-        """
-        SELECT src_node_id as node_id, source_type, COUNT(*) as cnt
-        FROM soma_intel_edge
-        WHERE src_node_id LIKE 'co_%'
-        GROUP BY src_node_id, source_type
-        UNION ALL
-        SELECT dst_node_id as node_id, source_type, COUNT(*) as cnt
-        FROM soma_intel_edge
-        WHERE dst_node_id LIKE 'co_%'
-        GROUP BY dst_node_id, source_type
-        """
-    ).fetchall()
-
-    # Aggregate into per-node dicts
-    node_edges: dict[str, dict[str, int]] = {}
-    for r in edge_rows:
-        nid = r["node_id"]
-        st  = r["source_type"]
-        node_edges.setdefault(nid, {})
-        node_edges[nid][st] = node_edges[nid].get(st, 0) + r["cnt"]
+    # Load edge source-type counts per company node via IntelStore
+    node_edges: dict[str, dict[str, int]] = store.edge_source_counts_for_companies()
 
     # Build TickerSignal for each co_* node
     signals: dict[str, TickerSignal] = {}
-    for row in co_nodes:
-        node_id = row["node_id"]
+    for node in co_nodes:
+        node_id = node.node_id
         ticker  = node_id[3:]  # strip "co_"
 
         in_uni, auto_added, tier = False, False, "core"
@@ -274,53 +248,33 @@ def apply_changes(
 
     for sig in signals.values():
         if sig.status == STATUS_PROMOTE_CANDIDATE:
-            pt = json.dumps(sig.etf_member_of)
-            store._c.execute(
-                """
-                INSERT INTO soma_intel_universe
-                  (ticker, source, platform_tags, added_ts, active, tier,
-                   auto_added, promotion_score, promotion_source)
-                VALUES (?, 'universe_manager', ?, ?, 1, 'watchlist', 1, ?, ?)
-                ON CONFLICT(ticker) DO UPDATE SET
-                  active           = 1,
-                  tier             = CASE WHEN excluded.tier != '' THEN excluded.tier ELSE tier END,
-                  auto_added       = 1,
-                  promotion_score  = excluded.promotion_score,
-                  promotion_source = excluded.promotion_source
-                """,
-                (sig.ticker, pt, now, sig.score, sig.promotion_source_str),
+            n = store.upsert_universe_ticker(
+                ticker       = sig.ticker,
+                source       = "universe_manager",
+                platform_tags= sig.etf_member_of,
+                added_ts     = now,
+                score        = sig.score,
+                promo_source = sig.promotion_source_str,
+                tier         = "watchlist",
+                auto_added   = True,
             )
-            n = store._c.execute("SELECT changes()").fetchone()[0]
             stats["promoted"] += n
             if verbose and n:
                 print(f"  PROMOTE  {sig.ticker:<10} score={sig.score:.2f}  "
                       f"sources={sig.promotion_source_str}")
 
         elif sig.status == STATUS_DEMOTE_CANDIDATE:
-            store._c.execute(
-                "UPDATE soma_intel_universe SET active=0 WHERE ticker=? AND auto_added=1",
-                (sig.ticker,),
-            )
-            n = store._c.execute("SELECT changes()").fetchone()[0]
+            n = store.demote_universe_ticker(sig.ticker)
             stats["demoted"] += n
             if verbose and n:
                 print(f"  DEMOTE   {sig.ticker:<10} score={sig.score:.2f}  "
                       f"(auto_added, below threshold)")
 
         # Refresh score + source on every ticker that has a universe row (active or not)
-        store._c.execute(
-            """
-            UPDATE soma_intel_universe
-            SET promotion_score  = ?,
-                promotion_source = ?
-            WHERE ticker = ?
-            """,
-            (sig.score, sig.promotion_source_str, sig.ticker),
-        )
-        n = store._c.execute("SELECT changes()").fetchone()[0]
+        n = store.refresh_universe_score(sig.ticker, sig.score, sig.promotion_source_str)
         stats["score_updated"] += n
 
-    store._c.commit()
+    store.commit()
     return stats
 
 

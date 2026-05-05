@@ -148,33 +148,21 @@ def _fmt_edge_verbose(e: Edge) -> list[str]:
 
 def cmd_stats(store: IntelStore, _args: argparse.Namespace) -> None:
     """DB-wide statistics."""
-    node_total = store._c.execute("SELECT COUNT(*) FROM soma_intel_node").fetchone()[0]
-    edge_total = store._c.execute("SELECT COUNT(*) FROM soma_intel_edge").fetchone()[0]
-    unaudited  = store._c.execute(
-        "SELECT COUNT(*) FROM soma_intel_edge WHERE audit_status='unaudited'"
-    ).fetchone()[0]
-
-    node_rows = store._c.execute(
-        "SELECT node_type, COUNT(*) c FROM soma_intel_node GROUP BY node_type ORDER BY c DESC"
-    ).fetchall()
-    edge_rows = store._c.execute(
-        "SELECT source_type, COUNT(*) c FROM soma_intel_edge GROUP BY source_type ORDER BY c DESC"
-    ).fetchall()
-    etype_rows = store._c.execute(
-        "SELECT edge_type, COUNT(*) c FROM soma_intel_edge GROUP BY edge_type ORDER BY c DESC"
-    ).fetchall()
+    stats     = store.graph_stats()
+    etype_rows = store.edge_type_counts()
 
     print(f"\n{_bold('SOMA-INTEL Graph Statistics')}")
-    print(f"  {_bold('Nodes:')}  {node_total}")
-    for r in node_rows:
-        print(f"    {r[0]:<14} {r[1]}")
-    print(f"\n  {_bold('Edges:')}  {edge_total}  (unaudited: {_yellow(str(unaudited))})")
+    print(f"  {_bold('Nodes:')}  {stats['node_total']}")
+    for r in stats["node_by_type"]:
+        print(f"    {r['node_type']:<14} {r['c']}")
+    print(f"\n  {_bold('Edges:')}  {stats['edge_total']}  "
+          f"(unaudited: {_yellow(str(stats['unaudited']))})")
     print(f"  By source:")
-    for r in edge_rows:
-        print(f"    {r[0]:<25} {r[1]}")
+    for r in stats["edge_by_source"]:
+        print(f"    {r['source_type']:<25} {r['c']}")
     print(f"  By type:")
-    for r in etype_rows:
-        print(f"    {_edge_color(r[0]):<35} {r[1]}")
+    for etype, cnt in etype_rows:
+        print(f"    {_edge_color(etype):<35} {cnt}")
 
 
 def cmd_node(store: IntelStore, args: argparse.Namespace) -> None:
@@ -267,14 +255,12 @@ def cmd_platform(store: IntelStore, args: argparse.Namespace) -> None:
 
     pl_node = store.get_node(pl_id)
     if not pl_node:
-        # Show available platforms
-        rows = store._c.execute(
-            "SELECT node_id, name FROM soma_intel_node WHERE node_type='platform'"
-        ).fetchall()
+        # Show available platforms via IntelStore
+        platforms = store.list_nodes_by_type("platform")
         print(_red(f"Platform not found: {pl_id}"))
         print("Available platforms:")
-        for r in rows:
-            print(f"  {r[0]:<25} {r[1]}")
+        for p in platforms:
+            print(f"  {p.node_id:<25} {p.name}")
         return
 
     edges = store.neighbors(pl_id, edge_types=["belongs_to_platform"])
@@ -352,9 +338,7 @@ def cmd_audit(store: IntelStore, args: argparse.Namespace) -> None:
     stratify = getattr(args, "stratify", "confidence")
     edges = store.audit_pending(limit=args.limit, stratify_by=stratify)
 
-    total_unaudited = store._c.execute(
-        "SELECT COUNT(*) FROM soma_intel_edge WHERE audit_status='unaudited'"
-    ).fetchone()[0]
+    total_unaudited = store.count_unaudited_edges()
 
     print(f"\n{_bold('Audit Queue')}  —  {total_unaudited} total unaudited  "
           f"(showing {len(edges)}, sort={stratify}):")

@@ -474,12 +474,8 @@ def main() -> None:
 
     # DB snapshot
     with IntelStore(db_path=DB_PATH) as store:
-        ri_count = store._c.execute(
-            "SELECT COUNT(*) FROM raw_intelligence WHERE source_type='soma_intel'"
-        ).fetchone()[0]
-        ev_count = store._c.execute(
-            "SELECT COUNT(*) FROM events WHERE event_type='SOMA_INTEL_DAILY_RUN'"
-        ).fetchone()[0]
+        ri_count = store.count_soma_raw_intelligence("soma_intel")
+        ev_count = store.count_soma_events("SOMA_INTEL_DAILY_RUN")
         print(f"\nDB snapshot:")
         print(f"  raw_intelligence (soma_intel):  {ri_count}")
         print(f"  events (SOMA_INTEL_DAILY_RUN):  {ev_count}")

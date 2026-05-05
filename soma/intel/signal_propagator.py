@@ -63,12 +63,11 @@ TOP_EDGE_LIMIT      = 5      # max edges in features JSON
 PRIORITY_HIGH   = 10.0
 PRIORITY_MEDIUM =  4.0
 
-# Horizon by priority label
-HORIZON: dict[str, str] = {
-    "HIGH":   "medium",
-    "MEDIUM": "thematic",
-    "LOW":    "structural",
-}
+# Horizon placeholder (§J spec: tactical | thematic | structural).
+# All propagated signals default to 'thematic' until horizon track modules
+# (horizon_tactical.py, horizon_thematic.py, horizon_structural.py) are built.
+# NEVER map priority → horizon — they are orthogonal axes per spec.
+HORIZON_PLACEHOLDER = "thematic"
 
 # Tag embedded in notes field — lets convergence_engine rows coexist cleanly
 PROPAGATOR_TAG = "signal_propagator"
@@ -129,37 +128,28 @@ def score_ticker(
     """
     node_id = f"co_{ticker}"
 
-    # Collect all non-superseded edges incident to this company node
-    rows = store._c.execute(
-        """
-        SELECT edge_id, src_node_id, dst_node_id, edge_type,
-               source_type, confidence, half_life_days, ts
-        FROM soma_intel_edge
-        WHERE (src_node_id = ? OR dst_node_id = ?)
-          AND superseded_by IS NULL
-        """,
-        (node_id, node_id),
-    ).fetchall()
+    # Collect all non-superseded edges incident to this company node via IntelStore
+    edges = store.neighbors(node_id)
 
-    if not rows:
+    if not edges:
         return None
 
     contributions: list[EdgeContribution] = []
     source_weights: dict[str, float]      = {}
 
-    for r in rows:
-        hl  = float(r["half_life_days"]) if r["half_life_days"] else 30.0
-        age = _age_days(r["ts"])
-        w   = _decay(r["confidence"], age, hl)
-        st  = r["source_type"] or "unknown"
+    for edge in edges:
+        hl  = float(edge.half_life_days) if edge.half_life_days else 30.0
+        age = _age_days(edge.ts)
+        w   = _decay(edge.confidence, age, hl)
+        st  = edge.source_type or "unknown"
 
         ec = EdgeContribution(
-            edge_id     = r["edge_id"],
-            src         = r["src_node_id"],
-            dst         = r["dst_node_id"],
-            edge_type   = r["edge_type"],
+            edge_id     = edge.edge_id,
+            src         = edge.src_node_id,
+            dst         = edge.dst_node_id,
+            edge_type   = edge.edge_type,
             source_type = st,
-            confidence  = r["confidence"],
+            confidence  = edge.confidence,
             half_life   = hl,
             age_days    = age,
             weight      = w,
@@ -237,53 +227,38 @@ def _upsert_signal(store: IntelStore, ts: TickerScore) -> str:
     pri          = _priority(ts.raw_score)
     anom         = _anomaly(ts.raw_score)
     features_str = _features_json(ts)
-    horizon_val  = HORIZON[pri]
     hl_days      = int(round(ts.avg_half_life))
     notes        = (
         f"{PROPAGATOR_TAG}: score={ts.raw_score:.3f} "
         f"corr={ts.corroboration} edges={ts.edge_count}"
     )
 
-    # Check for an existing propagated row for (ticker, date)
-    existing = store._c.execute(
-        """
-        SELECT signal_id, reconfirmation_count
-        FROM soma_intel_signal
-        WHERE ticker = ? AND date = ? AND notes LIKE ?
-        """,
-        (ts.ticker, TODAY, f"{PROPAGATOR_TAG}%"),
-    ).fetchone()
+    # Check for an existing propagated row for (ticker, date) via IntelStore
+    existing = store.get_signal(ts.ticker, TODAY, PROPAGATOR_TAG)
 
     if existing:
-        store._c.execute(
-            """
-            UPDATE soma_intel_signal
-            SET priority             = ?,
-                anomaly_score        = ?,
-                features             = ?,
-                corroboration_count  = ?,
-                half_life_days       = ?,
-                reconfirmation_count = reconfirmation_count + 1,
-                status               = 'reconfirmed',
-                horizon              = ?,
-                notes                = ?
-            WHERE signal_id = ?
-            """,
-            (pri, anom, features_str, ts.corroboration,
-             hl_days, horizon_val, notes, existing["signal_id"]),
+        store.update_signal(
+            signal_id    = existing["signal_id"],
+            priority     = pri,
+            anomaly_score= anom,
+            features     = features_str,
+            corroboration= ts.corroboration,
+            half_life    = hl_days,
+            horizon      = HORIZON_PLACEHOLDER,
+            notes        = notes,
         )
         return "reconfirmed"
 
-    store._c.execute(
-        """
-        INSERT INTO soma_intel_signal
-          (ticker, date, priority, anomaly_score, features,
-           corroboration_count, half_life_days,
-           reconfirmation_count, status, horizon, notes)
-        VALUES (?, ?, ?, ?, ?, ?, ?, 0, 'active', ?, ?)
-        """,
-        (ts.ticker, TODAY, pri, anom, features_str,
-         ts.corroboration, hl_days, horizon_val, notes),
+    store.insert_signal(
+        ticker        = ts.ticker,
+        date          = TODAY,
+        priority      = pri,
+        anomaly_score = anom,
+        features      = features_str,
+        corroboration = ts.corroboration,
+        half_life     = hl_days,
+        horizon       = HORIZON_PLACEHOLDER,
+        notes         = notes,
     )
     return "inserted"
 
@@ -310,10 +285,7 @@ def run_propagator(
     if tickers:
         ticker_list = tickers
     else:
-        rows = store._c.execute(
-            "SELECT ticker FROM soma_intel_universe WHERE active=1 ORDER BY ticker"
-        ).fetchall()
-        ticker_list = [r["ticker"] for r in rows]
+        ticker_list = store.list_active_universe_tickers()
 
     all_scores: list[TickerScore] = []
 
@@ -341,7 +313,7 @@ def run_propagator(
                 stats["signals_written"] += 1
 
     if not dry_run:
-        store._c.commit()
+        store.commit()
 
     # Top-N summary table
     top = sorted(all_scores, key=lambda s: s.raw_score, reverse=True)[:top_n]
@@ -407,7 +379,7 @@ def main() -> None:
         print("\nDB snapshot:")
         for table in ("soma_intel_edge", "soma_intel_node",
                       "soma_intel_signal", "soma_intel_belief"):
-            cnt = store._c.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+            cnt = store.count_table(table)
             print(f"  {table:<30} {cnt}")
 
     if dry_run:

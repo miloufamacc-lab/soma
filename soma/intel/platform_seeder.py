@@ -336,8 +336,8 @@ def seed_platforms(store: IntelStore, dry_run: bool, force: bool, verbose: bool)
     stats = {"platforms_written": 0, "history_rows_written": 0}
 
     if force and not dry_run:
-        store._c.execute("DELETE FROM soma_intel_scurve_history")
-        store._c.execute("DELETE FROM soma_intel_platform")
+        store.clear_scurve_history()
+        store.clear_platforms()
         print("  [force] cleared existing platform + history rows")
 
     for p in PLATFORMS:
@@ -347,36 +347,31 @@ def seed_platforms(store: IntelStore, dry_run: bool, force: bool, verbose: bool)
                   f"points={n_points}")
 
         if not dry_run:
-            store._c.execute(
-                """
-                INSERT OR REPLACE INTO soma_intel_platform
-                  (platform_id, name, adoption_metric, curve_K, curve_r, curve_t0,
-                   wrights_law_rate, position, last_fit_ts)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL)
-                """,
-                (
-                    p["platform_id"], p["name"], p["adoption_metric"],
-                    p["curve_K"], p["curve_r"], p["curve_t0"],
-                    p["wrights_law_rate"], p["position"],
-                ),
+            store.upsert_platform(
+                platform_id      = p["platform_id"],
+                name             = p["name"],
+                adoption_metric  = p["adoption_metric"],
+                curve_K          = p["curve_K"],
+                curve_r          = p["curve_r"],
+                curve_t0         = p["curve_t0"],
+                wrights_law_rate = p["wrights_law_rate"],
+                position         = p["position"],
             )
         stats["platforms_written"] += 1
 
         history = _PLATFORM_DATA.get(p["platform_id"], [])
         for date_str, value in history:
             if not dry_run:
-                store._c.execute(
-                    """
-                    INSERT OR IGNORE INTO soma_intel_scurve_history
-                      (platform_id, date, metric_value, source)
-                    VALUES (?, ?, ?, 'platform_seeder_v1')
-                    """,
-                    (p["platform_id"], date_str, value),
+                store.insert_scurve_history_row(
+                    platform_id  = p["platform_id"],
+                    date         = date_str,
+                    metric_value = value,
+                    source       = "platform_seeder_v1",
                 )
             stats["history_rows_written"] += 1
 
     if not dry_run:
-        store._c.commit()
+        store.commit()
 
     return stats
 
@@ -418,18 +413,8 @@ def main() -> None:
         # Verify
         if not dry_run:
             for pid in [p["platform_id"] for p in PLATFORMS]:
-                n = store._c.execute(
-                    "SELECT COUNT(*) FROM soma_intel_scurve_history WHERE platform_id=?",
-                    (pid,),
-                ).fetchone()[0]
-                first = store._c.execute(
-                    "SELECT MIN(date) FROM soma_intel_scurve_history WHERE platform_id=?",
-                    (pid,),
-                ).fetchone()[0]
-                last = store._c.execute(
-                    "SELECT MAX(date) FROM soma_intel_scurve_history WHERE platform_id=?",
-                    (pid,),
-                ).fetchone()[0]
+                n              = store.count_scurve_history(pid)
+                first, last    = store.scurve_history_date_range(pid)
                 print(f"  {pid:<22}  {n:>3} rows  {first} → {last}")
 
     if dry_run:

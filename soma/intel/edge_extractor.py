@@ -78,25 +78,7 @@ def _load_node_context(store: IntelStore) -> dict[str, str]:
     Build a dict of node_id → name for the LLM prompt context.
     Prioritises company, platform, regime, and security nodes (most linkable).
     """
-    rows = store._c.execute(
-        """
-        SELECT node_id, node_type, name FROM soma_intel_node
-        ORDER BY
-          CASE node_type
-            WHEN 'company'  THEN 0
-            WHEN 'platform' THEN 1
-            WHEN 'regime'   THEN 2
-            WHEN 'security' THEN 3
-            WHEN 'person'   THEN 4
-            WHEN 'thesis'   THEN 5
-            WHEN 'concept'  THEN 6
-            ELSE 7
-          END,
-          node_id
-        LIMIT ?
-        """,
-        (_MAX_CONTEXT_NODES,),
-    ).fetchall()
+    rows = store.list_nodes_prioritized(limit=_MAX_CONTEXT_NODES)
     return {r["node_id"]: r["name"] for r in rows}
 
 

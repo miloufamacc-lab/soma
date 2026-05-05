@@ -131,32 +131,17 @@ class ConvergenceResult:
 
 
 def _load_platform_names(store: IntelStore) -> dict[str, str]:
-    rows = store._c.execute(
-        "SELECT node_id, name FROM soma_intel_node WHERE node_type='platform'"
-    ).fetchall()
-    return {r["node_id"]: r["name"] for r in rows}
+    """Return platform_id → display name for all platform nodes."""
+    return {n.node_id: n.name for n in store.list_nodes_by_type("platform")}
 
 
 def _get_platform_members(store: IntelStore) -> dict[str, list[str]]:
     """Returns co_node_id → sorted list of pl_ids (≥2 only)."""
-    rows = store._c.execute(
-        """
-        SELECT src_node_id, dst_node_id
-        FROM soma_intel_edge
-        WHERE edge_type = 'belongs_to_platform'
-          AND src_node_id LIKE 'co_%'
-          AND dst_node_id LIKE 'pl_%'
-          AND superseded_by IS NULL
-        """
-    ).fetchall()
-
-    membership: dict[str, set[str]] = {}
-    for r in rows:
-        membership.setdefault(r["src_node_id"], set()).add(r["dst_node_id"])
-
+    # get_ticker_platforms() returns ticker→pls; convert back to node_id keyed dict
+    # and filter to multi-platform companies only.
     return {
-        nid: sorted(pls)
-        for nid, pls in membership.items()
+        f"co_{ticker}": pls
+        for ticker, pls in store.get_ticker_platforms().items()
         if len(pls) >= 2
     }
 
@@ -251,52 +236,38 @@ def run_pass_a(
             print(f"  [A:signal] {ticker}  priority={priority}  anomaly={anomaly}")
 
         if not dry_run:
-            store._c.execute(
-                """
-                INSERT INTO soma_intel_signal
-                  (ticker, date, priority, anomaly_score, features,
-                   corroboration_count, half_life_days, status, horizon, notes)
-                VALUES (?, ?, ?, ?, ?, ?, ?, 'active', 'medium',
-                        'Platform convergence detected by convergence_engine')
-                """,
-                (ticker, TODAY, priority, anomaly, features,
-                 len(platforms), CONV_HALF_LIFE_DAYS),
+            # horizon='thematic': convergence signals are cross-platform investment theses.
+            # 'medium' was incorrect — horizon and priority are orthogonal axes per §J.
+            store.insert_signal(
+                ticker        = ticker,
+                date          = TODAY,
+                priority      = priority,
+                anomaly_score = anomaly,
+                features      = features,
+                corroboration = len(platforms),
+                half_life     = CONV_HALF_LIFE_DAYS,
+                horizon       = "thematic",
+                notes         = "Platform convergence detected by convergence_engine",
             )
         result.signal_written = True
         stats["signals_written"] += 1
 
-        # ── Write soma_intel_belief ───────────────────────────────────────
+        # ── Write soma_intel_belief via IntelStore ────────────────────────
         if verbose:
             print(f"  [A:belief] {node_id}  platform_count={len(platforms)}")
         if not dry_run:
-            # Supersede any prior platform_count belief for this node
-            prior = store._c.execute(
-                """SELECT belief_id FROM soma_intel_belief
-                   WHERE subject_node_id=? AND predicate='platform_count'
-                     AND superseded_by IS NULL""",
-                (node_id,),
-            ).fetchone()
-            prior_id = prior["belief_id"] if prior else None
-
-            cur = store._c.execute(
-                """
-                INSERT INTO soma_intel_belief
-                  (subject_node_id, predicate, value, confidence, ts,
-                   source_id, superseded_by)
-                VALUES (?, 'platform_count', ?, ?, ?, 'convergence_engine', NULL)
-                """,
-                (node_id, str(len(platforms)), CONV_BASE_CONFIDENCE, NOW),
+            store.upsert_belief(
+                node_id    = node_id,
+                predicate  = "platform_count",
+                value      = str(len(platforms)),
+                confidence = CONV_BASE_CONFIDENCE,
+                source_id  = "convergence_engine",
             )
-            if prior_id:
-                store._c.execute(
-                    "UPDATE soma_intel_belief SET superseded_by=? WHERE belief_id=?",
-                    (cur.lastrowid, prior_id),
-                )
         result.belief_written = True
         stats["beliefs_written"] += 1
 
     if not dry_run:
-        store._c.commit()
+        store.commit()
 
     return stats
 
@@ -310,32 +281,12 @@ def _structural_theses(store: IntelStore) -> set[str]:
     Return thesis node IDs that are structural (mentioned by too many companies).
     These are wiki framework/meta articles, not investable thesis signals.
     """
-    rows = store._c.execute(
-        """
-        SELECT dst_node_id, COUNT(DISTINCT src_node_id) as c
-        FROM soma_intel_edge
-        WHERE edge_type = 'mentioned_in'
-          AND src_node_id LIKE 'co_%'
-          AND dst_node_id LIKE 'th_%'
-        GROUP BY dst_node_id
-        HAVING c > ?
-        """,
-        (MAX_STRUCTURAL_MENTIONS,),
-    ).fetchall()
-    return {r["dst_node_id"] for r in rows}
+    return store.structural_thesis_node_ids(MAX_STRUCTURAL_MENTIONS)
 
 
 def _existing_has_thesis_pairs(store: IntelStore) -> set[tuple[str, str]]:
     """Already-written has_thesis edges — skip re-writing."""
-    rows = store._c.execute(
-        """
-        SELECT src_node_id, dst_node_id FROM soma_intel_edge
-        WHERE edge_type = 'has_thesis'
-          AND src_node_id LIKE 'co_%'
-          AND superseded_by IS NULL
-        """
-    ).fetchall()
-    return {(r["src_node_id"], r["dst_node_id"]) for r in rows}
+    return store.existing_edge_pairs_of_type("has_thesis", src_prefix="co_%")
 
 
 def run_pass_b(
@@ -349,22 +300,15 @@ def run_pass_b(
     structural   = _structural_theses(store)
     existing     = _existing_has_thesis_pairs(store)
 
-    # All co_* → mentioned_in → th_* edges
-    rows = store._c.execute(
-        """
-        SELECT DISTINCT src_node_id, dst_node_id, source_id
-        FROM soma_intel_edge
-        WHERE edge_type  = 'mentioned_in'
-          AND src_node_id LIKE 'co_%'
-          AND dst_node_id LIKE 'th_%'
-          AND superseded_by IS NULL
-        """
-    ).fetchall()
+    # All co_* → mentioned_in → th_* edges via IntelStore
+    mention_edges = store.get_edges_of_type(
+        "mentioned_in", src_prefix="co_%", dst_prefix="th_%"
+    )
 
-    for r in rows:
-        co  = r["src_node_id"]
-        th  = r["dst_node_id"]
-        sid = r["source_id"]
+    for e in mention_edges:
+        co  = e.src_node_id
+        th  = e.dst_node_id
+        sid = e.source_id
 
         if th in structural:
             stats["skipped_structural"] += 1
@@ -373,11 +317,9 @@ def run_pass_b(
             stats["skipped_existing"] += 1
             continue
 
-        ticker    = co[3:]
-        th_name   = store._c.execute(
-            "SELECT name FROM soma_intel_node WHERE node_id=?", (th,)
-        ).fetchone()
-        th_label  = th_name["name"] if th_name else th
+        ticker   = co[3:]
+        th_node  = store.get_node(th)
+        th_label = th_node.name if th_node else th
 
         evidence = f"{ticker} wiki article cross-links to thesis: {th_label}"
         if verbose:
@@ -398,7 +340,7 @@ def run_pass_b(
         stats["has_thesis_written"] += 1
 
     if not dry_run:
-        store._c.commit()
+        store.commit()
 
     return stats
 
@@ -418,52 +360,29 @@ def run_pass_c(
     """
     stats = {"beliefs_refreshed": 0}
 
-    rows = store._c.execute(
-        """
-        SELECT ticker, promotion_score, promotion_source
-        FROM soma_intel_universe
-        WHERE active=1 AND promotion_score IS NOT NULL
-        ORDER BY promotion_score DESC
-        """
-    ).fetchall()
+    # Load active universe rows with scores via IntelStore
+    universe_rows = store.list_universe_with_scores()
 
-    for r in rows:
+    for r in universe_rows:
         ticker = r["ticker"]
         score  = r["promotion_score"]
-        src    = r["promotion_source"] or ""
         nid    = f"co_{ticker}"
 
         if verbose and score > 5.0:
             print(f"  [C:belief] {nid}  signal_score={score:.3f}")
 
         if not dry_run:
-            # Supersede prior signal_score belief
-            prior = store._c.execute(
-                """SELECT belief_id FROM soma_intel_belief
-                   WHERE subject_node_id=? AND predicate='signal_score'
-                     AND superseded_by IS NULL""",
-                (nid,),
-            ).fetchone()
-            prior_id = prior["belief_id"] if prior else None
-
-            cur = store._c.execute(
-                """
-                INSERT INTO soma_intel_belief
-                  (subject_node_id, predicate, value, confidence, ts,
-                   source_id, superseded_by)
-                VALUES (?, 'signal_score', ?, ?, ?, 'universe_manager', NULL)
-                """,
-                (nid, f"{score:.3f}", min(0.95, score / 30.0), NOW),
+            store.upsert_belief(
+                node_id    = nid,
+                predicate  = "signal_score",
+                value      = f"{score:.3f}",
+                confidence = min(0.95, score / 30.0),
+                source_id  = "universe_manager",
             )
-            if prior_id:
-                store._c.execute(
-                    "UPDATE soma_intel_belief SET superseded_by=? WHERE belief_id=?",
-                    (cur.lastrowid, prior_id),
-                )
         stats["beliefs_refreshed"] += 1
 
     if not dry_run:
-        store._c.commit()
+        store.commit()
 
     return stats
 
@@ -517,20 +436,17 @@ def main() -> None:
             all_stats["C"] = c
             print(f"  Beliefs refreshed: {c['beliefs_refreshed']}")
 
-        # Final DB snapshot
+        # Final DB snapshot via IntelStore
         print("\nDB snapshot:")
         for table in ("soma_intel_edge", "soma_intel_node",
                       "soma_intel_signal", "soma_intel_belief"):
-            cnt = store._c.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+            cnt = store.count_table(table)
             print(f"  {table:<30} {cnt}")
 
-        # Edge type breakdown
-        etype = store._c.execute(
-            "SELECT edge_type, COUNT(*) c FROM soma_intel_edge GROUP BY edge_type ORDER BY c DESC"
-        ).fetchall()
+        # Edge type breakdown via IntelStore
         print("\n  Edge types:")
-        for r in etype:
-            print(f"    {r[0]:<28} {r[1]}")
+        for etype, cnt in store.edge_type_counts():
+            print(f"    {etype:<28} {cnt}")
 
     if dry_run:
         print("\nDRY RUN complete — pass --apply to write.")

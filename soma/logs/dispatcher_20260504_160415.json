@@ -1,0 +1,29 @@
+{
+  "processed": 44,
+  "errors": 40,
+  "skipped": 1,
+  "dry_run": false,
+  "model_flags": [],
+  "wiki_updates": [
+    "musk-ecosystem-intelligence-log",
+    "musk-ecosystem-intelligence-log",
+    "musk-ecosystem-intelligence-log",
+    "musk-ecosystem-intelligence-log",
+    "musk-ecosystem-intelligence-log",
+    "musk-ecosystem-intelligence-log"
+  ],
+  "doctrine_evidence": [
+    "OIL_DISINFLATION_THESIS_V1",
+    "REGIME_RISK_ON_UPGRADE_V1",
+    "solana_etf_structural_rerating_catalyst",
+    "MACRO_REGIME_NORMAL_SUSTAINED",
+    "oil_supply_shock_inflation_persistence"
+  ],
+  "by_type": {
+    "PRISM": 22,
+    "DOCTRINE_EVIDENCE": 5,
+    "HORIZON": 5,
+    "WIKI_UPDATE": 6,
+    "VALUATION": 6
+  }
+}

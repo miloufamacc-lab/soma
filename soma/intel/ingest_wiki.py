@@ -429,9 +429,7 @@ def main() -> None:
 
     with IntelStore(db_path=DB_PATH) as store:
         # Guard: check existing wiki edges
-        existing_wiki = store._c.execute(
-            "SELECT COUNT(*) FROM soma_intel_edge WHERE source_type='wiki'"
-        ).fetchone()[0]
+        existing_wiki = store.count_edges_by_source_type("wiki")
 
         if existing_wiki > 0 and not args.force:
             print(f"\nWARNING: {existing_wiki} wiki edges already in DB.")
@@ -450,10 +448,8 @@ def main() -> None:
 
         if args.force and existing_wiki > 0:
             print(f"\n--force: deleting {existing_wiki} existing wiki edges...")
-            store._c.execute(
-                "DELETE FROM soma_intel_edge WHERE source_type='wiki'"
-            )
-            store._c.commit()
+            store.delete_edges_by_source_type("wiki")
+            store.commit()
             print(f"  Deleted.")
 
         print(f"\nIngesting...")
@@ -468,12 +464,8 @@ def main() -> None:
         )
 
         # Verify
-        node_count = store._c.execute(
-            "SELECT COUNT(*) FROM soma_intel_node"
-        ).fetchone()[0]
-        edge_count = store._c.execute(
-            "SELECT COUNT(*) FROM soma_intel_edge WHERE source_type='wiki'"
-        ).fetchone()[0]
+        node_count = store.count_table("soma_intel_node")
+        edge_count = store.count_edges_by_source_type("wiki")
 
     print(f"\nResults:")
     print(f"  Nodes upserted:          {stats['nodes_upserted'] + len(_PLATFORM_NODES)}")

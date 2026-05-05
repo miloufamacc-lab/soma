@@ -597,3 +597,1460 @@ class IntelStore:
         )
         self._c.commit()
         log.debug("audit_record: edge %d → %s by %s", edge_id, decision, auditor)
+
+    def commit(self) -> None:
+        """Explicit commit. Prefer calling this instead of store._c.commit() directly."""
+        self._c.commit()
+
+    # ════════════════════════════════════════════════════════════════════════
+    # EXTENDED INTERFACE — additional methods for soma/intel/ modules
+    # All raw SQL in soma/intel/ MUST go through one of the methods below
+    # (or the LOCKED INTERFACE above).  Do not add store._c.execute() calls
+    # in any other module — extend this section instead.
+    # ════════════════════════════════════════════════════════════════════════
+
+    # ── Universe ─────────────────────────────────────────────────────────────
+
+    def list_active_universe_tickers(self) -> list[str]:
+        """Return sorted list of active ticker symbols from soma_intel_universe."""
+        rows = self._c.execute(
+            "SELECT ticker FROM soma_intel_universe WHERE active=1 ORDER BY ticker"
+        ).fetchall()
+        return [r["ticker"] for r in rows]
+
+    def list_universe(self, active_only: bool = True) -> list[dict]:
+        """Return universe rows as plain dicts (keys: ticker, auto_added, tier)."""
+        if active_only:
+            rows = self._c.execute(
+                "SELECT ticker, auto_added, tier FROM soma_intel_universe WHERE active=1"
+            ).fetchall()
+        else:
+            rows = self._c.execute(
+                "SELECT ticker, auto_added, tier FROM soma_intel_universe"
+            ).fetchall()
+        return [dict(r) for r in rows]
+
+    def list_universe_with_scores(self) -> list[dict]:
+        """Return active universe rows including promotion_score and promotion_source."""
+        rows = self._c.execute(
+            """
+            SELECT ticker, promotion_score, promotion_source
+            FROM soma_intel_universe
+            WHERE active=1 AND promotion_score IS NOT NULL
+            ORDER BY promotion_score DESC
+            """
+        ).fetchall()
+        return [dict(r) for r in rows]
+
+    def upsert_universe_ticker(
+        self,
+        ticker: str,
+        source: str,
+        platform_tags: list,
+        added_ts: str,
+        score: float,
+        promo_source: str,
+        tier: str = "watchlist",
+        auto_added: bool = True,
+    ) -> int:
+        """
+        Insert or activate a ticker in soma_intel_universe.
+        Returns SQLite changes() count (1 if inserted/updated, 0 if no-op).
+        """
+        import json as _json
+        pt = _json.dumps(platform_tags)
+        ai = int(auto_added)
+        self._c.execute(
+            """
+            INSERT INTO soma_intel_universe
+              (ticker, source, platform_tags, added_ts, active, tier,
+               auto_added, promotion_score, promotion_source)
+            VALUES (?, ?, ?, ?, 1, ?, ?, ?, ?)
+            ON CONFLICT(ticker) DO UPDATE SET
+              active           = 1,
+              tier             = CASE WHEN excluded.tier != '' THEN excluded.tier ELSE tier END,
+              auto_added       = ?,
+              promotion_score  = excluded.promotion_score,
+              promotion_source = excluded.promotion_source
+            """,
+            (ticker, source, pt, added_ts, tier, ai, score, promo_source, ai),
+        )
+        return self._c.execute("SELECT changes()").fetchone()[0]
+
+    def demote_universe_ticker(self, ticker: str) -> int:
+        """
+        Set active=0 for an auto-added ticker (manual tickers are never demoted).
+        Returns SQLite changes() count.
+        """
+        self._c.execute(
+            "UPDATE soma_intel_universe SET active=0 WHERE ticker=? AND auto_added=1",
+            (ticker,),
+        )
+        return self._c.execute("SELECT changes()").fetchone()[0]
+
+    def refresh_universe_score(self, ticker: str, score: float, promo_source: str) -> int:
+        """
+        Update promotion_score + promotion_source for any universe row (active or not).
+        Returns SQLite changes() count.
+        """
+        self._c.execute(
+            """
+            UPDATE soma_intel_universe
+            SET promotion_score=?, promotion_source=?
+            WHERE ticker=?
+            """,
+            (score, promo_source, ticker),
+        )
+        return self._c.execute("SELECT changes()").fetchone()[0]
+
+    # ── Belief ────────────────────────────────────────────────────────────────
+
+    def get_active_belief(self, node_id: str, predicate: str) -> Optional[dict]:
+        """
+        Return the active (non-superseded) belief for (node_id, predicate).
+        Keys: belief_id, value, confidence, ts, source_id. Returns None if not found.
+        """
+        row = self._c.execute(
+            """
+            SELECT belief_id, value, confidence, ts, source_id
+            FROM soma_intel_belief
+            WHERE subject_node_id=? AND predicate=? AND superseded_by IS NULL
+            """,
+            (node_id, predicate),
+        ).fetchone()
+        return dict(row) if row else None
+
+    def get_active_beliefs(self, predicate: str) -> list[dict]:
+        """
+        Return all active beliefs for a given predicate.
+        Keys: subject_node_id, belief_id, value, confidence, ts, source_id.
+        """
+        rows = self._c.execute(
+            """
+            SELECT subject_node_id, belief_id, value, confidence, ts, source_id
+            FROM soma_intel_belief
+            WHERE predicate=? AND superseded_by IS NULL
+            """,
+            (predicate,),
+        ).fetchall()
+        return [dict(r) for r in rows]
+
+    def upsert_belief(
+        self,
+        node_id: str,
+        predicate: str,
+        value: str,
+        confidence: float,
+        source_id: str,
+    ) -> int:
+        """
+        Insert a new belief, superseding any prior active belief for (node_id, predicate).
+
+        The supersede chain is: old belief → new belief (old.superseded_by = new.belief_id).
+        Returns the new belief_id.
+        """
+        prior = self._c.execute(
+            """
+            SELECT belief_id FROM soma_intel_belief
+            WHERE subject_node_id=? AND predicate=? AND superseded_by IS NULL
+            """,
+            (node_id, predicate),
+        ).fetchone()
+        prior_id: Optional[int] = prior["belief_id"] if prior else None
+
+        now = self._now_iso()
+        cur = self._c.execute(
+            """
+            INSERT INTO soma_intel_belief
+              (subject_node_id, predicate, value, confidence, ts, source_id, superseded_by)
+            VALUES (?, ?, ?, ?, ?, ?, NULL)
+            """,
+            (node_id, predicate, value, confidence, now, source_id),
+        )
+        new_id: int = cur.lastrowid  # type: ignore[assignment]
+
+        if prior_id is not None:
+            self._c.execute(
+                "UPDATE soma_intel_belief SET superseded_by=? WHERE belief_id=?",
+                (new_id, prior_id),
+            )
+        return new_id
+
+    def count_active_beliefs(self, predicate: str) -> int:
+        """Count active (non-superseded) beliefs for a predicate."""
+        return self._c.execute(
+            """
+            SELECT COUNT(*) FROM soma_intel_belief
+            WHERE predicate=? AND superseded_by IS NULL
+            """,
+            (predicate,),
+        ).fetchone()[0]
+
+    # ── Signal ────────────────────────────────────────────────────────────────
+
+    def get_signal(
+        self,
+        ticker: str,
+        date: str,
+        notes_prefix: str,
+    ) -> Optional[dict]:
+        """
+        Return the signal row for (ticker, date) whose notes column starts with notes_prefix.
+        Keys: signal_id, reconfirmation_count. Returns None if not found.
+        """
+        row = self._c.execute(
+            """
+            SELECT signal_id, reconfirmation_count
+            FROM soma_intel_signal
+            WHERE ticker=? AND date=? AND notes LIKE ?
+            """,
+            (ticker, date, f"{notes_prefix}%"),
+        ).fetchone()
+        return dict(row) if row else None
+
+    def insert_signal(
+        self,
+        ticker: str,
+        date: str,
+        priority: str,
+        anomaly_score: float,
+        features: str,
+        corroboration: int,
+        half_life: int,
+        horizon: str,
+        notes: str,
+        status: str = "active",
+    ) -> None:
+        """
+        Insert a new signal row.
+
+        Valid horizon values (§J spec): 'tactical' | 'thematic' | 'structural'.
+        Use 'thematic' as placeholder until horizon track modules are wired.
+        """
+        _valid_horizons = {"tactical", "thematic", "structural"}
+        if horizon not in _valid_horizons:
+            raise ValueError(
+                f"horizon must be one of {_valid_horizons}, got {horizon!r}. "
+                "Use 'thematic' as placeholder until horizon tracks are built."
+            )
+        self._c.execute(
+            """
+            INSERT INTO soma_intel_signal
+              (ticker, date, priority, anomaly_score, features,
+               corroboration_count, half_life_days,
+               reconfirmation_count, status, horizon, notes)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?)
+            """,
+            (ticker, date, priority, anomaly_score, features,
+             corroboration, half_life, status, horizon, notes),
+        )
+
+    def update_signal(
+        self,
+        signal_id: int,
+        priority: str,
+        anomaly_score: float,
+        features: str,
+        corroboration: int,
+        half_life: int,
+        horizon: str,
+        notes: str,
+    ) -> None:
+        """Reconfirm (update) an existing signal row. Increments reconfirmation_count."""
+        _valid_horizons = {"tactical", "thematic", "structural"}
+        if horizon not in _valid_horizons:
+            raise ValueError(
+                f"horizon must be one of {_valid_horizons}, got {horizon!r}."
+            )
+        self._c.execute(
+            """
+            UPDATE soma_intel_signal
+            SET priority             = ?,
+                anomaly_score        = ?,
+                features             = ?,
+                corroboration_count  = ?,
+                half_life_days       = ?,
+                reconfirmation_count = reconfirmation_count + 1,
+                status               = 'reconfirmed',
+                horizon              = ?,
+                notes                = ?
+            WHERE signal_id = ?
+            """,
+            (priority, anomaly_score, features, corroboration,
+             half_life, horizon, notes, signal_id),
+        )
+
+    # ── Platform ──────────────────────────────────────────────────────────────
+
+    def list_platform_positions(self) -> dict[str, str]:
+        """Return mapping of platform_id → position label (or 'unknown')."""
+        rows = self._c.execute(
+            "SELECT platform_id, position FROM soma_intel_platform"
+        ).fetchall()
+        return {r["platform_id"]: (r["position"] or "unknown") for r in rows}
+
+    def get_ticker_platforms(self) -> dict[str, list[str]]:
+        """
+        Return ticker → sorted list of platform_ids from active belongs_to_platform edges.
+        Only includes co_* → pl_* non-superseded edges.
+        """
+        rows = self._c.execute(
+            """
+            SELECT DISTINCT src_node_id, dst_node_id
+            FROM soma_intel_edge
+            WHERE edge_type = 'belongs_to_platform'
+              AND src_node_id LIKE 'co_%'
+              AND dst_node_id LIKE 'pl_%'
+              AND superseded_by IS NULL
+            """
+        ).fetchall()
+        membership: dict[str, set[str]] = {}
+        for r in rows:
+            ticker = r["src_node_id"][3:]   # strip "co_"
+            membership.setdefault(ticker, set()).add(r["dst_node_id"])
+        return {t: sorted(pls) for t, pls in membership.items()}
+
+    # ── Node batch ────────────────────────────────────────────────────────────
+
+    def list_nodes_by_type(self, node_type: str) -> list[Node]:
+        """Return all nodes of a given node_type as Node objects."""
+        rows = self._c.execute(
+            "SELECT * FROM soma_intel_node WHERE node_type=?",
+            (node_type,),
+        ).fetchall()
+        return [self._row_to_node(r) for r in rows]
+
+    # ── Edge batch ────────────────────────────────────────────────────────────
+
+    def edge_source_counts_for_companies(self) -> dict[str, dict[str, int]]:
+        """
+        Aggregate edge counts by (company_node_id, source_type) for all co_* nodes.
+
+        Returns: node_id → {source_type → total count}.
+        Counts both outgoing and incoming edges (bidirectional signal density).
+        Used by universe_manager to score signal richness per ticker.
+        """
+        rows = self._c.execute(
+            """
+            SELECT src_node_id AS node_id, source_type, COUNT(*) AS cnt
+            FROM soma_intel_edge
+            WHERE src_node_id LIKE 'co_%'
+            GROUP BY src_node_id, source_type
+            UNION ALL
+            SELECT dst_node_id AS node_id, source_type, COUNT(*) AS cnt
+            FROM soma_intel_edge
+            WHERE dst_node_id LIKE 'co_%'
+            GROUP BY dst_node_id, source_type
+            """
+        ).fetchall()
+        result: dict[str, dict[str, int]] = {}
+        for r in rows:
+            nid = r["node_id"]
+            st  = r["source_type"]
+            result.setdefault(nid, {})
+            result[nid][st] = result[nid].get(st, 0) + r["cnt"]
+        return result
+
+    def get_edges_of_type(
+        self,
+        edge_type: str,
+        src_prefix: Optional[str] = None,
+        dst_prefix: Optional[str] = None,
+        active_only: bool = True,
+    ) -> list[Edge]:
+        """
+        Return edges of a given type with optional LIKE prefix filters on src/dst.
+
+        Args:
+            edge_type:   must be in VALID_EDGE_TYPES.
+            src_prefix:  e.g. 'co_%' to restrict to company sources.
+            dst_prefix:  e.g. 'th_%' to restrict to thesis destinations.
+            active_only: if True (default), exclude superseded edges.
+
+        Returns:
+            List of Edge objects.
+        """
+        clauses: list[str] = ["edge_type = ?"]
+        params: list[Any] = [edge_type]
+
+        if active_only:
+            clauses.append("superseded_by IS NULL")
+        if src_prefix:
+            clauses.append("src_node_id LIKE ?")
+            params.append(src_prefix)
+        if dst_prefix:
+            clauses.append("dst_node_id LIKE ?")
+            params.append(dst_prefix)
+
+        sql = "SELECT * FROM soma_intel_edge WHERE " + " AND ".join(clauses)
+        rows = self._c.execute(sql, params).fetchall()
+        return [self._row_to_edge(r) for r in rows]
+
+    def structural_thesis_node_ids(self, max_mentions: int) -> set[str]:
+        """
+        Return thesis node IDs mentioned by more than max_mentions distinct company nodes.
+
+        Used to identify structural/framework theses (e.g. 'Value Investing') vs
+        investable signal theses (e.g. 'Tesla FSD Monetisation').
+
+        Args:
+            max_mentions: threshold (exclusive). Theses with count > this are structural.
+        """
+        rows = self._c.execute(
+            """
+            SELECT dst_node_id, COUNT(DISTINCT src_node_id) AS c
+            FROM soma_intel_edge
+            WHERE edge_type = 'mentioned_in'
+              AND src_node_id LIKE 'co_%'
+              AND dst_node_id LIKE 'th_%'
+            GROUP BY dst_node_id
+            HAVING c > ?
+            """,
+            (max_mentions,),
+        ).fetchall()
+        return {r["dst_node_id"] for r in rows}
+
+    def existing_edge_pairs_of_type(
+        self,
+        edge_type: str,
+        src_prefix: str = "co_%",
+    ) -> set[tuple[str, str]]:
+        """
+        Return set of (src_node_id, dst_node_id) for active edges of a given type.
+
+        Used for deduplication checks before writing derived edges (e.g. has_thesis).
+
+        Args:
+            edge_type:   the edge type to query.
+            src_prefix:  LIKE pattern to restrict source nodes (default 'co_%').
+        """
+        rows = self._c.execute(
+            """
+            SELECT src_node_id, dst_node_id FROM soma_intel_edge
+            WHERE edge_type=? AND src_node_id LIKE ? AND superseded_by IS NULL
+            """,
+            (edge_type, src_prefix),
+        ).fetchall()
+        return {(r["src_node_id"], r["dst_node_id"]) for r in rows}
+
+    # ── Statistics ────────────────────────────────────────────────────────────
+
+    def graph_stats(self) -> dict:
+        """
+        Return DB-wide graph statistics.
+
+        Keys:
+            node_total (int)
+            edge_total (int)
+            unaudited  (int)
+            node_by_type  (list[dict] — node_type, c)
+            edge_by_source (list[dict] — source_type, c)
+        """
+        node_total = self._c.execute(
+            "SELECT COUNT(*) FROM soma_intel_node"
+        ).fetchone()[0]
+        edge_total = self._c.execute(
+            "SELECT COUNT(*) FROM soma_intel_edge"
+        ).fetchone()[0]
+        unaudited = self._c.execute(
+            "SELECT COUNT(*) FROM soma_intel_edge WHERE audit_status='unaudited'"
+        ).fetchone()[0]
+        node_by_type = [
+            dict(r) for r in self._c.execute(
+                """
+                SELECT node_type, COUNT(*) AS c
+                FROM soma_intel_node GROUP BY node_type ORDER BY c DESC
+                """
+            ).fetchall()
+        ]
+        edge_by_source = [
+            dict(r) for r in self._c.execute(
+                """
+                SELECT source_type, COUNT(*) AS c
+                FROM soma_intel_edge GROUP BY source_type ORDER BY c DESC
+                """
+            ).fetchall()
+        ]
+        return {
+            "node_total":     node_total,
+            "edge_total":     edge_total,
+            "unaudited":      unaudited,
+            "node_by_type":   node_by_type,
+            "edge_by_source": edge_by_source,
+        }
+
+    def edge_type_counts(self) -> list[tuple[str, int]]:
+        """Return list of (edge_type, count) sorted by count DESC."""
+        rows = self._c.execute(
+            """
+            SELECT edge_type, COUNT(*) AS c
+            FROM soma_intel_edge GROUP BY edge_type ORDER BY c DESC
+            """
+        ).fetchall()
+        return [(r["edge_type"], r["c"]) for r in rows]
+
+    def count_table(self, table_name: str) -> int:
+        """
+        Count all rows in a soma_intel_* table.
+
+        Args:
+            table_name: must be one of the whitelisted soma_intel_* table names.
+
+        Raises:
+            ValueError: if table_name is not in the whitelist (prevents SQL injection).
+        """
+        _ALLOWED = {
+            "soma_intel_node",
+            "soma_intel_edge",
+            "soma_intel_signal",
+            "soma_intel_belief",
+            "soma_intel_universe",
+            "soma_intel_platform",
+            "soma_intel_scurve_history",
+            "soma_intel_baseline",
+            "soma_intel_audit_log",
+        }
+        if table_name not in _ALLOWED:
+            raise ValueError(
+                f"table_name must be one of {sorted(_ALLOWED)}, got {table_name!r}"
+            )
+        return self._c.execute(f"SELECT COUNT(*) FROM {table_name}").fetchone()[0]
+
+    def count_unaudited_edges(self) -> int:
+        """Count edges with audit_status='unaudited'."""
+        return self._c.execute(
+            "SELECT COUNT(*) FROM soma_intel_edge WHERE audit_status='unaudited'"
+        ).fetchone()[0]
+
+    # ── Signal sweep helpers ──────────────────────────────────────────────────
+
+    def list_signals_active(
+        self,
+        tickers: Optional[list[str]] = None,
+    ) -> list[dict]:
+        """
+        Return all non-expired signals (status NOT IN ('expired')), ordered by date ASC.
+
+        Args:
+            tickers: if provided, restrict to these ticker symbols.
+
+        Returns:
+            List of dicts with keys: signal_id, ticker, date, priority,
+            half_life_days, status, notes, reconfirmation_count.
+        """
+        clauses = ["status NOT IN ('expired')"]
+        params: list[Any] = []
+        if tickers:
+            placeholders = ",".join("?" * len(tickers))
+            clauses.append(f"ticker IN ({placeholders})")
+            params.extend(tickers)
+        sql = (
+            "SELECT signal_id, ticker, date, priority, half_life_days, "
+            "status, notes, reconfirmation_count "
+            "FROM soma_intel_signal WHERE "
+            + " AND ".join(clauses)
+            + " ORDER BY date ASC"
+        )
+        rows = self._c.execute(sql, params).fetchall()
+        return [dict(r) for r in rows]
+
+    def list_active_signals_not_today(
+        self,
+        today: str,
+        notes_prefix: str,
+        tickers: Optional[list[str]] = None,
+    ) -> list[dict]:
+        """
+        Return active/reconfirmed signals whose date != today and whose notes
+        start with notes_prefix. Used by signal_sweep Pass 3.
+
+        Returns dicts with keys: signal_id, ticker, date, half_life_days,
+        reconfirmation_count.
+        """
+        clauses = [
+            "status IN ('active', 'reconfirmed')",
+            "date != ?",
+            "notes LIKE ?",
+        ]
+        params: list[Any] = [today, f"{notes_prefix}%"]
+        if tickers:
+            placeholders = ",".join("?" * len(tickers))
+            clauses.append(f"ticker IN ({placeholders})")
+            params.extend(tickers)
+        sql = (
+            "SELECT signal_id, ticker, date, half_life_days, reconfirmation_count "
+            "FROM soma_intel_signal WHERE "
+            + " AND ".join(clauses)
+            + " ORDER BY date ASC"
+        )
+        rows = self._c.execute(sql, params).fetchall()
+        return [dict(r) for r in rows]
+
+    def expire_signal(self, signal_id: int) -> None:
+        """Set status='expired' on a signal row. Used by signal_sweep passes 1 + 3."""
+        self._c.execute(
+            "UPDATE soma_intel_signal SET status='expired' WHERE signal_id=?",
+            (signal_id,),
+        )
+
+    def count_signals_by_status(self, status: str) -> int:
+        """Count signals with a given status ('active'|'reconfirmed'|'expired')."""
+        return self._c.execute(
+            "SELECT COUNT(*) FROM soma_intel_signal WHERE status=?",
+            (status,),
+        ).fetchone()[0]
+
+    def count_recent_signals(
+        self,
+        ticker:       str,
+        notes_prefix: str,
+        since_date:   str,
+    ) -> int:
+        """
+        Count active signals for a given ticker whose notes start with
+        `notes_prefix`, created on or after `since_date` (ISO YYYY-MM-DD).
+        Used by confirm.py to compute novelty_score.
+        """
+        return self._c.execute(
+            """
+            SELECT COUNT(*)
+            FROM soma_intel_signal
+            WHERE ticker = ?
+              AND date  >= ?
+              AND (notes LIKE ? OR notes IS NULL)
+              AND status  = 'active'
+            """,
+            (ticker, since_date, notes_prefix + "%"),
+        ).fetchone()[0]
+
+    def list_recent_edges_for_ticker(
+        self,
+        ticker:     str,
+        since_ts:   str,
+        as_of_date: str,
+    ) -> list[dict]:
+        """
+        Return edges (src→ticker or ticker→dst) with ts between since_ts and
+        as_of_date.  Used by confirm.py for corroboration and exclusion checks.
+        Returns dicts with keys: edge_id, source_type, edge_type, confidence, ts.
+        """
+        rows = self._c.execute(
+            """
+            SELECT e.edge_id, e.source_type, e.edge_type,
+                   e.confidence, e.ts
+            FROM soma_intel_edge e
+            WHERE (e.src_node_id = ? OR e.dst_node_id = ?)
+              AND e.ts >= ?
+              AND e.ts <= ?
+            ORDER BY e.ts DESC
+            """,
+            (f"co_{ticker}", f"co_{ticker}", since_ts, as_of_date),
+        ).fetchall()
+        return [dict(r) for r in rows]
+
+    def count_ticker_edges(self, ticker: str) -> int:
+        """
+        Count all edges where the ticker's company node is source or target.
+        Used by confirm.py for the 'effective edge count ≥ 5' gate.
+        """
+        return self._c.execute(
+            """
+            SELECT COUNT(*)
+            FROM soma_intel_edge
+            WHERE src_node_id = ?
+               OR dst_node_id = ?
+            """,
+            (f"co_{ticker}", f"co_{ticker}"),
+        ).fetchone()[0]
+
+    def count_active_signals_for_date(self, date_str: str, priority: str) -> int:
+        """
+        Count active signals for a given date and priority.
+        Used by anomaly.py to enforce daily caps (P1 ≤ 5, P2 ≤ 10).
+        """
+        return self._c.execute(
+            """
+            SELECT COUNT(*)
+            FROM soma_intel_signal
+            WHERE date = ? AND priority = ? AND status = 'active'
+            """,
+            (date_str, priority),
+        ).fetchone()[0]
+
+    def insert_anomaly_signal(
+        self,
+        ticker:               str,
+        date:                 str,
+        priority:             str,
+        anomaly_score:        float,
+        features_json:        str,
+        corroboration_count:  int,
+        half_life_days:       int,
+        notes:                str,
+        horizon:              str = "tactical",
+    ) -> int:
+        """
+        Insert a new signal row from the anomaly engine.
+        Returns the new signal_id.
+        """
+        cur = self._c.execute(
+            """
+            INSERT OR IGNORE INTO soma_intel_signal
+                (ticker, date, priority, anomaly_score, features,
+                 corroboration_count, half_life_days, status, horizon, notes)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'active', ?, ?)
+            """,
+            (ticker, date, priority, round(anomaly_score, 4), features_json,
+             corroboration_count, half_life_days, horizon, notes),
+        )
+        return cur.lastrowid
+
+    # ── Belief sweep helpers ──────────────────────────────────────────────────
+
+    def list_superseded_beliefs_before(self, cutoff_ts: str) -> list[dict]:
+        """
+        Return superseded beliefs (superseded_by IS NOT NULL) with ts < cutoff_ts.
+        Ordered ts ASC (oldest first, matches prune order).
+        Returns dicts with keys: belief_id, subject_node_id, predicate, ts.
+        """
+        rows = self._c.execute(
+            """
+            SELECT belief_id, subject_node_id, predicate, ts
+            FROM soma_intel_belief
+            WHERE superseded_by IS NOT NULL
+              AND ts < ?
+            ORDER BY ts ASC
+            """,
+            (cutoff_ts,),
+        ).fetchall()
+        return [dict(r) for r in rows]
+
+    def delete_beliefs_by_ids(self, belief_ids: list[int]) -> int:
+        """
+        Delete beliefs by primary key. Batches in groups of 500 to stay within
+        SQLite limits. Returns total rows deleted.
+        """
+        if not belief_ids:
+            return 0
+        deleted = 0
+        for i in range(0, len(belief_ids), 500):
+            batch = belief_ids[i : i + 500]
+            placeholders = ",".join("?" * len(batch))
+            self._c.execute(
+                f"DELETE FROM soma_intel_belief WHERE belief_id IN ({placeholders})",
+                batch,
+            )
+            deleted += len(batch)
+        return deleted
+
+    def count_beliefs_active(self) -> int:
+        """Count active (non-superseded) beliefs across all predicates."""
+        return self._c.execute(
+            "SELECT COUNT(*) FROM soma_intel_belief WHERE superseded_by IS NULL"
+        ).fetchone()[0]
+
+    def count_beliefs_superseded(self) -> int:
+        """Count superseded (non-active) beliefs."""
+        return self._c.execute(
+            "SELECT COUNT(*) FROM soma_intel_belief WHERE superseded_by IS NOT NULL"
+        ).fetchone()[0]
+
+    # ── Platform management ───────────────────────────────────────────────────
+
+    def list_platforms(
+        self,
+        filter_ids: Optional[list[str]] = None,
+    ) -> list[dict]:
+        """
+        Return platform rows as dicts. Keys: platform_id, name, adoption_metric,
+        curve_K, curve_r, curve_t0, wrights_law_rate, position, last_fit_ts.
+
+        Args:
+            filter_ids: if provided, restrict to these platform_id values.
+        """
+        if filter_ids:
+            placeholders = ",".join("?" * len(filter_ids))
+            rows = self._c.execute(
+                f"SELECT * FROM soma_intel_platform "
+                f"WHERE platform_id IN ({placeholders}) ORDER BY platform_id",
+                filter_ids,
+            ).fetchall()
+        else:
+            rows = self._c.execute(
+                "SELECT * FROM soma_intel_platform ORDER BY platform_id"
+            ).fetchall()
+        return [dict(r) for r in rows]
+
+    def get_platform(self, platform_id: str) -> Optional[dict]:
+        """Return a single platform row as dict, or None if not found."""
+        row = self._c.execute(
+            "SELECT * FROM soma_intel_platform WHERE platform_id=?",
+            (platform_id,),
+        ).fetchone()
+        return dict(row) if row else None
+
+    def upsert_platform(
+        self,
+        platform_id: str,
+        name: str,
+        adoption_metric: str,
+        curve_K: Optional[float],
+        curve_r: Optional[float],
+        curve_t0: Optional[str],
+        wrights_law_rate: Optional[float],
+        position: Optional[str],
+    ) -> None:
+        """
+        INSERT OR REPLACE a platform row (full upsert — all fields).
+        Sets last_fit_ts=NULL (updated later by scurve_fitter).
+        """
+        self._c.execute(
+            """
+            INSERT OR REPLACE INTO soma_intel_platform
+              (platform_id, name, adoption_metric, curve_K, curve_r, curve_t0,
+               wrights_law_rate, position, last_fit_ts)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL)
+            """,
+            (platform_id, name, adoption_metric, curve_K, curve_r, curve_t0,
+             wrights_law_rate, position),
+        )
+
+    def update_platform_curve(
+        self,
+        platform_id: str,
+        K: float,
+        r: float,
+        t0: str,
+        position: str,
+        last_fit_ts: str,
+    ) -> None:
+        """Update fitted curve parameters on an existing platform row."""
+        self._c.execute(
+            """
+            UPDATE soma_intel_platform
+            SET curve_K     = ?,
+                curve_r     = ?,
+                curve_t0    = ?,
+                position    = ?,
+                last_fit_ts = ?
+            WHERE platform_id = ?
+            """,
+            (K, r, t0, position, last_fit_ts, platform_id),
+        )
+
+    def clear_platforms(self) -> None:
+        """Delete all rows from soma_intel_platform. Used by --force re-seed."""
+        self._c.execute("DELETE FROM soma_intel_platform")
+
+    # ── S-curve history ───────────────────────────────────────────────────────
+
+    def list_scurve_history(self, platform_id: str) -> list[dict]:
+        """
+        Return all scurve history rows for a platform, ordered by date ASC.
+        Keys: date, metric_value (and others from the table).
+        """
+        rows = self._c.execute(
+            """
+            SELECT date, metric_value, cumulative_units, unit_cost, source
+            FROM soma_intel_scurve_history
+            WHERE platform_id = ?
+            ORDER BY date ASC
+            """,
+            (platform_id,),
+        ).fetchall()
+        return [dict(r) for r in rows]
+
+    def insert_scurve_history_row(
+        self,
+        platform_id: str,
+        date: str,
+        metric_value: float,
+        source: str,
+        cumulative_units: Optional[float] = None,
+        unit_cost: Optional[float] = None,
+    ) -> None:
+        """INSERT OR IGNORE a single scurve history row (idempotent by PK)."""
+        self._c.execute(
+            """
+            INSERT OR IGNORE INTO soma_intel_scurve_history
+              (platform_id, date, metric_value, cumulative_units, unit_cost, source)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (platform_id, date, metric_value, cumulative_units, unit_cost, source),
+        )
+
+    def count_scurve_history(self, platform_id: str) -> int:
+        """Count scurve history rows for a given platform_id."""
+        return self._c.execute(
+            "SELECT COUNT(*) FROM soma_intel_scurve_history WHERE platform_id=?",
+            (platform_id,),
+        ).fetchone()[0]
+
+    def scurve_history_date_range(
+        self, platform_id: str
+    ) -> tuple[Optional[str], Optional[str]]:
+        """Return (min_date, max_date) for a platform's scurve history, or (None, None)."""
+        row = self._c.execute(
+            """
+            SELECT MIN(date) AS min_d, MAX(date) AS max_d
+            FROM soma_intel_scurve_history WHERE platform_id=?
+            """,
+            (platform_id,),
+        ).fetchone()
+        return (row["min_d"], row["max_d"]) if row else (None, None)
+
+    def clear_scurve_history(self) -> None:
+        """Delete all rows from soma_intel_scurve_history. Used by --force re-seed."""
+        self._c.execute("DELETE FROM soma_intel_scurve_history")
+
+    # ── Edge management (ingest helpers) ─────────────────────────────────────
+
+    def count_edges_by_source_type(self, source_type: str) -> int:
+        """Count edges with a specific source_type value."""
+        return self._c.execute(
+            "SELECT COUNT(*) FROM soma_intel_edge WHERE source_type=?",
+            (source_type,),
+        ).fetchone()[0]
+
+    def count_edges_by_source_types(self, source_types: list[str]) -> int:
+        """Count edges whose source_type is any of the provided values (IN clause)."""
+        if not source_types:
+            return 0
+        placeholders = ",".join("?" * len(source_types))
+        return self._c.execute(
+            f"SELECT COUNT(*) FROM soma_intel_edge WHERE source_type IN ({placeholders})",
+            source_types,
+        ).fetchone()[0]
+
+    def delete_edges_by_source_type(self, source_type: str) -> int:
+        """
+        Delete all edges with a given source_type. Returns rows deleted.
+        Warning: destructive — caller is responsible for --force guard.
+        """
+        self._c.execute(
+            "DELETE FROM soma_intel_edge WHERE source_type=?",
+            (source_type,),
+        )
+        return self._c.execute("SELECT changes()").fetchone()[0]
+
+    # ── Universe bootstrap ────────────────────────────────────────────────────
+
+    def universe_is_loaded(self) -> bool:
+        """Return True if soma_intel_universe has at least one row."""
+        row = self._c.execute(
+            "SELECT 1 FROM soma_intel_universe LIMIT 1"
+        ).fetchone()
+        return row is not None
+
+    def count_active_universe(self) -> int:
+        """Count active rows in soma_intel_universe."""
+        return self._c.execute(
+            "SELECT COUNT(*) FROM soma_intel_universe WHERE active=1"
+        ).fetchone()[0]
+
+    def load_universe_entry(
+        self,
+        ticker: str,
+        source: str,
+        platform_tags: list,
+        added_ts: str,
+    ) -> None:
+        """
+        INSERT OR UPDATE a universe row from the initial bulk load (load_universe.py).
+
+        Differs from upsert_universe_ticker: simpler signature, no promotion fields.
+        Does not commit — caller must call store.commit() after the batch.
+        """
+        self._c.execute(
+            """
+            INSERT INTO soma_intel_universe
+              (ticker, source, platform_tags, added_ts, active)
+            VALUES (?, ?, ?, ?, 1)
+            ON CONFLICT(ticker) DO UPDATE SET
+              source        = excluded.source,
+              platform_tags = excluded.platform_tags,
+              active        = 1
+            """,
+            (ticker, source, json.dumps(platform_tags), added_ts),
+        )
+
+    # ── Node listing (edge extractor) ─────────────────────────────────────────
+
+    def list_nodes_prioritized(self, limit: int = 200) -> list[dict]:
+        """
+        Return up to `limit` nodes sorted by type priority (company first, then
+        platform, regime, security, person, thesis, concept, other).
+
+        Keys: node_id, node_type, name.
+        Used by edge_extractor to build the LLM node-context list.
+        """
+        rows = self._c.execute(
+            """
+            SELECT node_id, node_type, name FROM soma_intel_node
+            ORDER BY
+              CASE node_type
+                WHEN 'company'  THEN 0
+                WHEN 'platform' THEN 1
+                WHEN 'regime'   THEN 2
+                WHEN 'security' THEN 3
+                WHEN 'person'   THEN 4
+                WHEN 'thesis'   THEN 5
+                WHEN 'concept'  THEN 6
+                ELSE 7
+              END,
+              node_id ASC
+            LIMIT ?
+            """,
+            (limit,),
+        ).fetchall()
+        return [dict(r) for r in rows]
+
+    # ── Node type stats ───────────────────────────────────────────────────────
+
+    def node_type_counts(self) -> list[dict]:
+        """
+        Return list of dicts with keys node_type, c — count per type ordered DESC.
+        Used by ingest_oracle summary display.
+        """
+        rows = self._c.execute(
+            """
+            SELECT node_type, COUNT(*) AS c
+            FROM soma_intel_node GROUP BY node_type ORDER BY c DESC
+            """
+        ).fetchall()
+        return [dict(r) for r in rows]
+
+    def list_company_nodes(self) -> list[dict]:
+        """
+        Return all company nodes as list of dicts with keys:
+        node_id, name, metadata (raw JSON string).
+        Used by anomaly.py to build the sector map.
+        """
+        rows = self._c.execute(
+            """
+            SELECT node_id, name, metadata
+            FROM soma_intel_node
+            WHERE node_type = 'company'
+            ORDER BY node_id
+            """
+        ).fetchall()
+        return [dict(r) for r in rows]
+
+    # ── SOMA base-table stats (read-only, for bridge summary display) ─────────
+
+    def count_soma_raw_intelligence(self, source_type: str) -> int:
+        """
+        Count rows in soma's raw_intelligence table by source_type.
+        Read-only query against the same soma.db — NOT a graph operation.
+        Used exclusively by soma_intel_bridge for stats display.
+        """
+        try:
+            return self._c.execute(
+                "SELECT COUNT(*) FROM raw_intelligence WHERE source_type=?",
+                (source_type,),
+            ).fetchone()[0]
+        except Exception:
+            return -1  # table may not exist in test envs
+
+    def count_soma_events(self, event_type: str) -> int:
+        """
+        Count rows in soma's events table by event_type.
+        Read-only query against the same soma.db — NOT a graph operation.
+        Used exclusively by soma_intel_bridge for stats display.
+        """
+        try:
+            return self._c.execute(
+                "SELECT COUNT(*) FROM events WHERE event_type=?",
+                (event_type,),
+            ).fetchone()[0]
+        except Exception:
+            return -1  # table may not exist in test envs
+
+    # ── Audit log (migration 022) ─────────────────────────────────────────────
+
+    def record_audit(
+        self,
+        edge_id: int,
+        auditor: str,
+        decision: str,
+        rationale: Optional[str] = None,
+        prior_audit_id: Optional[int] = None,
+    ) -> int:
+        """
+        Append an immutable audit row to soma_intel_audit_log (§K.2).
+
+        Also updates edge.audit_status + audit_ts on the edge row.
+        Returns the new audit_id.
+
+        Args:
+            edge_id:        edge being audited.
+            auditor:        'user' | 'claude_adversarial' | 'meta_learner'.
+            decision:       'approved' | 'rejected' | 'corrected' | 're_audited'.
+            rationale:      optional free text.
+            prior_audit_id: if re-auditing a previously audited edge, chain via this.
+
+        Raises:
+            ValueError: if decision is not one of the four valid values.
+        """
+        _valid_decisions = {"approved", "rejected", "corrected", "re_audited"}
+        if decision not in _valid_decisions:
+            raise ValueError(
+                f"decision must be one of {_valid_decisions}, got {decision!r}"
+            )
+
+        now = self._now_iso()
+
+        # Append to immutable log
+        cur = self._c.execute(
+            """
+            INSERT INTO soma_intel_audit_log
+              (edge_id, auditor, decision, rationale, ts, prior_audit_id)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (edge_id, auditor, decision, rationale, now, prior_audit_id),
+        )
+        audit_id: int = cur.lastrowid  # type: ignore[assignment]
+
+        # Mirror decision onto the edge row for fast filtering
+        edge_audit_status = decision if decision != "re_audited" else "approved"
+        self._c.execute(
+            """
+            UPDATE soma_intel_edge
+            SET audit_status = ?,
+                audit_ts     = ?,
+                audit_notes  = ?
+            WHERE edge_id = ?
+            """,
+            (edge_audit_status, now, f"[{auditor}] {rationale or ''}", edge_id),
+        )
+        self._c.commit()
+        log.debug("record_audit: edge %d → %s by %s (audit_id=%d)",
+                  edge_id, decision, auditor, audit_id)
+        return audit_id
+
+    def list_audit_log(
+        self,
+        edge_id: Optional[int] = None,
+        limit: int = 100,
+    ) -> list[dict]:
+        """
+        Return audit log rows, optionally filtered by edge_id.
+        Ordered by ts DESC (most recent first).
+        """
+        if edge_id is not None:
+            rows = self._c.execute(
+                """
+                SELECT * FROM soma_intel_audit_log
+                WHERE edge_id=? ORDER BY ts DESC LIMIT ?
+                """,
+                (edge_id, limit),
+            ).fetchall()
+        else:
+            rows = self._c.execute(
+                "SELECT * FROM soma_intel_audit_log ORDER BY ts DESC LIMIT ?",
+                (limit,),
+            ).fetchall()
+        return [dict(r) for r in rows]
+
+    # ── Edge audit helpers (used by audit_engine.py) ──────────────────────────
+
+    def list_edges_for_audit(
+        self,
+        min_confidence:      float = 0.30,
+        audit_status_filter: Optional[list[str]] = None,
+        limit:               int   = 5000,
+    ) -> list[dict]:
+        """
+        Return edges eligible for audit: confidence >= min_confidence,
+        optionally filtered to specific audit_status values.
+        Returns dicts with all soma_intel_edge columns.
+        """
+        if audit_status_filter:
+            placeholders = ",".join("?" * len(audit_status_filter))
+            rows = self._c.execute(
+                f"""
+                SELECT * FROM soma_intel_edge
+                WHERE confidence >= ?
+                  AND audit_status IN ({placeholders})
+                ORDER BY confidence ASC, ts DESC
+                LIMIT ?
+                """,
+                [min_confidence, *audit_status_filter, limit],
+            ).fetchall()
+        else:
+            rows = self._c.execute(
+                """
+                SELECT * FROM soma_intel_edge
+                WHERE confidence >= ?
+                ORDER BY confidence ASC, ts DESC
+                LIMIT ?
+                """,
+                (min_confidence, limit),
+            ).fetchall()
+        return [dict(r) for r in rows]
+
+    def get_edge(self, edge_id: int) -> Optional[dict]:
+        """Return a single edge row as dict, or None if not found."""
+        row = self._c.execute(
+            "SELECT * FROM soma_intel_edge WHERE edge_id=?", (edge_id,)
+        ).fetchone()
+        return dict(row) if row else None
+
+    def get_last_audit_ts_map(self) -> dict[int, str]:
+        """
+        Return {edge_id → most_recent_audit_ts} for all edges that have at
+        least one audit log entry. Used by audit_engine queue builder.
+        """
+        rows = self._c.execute(
+            """
+            SELECT edge_id, MAX(ts) AS last_ts
+            FROM soma_intel_audit_log
+            GROUP BY edge_id
+            """
+        ).fetchall()
+        return {r["edge_id"]: r["last_ts"] for r in rows}
+
+    def update_edge_audit_status(
+        self,
+        edge_id:      int,
+        audit_status: str,
+        audit_ts:     str,
+        audit_notes:  Optional[str] = None,
+    ) -> None:
+        """Update the audit_status, audit_ts, and audit_notes on an edge."""
+        self._c.execute(
+            """
+            UPDATE soma_intel_edge
+            SET audit_status = ?, audit_ts = ?, audit_notes = ?
+            WHERE edge_id = ?
+            """,
+            (audit_status, audit_ts, audit_notes, edge_id),
+        )
+
+    def audit_coverage_stats(self) -> list[dict]:
+        """
+        Return [{audit_status, n}] for all edges grouped by audit_status.
+        Used by audit_engine --stats.
+        """
+        rows = self._c.execute(
+            """
+            SELECT audit_status, COUNT(*) AS n
+            FROM soma_intel_edge
+            GROUP BY audit_status
+            ORDER BY n DESC
+            """
+        ).fetchall()
+        return [dict(r) for r in rows]
+
+    def edge_confidence_band_counts(self) -> list[dict]:
+        """
+        Return [{band, n}] showing count of edges per confidence band.
+        Bands: low (<0.55), mid (0.55-0.75), high (0.75-0.95), top (≥0.95).
+        """
+        rows = self._c.execute(
+            """
+            SELECT
+              CASE
+                WHEN confidence < 0.55 THEN 'low'
+                WHEN confidence < 0.75 THEN 'mid'
+                WHEN confidence < 0.95 THEN 'high'
+                ELSE 'top'
+              END AS band,
+              COUNT(*) AS n
+            FROM soma_intel_edge
+            WHERE confidence >= 0.30
+            GROUP BY band
+            ORDER BY band
+            """
+        ).fetchall()
+        return [dict(r) for r in rows]
+
+    # ── Source calibration (migration 022) ────────────────────────────────────
+
+    def upsert_source_calibration(
+        self,
+        source_id: str,
+        multiplier: float,
+        brier_score: Optional[float],
+        n_observations: int,
+        last_updated: str,
+    ) -> None:
+        """Upsert a calibration row for a source. Used by calibration.py (§K.3)."""
+        self._c.execute(
+            """
+            INSERT INTO soma_intel_source_calibration
+              (source_id, multiplier, brier_score, n_observations, last_updated)
+            VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT(source_id) DO UPDATE SET
+              multiplier     = excluded.multiplier,
+              brier_score    = excluded.brier_score,
+              n_observations = excluded.n_observations,
+              last_updated   = excluded.last_updated
+            """,
+            (source_id, multiplier, brier_score, n_observations, last_updated),
+        )
+        self._c.commit()
+
+    def get_source_calibration(self, source_id: str) -> Optional[dict]:
+        """Return calibration row for a source_id, or None."""
+        row = self._c.execute(
+            "SELECT * FROM soma_intel_source_calibration WHERE source_id=?",
+            (source_id,),
+        ).fetchone()
+        return dict(row) if row else None
+
+    def list_source_calibrations(self) -> list[dict]:
+        """Return all source calibration rows ordered by multiplier ASC (worst first)."""
+        rows = self._c.execute(
+            "SELECT * FROM soma_intel_source_calibration ORDER BY multiplier ASC"
+        ).fetchall()
+        return [dict(r) for r in rows]
+
+    # ── Regime + Baseline (migration 021, populated by regime.py + baseline.py) ──
+
+    def upsert_regime_row(
+        self,
+        date: str,
+        trend_state: str,
+        vol_state: str,
+        macro_state: str,
+        composite_label: str,
+        confidence: float,
+        features: dict,
+    ) -> None:
+        """
+        UPSERT one daily regime row to soma_intel_regime.
+        Idempotent: running twice for the same date is safe.
+        """
+        self._c.execute(
+            """
+            INSERT INTO soma_intel_regime
+              (date, trend_state, vol_state, macro_state, composite_label,
+               confidence, features)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(date) DO UPDATE SET
+              trend_state     = excluded.trend_state,
+              vol_state       = excluded.vol_state,
+              macro_state     = excluded.macro_state,
+              composite_label = excluded.composite_label,
+              confidence      = excluded.confidence,
+              features        = excluded.features
+            """,
+            (date, trend_state, vol_state, macro_state, composite_label,
+             confidence, json.dumps(features)),
+        )
+
+    def get_regime_row(self, date: str) -> Optional[dict]:
+        """Return the regime row for a specific date, or None."""
+        row = self._c.execute(
+            "SELECT * FROM soma_intel_regime WHERE date=?",
+            (date,),
+        ).fetchone()
+        if row is None:
+            return None
+        d = dict(row)
+        d["features"] = json.loads(d["features"] or "{}")
+        return d
+
+    def list_regime_rows(
+        self,
+        start_date: Optional[str] = None,
+        end_date: Optional[str] = None,
+        limit: Optional[int] = None,
+    ) -> list[dict]:
+        """
+        Return regime rows, optionally filtered by date range.
+        Ordered by date ASC. Parses 'features' JSON column.
+        """
+        clauses: list[str] = []
+        params: list[Any] = []
+        if start_date:
+            clauses.append("date >= ?")
+            params.append(start_date)
+        if end_date:
+            clauses.append("date <= ?")
+            params.append(end_date)
+        sql = "SELECT * FROM soma_intel_regime"
+        if clauses:
+            sql += " WHERE " + " AND ".join(clauses)
+        sql += " ORDER BY date ASC"
+        if limit:
+            sql += f" LIMIT {int(limit)}"
+        rows = self._c.execute(sql, params).fetchall()
+        result = []
+        for r in rows:
+            d = dict(r)
+            d["features"] = json.loads(d["features"] or "{}")
+            result.append(d)
+        return result
+
+    def upsert_baseline(
+        self,
+        ticker: str,
+        regime_label: str,
+        feature: str,
+        mean: float,
+        stdev: float,
+        n_days: int,
+        is_provisional: int,
+        last_updated: str,
+    ) -> None:
+        """
+        UPSERT one baseline row (ticker × regime × feature).
+        Called by baseline.py after computing regime-conditional statistics.
+        """
+        self._c.execute(
+            """
+            INSERT INTO soma_intel_baseline
+              (ticker, regime_label, feature, mean, stdev, n_days,
+               is_provisional, last_updated)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(ticker, regime_label, feature) DO UPDATE SET
+              mean           = excluded.mean,
+              stdev          = excluded.stdev,
+              n_days         = excluded.n_days,
+              is_provisional = excluded.is_provisional,
+              last_updated   = excluded.last_updated
+            """,
+            (ticker, regime_label, feature, mean, stdev, n_days,
+             is_provisional, last_updated),
+        )
+
+    def get_baseline(
+        self,
+        ticker: str,
+        regime_label: str,
+        feature: str,
+    ) -> Optional[dict]:
+        """Return baseline row for (ticker, regime_label, feature), or None."""
+        row = self._c.execute(
+            """
+            SELECT * FROM soma_intel_baseline
+            WHERE ticker=? AND regime_label=? AND feature=?
+            """,
+            (ticker, regime_label, feature),
+        ).fetchone()
+        return dict(row) if row else None
+
+    def list_baselines_for_ticker(
+        self,
+        ticker: str,
+        regime_label: Optional[str] = None,
+    ) -> list[dict]:
+        """
+        Return baseline rows for a ticker, optionally filtered by regime_label.
+        """
+        if regime_label:
+            rows = self._c.execute(
+                """
+                SELECT * FROM soma_intel_baseline
+                WHERE ticker=? AND regime_label=?
+                """,
+                (ticker, regime_label),
+            ).fetchall()
+        else:
+            rows = self._c.execute(
+                "SELECT * FROM soma_intel_baseline WHERE ticker=?",
+                (ticker,),
+            ).fetchall()
+        return [dict(r) for r in rows]

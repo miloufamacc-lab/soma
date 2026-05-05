@@ -141,31 +141,20 @@ def load_to_db(universe: dict, db_path: str | Path) -> int:
     """Upsert all core tickers into soma_intel_universe. Returns row count."""
     loaded = 0
     with IntelStore(db_path=db_path) as store:
-        # Ensure tables exist (no-op if migration already ran)
-        store._c.execute("SELECT 1 FROM soma_intel_universe LIMIT 1")
+        # universe_is_loaded() confirms tables exist (no-op probe, no raw SQL)
+        _ = store.universe_is_loaded()
 
         now = datetime.now(timezone.utc).isoformat()
         for entry in universe["core"]:
-            store._c.execute(
-                """
-                INSERT INTO soma_intel_universe
-                  (ticker, source, platform_tags, added_ts, active)
-                VALUES (?, ?, ?, ?, 1)
-                ON CONFLICT(ticker) DO UPDATE SET
-                  source        = excluded.source,
-                  platform_tags = excluded.platform_tags,
-                  active        = 1
-                """,
-                (
-                    entry["ticker"],
-                    entry["source"],
-                    json.dumps(entry["platform_tags"]),
-                    now,
-                ),
+            store.load_universe_entry(
+                ticker=entry["ticker"],
+                source=entry["source"],
+                platform_tags=entry["platform_tags"],
+                added_ts=now,
             )
             loaded += 1
 
-        store._c.commit()
+        store.commit()
     return loaded
 
 
@@ -205,9 +194,7 @@ def main() -> None:
 
     # Verify
     with IntelStore(db_path=DB_PATH) as store:
-        count = store._c.execute(
-            "SELECT COUNT(*) FROM soma_intel_universe WHERE active=1"
-        ).fetchone()[0]
+        count = store.count_active_universe()
     print(f"  DB count (active): {count}")
     assert count == meta["total_tickers"], \
         f"Mismatch: {count} in DB vs {meta['total_tickers']} expected"

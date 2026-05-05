@@ -218,43 +218,24 @@ def run_fitter(
 ) -> list[FitResult]:
 
     # Which platforms to fit
-    if platforms:
-        pid_filter = tuple(platforms)
-        rows_q = store._c.execute(
-            f"SELECT platform_id, name FROM soma_intel_platform "
-            f"WHERE platform_id IN ({','.join('?' * len(pid_filter))})",
-            pid_filter,
-        ).fetchall()
-    else:
-        rows_q = store._c.execute(
-            "SELECT platform_id, name FROM soma_intel_platform ORDER BY platform_id"
-        ).fetchall()
+    rows_q = store.list_platforms(filter_ids=platforms if platforms else None)
 
     results: list[FitResult] = []
 
     for prow in rows_q:
         pid = prow["platform_id"]
 
-        history = store._c.execute(
-            """
-            SELECT date, metric_value FROM soma_intel_scurve_history
-            WHERE platform_id = ?
-            ORDER BY date ASC
-            """,
-            (pid,),
-        ).fetchall()
+        history = store.list_scurve_history(pid)
 
-        fr = _fit_platform(pid, [dict(r) for r in history])
+        fr = _fit_platform(pid, history)
         results.append(fr)
 
         if fr.error:
             print(f"  {pid:<22}  ERROR: {fr.error}")
             continue
 
-        metric = store._c.execute(
-            "SELECT adoption_metric FROM soma_intel_platform WHERE platform_id=?",
-            (pid,),
-        ).fetchone()["adoption_metric"]
+        platform_row = store.get_platform(pid)
+        metric       = (platform_row or {}).get("adoption_metric", "")
         metric_short = metric[:35]
 
         print(
@@ -268,21 +249,17 @@ def run_fitter(
             print(f"    metric: {metric_short}  current_val={fr.current_val:.2f}")
 
         if not dry_run:
-            store._c.execute(
-                """
-                UPDATE soma_intel_platform
-                SET curve_K      = ?,
-                    curve_r      = ?,
-                    curve_t0     = ?,
-                    position     = ?,
-                    last_fit_ts  = ?
-                WHERE platform_id = ?
-                """,
-                (fr.K, fr.r, fr.t0_date, fr.position, NOW, pid),
+            store.update_platform_curve(
+                platform_id = pid,
+                K           = fr.K,
+                r           = fr.r,
+                t0          = fr.t0_date,
+                position    = fr.position,
+                last_fit_ts = NOW,
             )
 
     if not dry_run:
-        store._c.commit()
+        store.commit()
 
     return results
 
