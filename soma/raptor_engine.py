@@ -635,6 +635,82 @@ class RaptorEngine:
 
         return result
 
+    # ── Daily status summary ──────────────────────────────────────────────────
+
+    def raptor_status(self) -> dict:
+        """One-screen terminal summary for run_day.py step 5b.
+
+        Returns a dict with all data needed for the RAPTOR Daily Pulse banner:
+          pipeline      — {stage: count} for all stages
+          scores        — {hot, warm, cold} counts
+          actions       — {immediate, re_consent, overdue} counts
+          coi           — {total, due_for_contact} counts + referrals_this_month
+          consent       — {valid, expiring_30d, deletion_pending}
+        """
+        from soma.raptor_privacy import RaptorPrivacy
+
+        # Pipeline stage counts
+        rows = self.bridge.conn.execute(
+            "SELECT pipeline_stage, COUNT(*) AS n "
+            "FROM raptor_prospects GROUP BY pipeline_stage"
+        ).fetchall()
+        pipeline = {r["pipeline_stage"]: r["n"] for r in rows}
+
+        # Score bands — only non-terminal stages
+        active_stages = {"identified", "researched", "contacted", "meeting_set", "proposal_sent"}
+        scores = {"hot": 0, "warm": 0, "cold": 0}
+        for p in self.bridge.get_all_prospects():
+            if p["pipeline_stage"] not in active_stages:
+                continue
+            s = p.get("lead_score") or 0.0
+            if s > THRESHOLD_IMMEDIATE:
+                scores["hot"] += 1
+            elif s >= THRESHOLD_NURTURE:
+                scores["warm"] += 1
+            else:
+                scores["cold"] += 1
+
+        # Action queue
+        aq = self.get_action_queue()
+
+        # COI summary
+        coi_all = self.bridge.conn.execute(
+            "SELECT COUNT(*) AS n FROM raptor_coi_network"
+        ).fetchone()["n"]
+        stale = self.suggest_coi_touchpoints()
+
+        # Referrals this month
+        this_month = date.today().isoformat()[:7]   # "YYYY-MM"
+        ref_month = self.bridge.conn.execute(
+            "SELECT COUNT(*) AS n FROM raptor_referrals "
+            "WHERE referral_date LIKE ?",
+            (f"{this_month}%",),
+        ).fetchone()["n"]
+
+        # Consent snapshot (reuse privacy engine)
+        privacy = RaptorPrivacy(self.bridge)
+        health  = privacy.consent_health_report()
+
+        return {
+            "pipeline":     pipeline,
+            "scores":       scores,
+            "actions": {
+                "immediate":  len(aq["immediate_outreach"]),
+                "re_consent": len(aq["re_consent"]),
+                "overdue":    len(aq["overdue_followup"]),
+            },
+            "coi": {
+                "total":            coi_all,
+                "due_for_contact":  len(stale),
+                "referrals_month":  ref_month,
+            },
+            "consent": {
+                "valid":             health["valid_consent_count"],
+                "expiring_30d":      health["expiring_30d"],
+                "deletion_pending":  health["deletion_pending"],
+            },
+        }
+
 
 # ── Rule seeders ──────────────────────────────────────────────────────────────
 

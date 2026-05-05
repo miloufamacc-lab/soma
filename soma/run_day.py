@@ -25,6 +25,7 @@ Steps:
     [3/7] SOMA Status → one-screen dashboard
     [4/7] MANTIS → shows portfolio state + trades
     [5/7] CIPHER → generates outlook IF material changes detected
+    [5b]  RAPTOR → daily pulse (scores, actions, COI, consent snapshot)
     [6/7] HORIZON → tactical timing analysis (7-lens synthesis)
     [7/7] Action items + timing
 """
@@ -798,6 +799,94 @@ def step_6_horizon():
         _step_fail(f"HORIZON error: {e}")
 
 
+# ── Step 5b: RAPTOR Daily Pulse ──────────────────────────────────────
+
+def step_5b_raptor():
+    """RAPTOR — Daily Pulse: prospect scores, actions, COI, consent snapshot."""
+    _header("5b", "RAPTOR — Daily Pulse")
+
+    try:
+        from soma.soma_bridge import SomaBridge
+        from soma.raptor_engine import RaptorEngine
+
+        with SomaBridge() as db:
+            engine  = RaptorEngine(db)
+            status  = engine.raptor_status()
+
+            # ── Print banner ──────────────────────────────────────────
+            W_R = 50
+            print(f"  {BOLD}{'=' * W_R}{RESET}")
+
+            # Pipeline
+            pip = status["pipeline"]
+            stages = ["identified", "researched", "contacted",
+                      "meeting_set", "proposal_sent", "active"]
+            pip_parts = " | ".join(
+                f"{s.replace('_',' ')}: {pip.get(s, 0)}" for s in stages
+            )
+            print(f"  Pipeline  {pip_parts}")
+
+            # Scores
+            sc = status["scores"]
+            print(
+                f"  Scores    {sc['hot']} hot (>80) | "
+                f"{sc['warm']} warm (50-80) | "
+                f"{sc['cold']} cold (<50)"
+            )
+
+            # Actions
+            ac = status["actions"]
+            imm_color  = RED    if ac["immediate"]  > 0 else GREEN
+            rc_color   = YELLOW if ac["re_consent"] > 0 else GREEN
+            ov_color   = YELLOW if ac["overdue"]    > 0 else GREEN
+            print(
+                f"  Actions   "
+                f"{imm_color}[!] {ac['immediate']} immediate{RESET} | "
+                f"{rc_color}[R] {ac['re_consent']} re-consent{RESET} | "
+                f"{ov_color}[O] {ac['overdue']} overdue{RESET}"
+            )
+
+            # COI
+            co = status["coi"]
+            coi_color = YELLOW if co["due_for_contact"] > 0 else GREEN
+            print(
+                f"  COIs      {co['total']} active | "
+                f"{coi_color}{co['due_for_contact']} due for contact{RESET} | "
+                f"{co['referrals_month']} referrals this month"
+            )
+
+            # Consent
+            cs = status["consent"]
+            cons_color = YELLOW if cs["expiring_30d"] > 0 or cs["deletion_pending"] > 0 else GREEN
+            print(
+                f"  Consent   {cs['valid']} valid | "
+                f"{cons_color}{cs['expiring_30d']} expiring <30d | "
+                f"{cs['deletion_pending']} deletion pending{RESET}"
+            )
+
+            print(f"  {BOLD}{'=' * W_R}{RESET}")
+
+            # Log to SOMA events
+            import json as _json
+            db.publish_event(
+                "raptor_daily_pulse",
+                {
+                    "pipeline":  status["pipeline"],
+                    "scores":    status["scores"],
+                    "actions":   status["actions"],
+                    "coi":       status["coi"],
+                    "consent":   status["consent"],
+                },
+                source_module="RAPTOR",
+            )
+            _step_ok("Daily pulse logged to soma_events")
+
+    except ImportError as e:
+        print(f"  {YELLOW}[SKIP] RAPTOR not importable: {e}{RESET}")
+    except Exception as e:
+        _step_fail(f"RAPTOR error: {e}")
+
+
 # ── Step 7b: Wiki Sync (VAULT → Wiki) ────────────────────────────────
 
 def _alert_wiki_sync_failure(reason: str, detail: str = "") -> None:
@@ -1042,6 +1131,12 @@ def main():
         step_5_cipher(wc_result)
     except Exception as e:
         print(f"  {RED}ERROR{RESET} in CIPHER step: {e}")
+
+    # Step 5b: RAPTOR Daily Pulse
+    try:
+        step_5b_raptor()
+    except Exception as e:
+        print(f"  {RED}ERROR{RESET} in RAPTOR step: {e}")
 
     # Step 7b: Wiki Sync (VAULT → Wiki)
     try:
