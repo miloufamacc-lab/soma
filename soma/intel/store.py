@@ -1276,6 +1276,40 @@ class IntelStore:
             (ticker, since_date, notes_prefix + "%"),
         ).fetchone()[0]
 
+    def count_signals_by_ticker_type(
+        self,
+        ticker:      str,
+        signal_type: str,
+        since_date:  str,
+    ) -> int:
+        """
+        Count live signals for (ticker, signal_type) in the last N days.
+        Used by novelty.py to compute novelty_score.
+
+        signal_type — v1 definition: the `horizon` column value
+        ('tactical' | 'thematic' | 'structural').  When signal_propagator is
+        updated to write f1..f5 features to live signals, this method should
+        be upgraded to extract the dominant feature from the features JSON.
+
+        Args:
+            ticker:      Ticker symbol (e.g. 'TSLA')
+            signal_type: Horizon string — 'tactical' | 'thematic' | 'structural'
+            since_date:  ISO YYYY-MM-DD lower bound (inclusive)
+
+        Returns:
+            Count of matching signals.
+        """
+        return self._c.execute(
+            """
+            SELECT COUNT(*)
+            FROM soma_intel_signal
+            WHERE ticker = ?
+              AND date   >= ?
+              AND horizon = ?
+            """,
+            (ticker, since_date, signal_type),
+        ).fetchone()[0]
+
     def list_recent_edges_for_ticker(
         self,
         ticker:     str,
@@ -1305,7 +1339,15 @@ class IntelStore:
         """
         Count all edges where the ticker's company node is source or target.
         Used by confirm.py for the 'effective edge count ≥ 5' gate.
+
+        bt_strict_mode: raises AssertionError — use count_ticker_edges_as_of() instead.
         """
+        if getattr(self, "_bt_strict", False):
+            raise AssertionError(
+                "bt_strict_mode violation: count_ticker_edges() reads ALL edges "
+                "regardless of date. Use count_ticker_edges_as_of(ticker, as_of_ts) "
+                f"with cutoff={self._bt_cutoff_ts!r} in backtest mode."
+            )
         return self._c.execute(
             """
             SELECT COUNT(*)
@@ -1315,6 +1357,117 @@ class IntelStore:
             """,
             (f"co_{ticker}", f"co_{ticker}"),
         ).fetchone()[0]
+
+    def count_ticker_edges_as_of(self, ticker: str, as_of_ts: str) -> int:
+        """
+        Count edges for ticker with ts <= as_of_ts. Backtest-safe version of
+        count_ticker_edges(). Use this in historical replay to avoid look-ahead.
+        """
+        return self._c.execute(
+            """
+            SELECT COUNT(*)
+            FROM soma_intel_edge
+            WHERE (src_node_id = ? OR dst_node_id = ?)
+              AND ts <= ?
+            """,
+            (f"co_{ticker}", f"co_{ticker}", as_of_ts),
+        ).fetchone()[0]
+
+    # ── Backtest mode (bt_strict) ─────────────────────────────────────────────
+
+    def set_bt_mode(self, cutoff_date: str) -> None:
+        """
+        Enable backtest strict mode.
+
+        While enabled, calling count_ticker_edges() (which reads ALL edges
+        with no date cutoff) raises AssertionError — forcing replay code to
+        use count_ticker_edges_as_of() instead.
+
+        cutoff_date: YYYY-MM-DD of the simulation date being processed.
+        """
+        self._bt_strict = True
+        self._bt_cutoff_ts = cutoff_date + "T23:59:59"
+
+    def clear_bt_mode(self) -> None:
+        """Disable backtest strict mode."""
+        self._bt_strict = False
+        self._bt_cutoff_ts = None
+
+    # ── Backtest signal table helpers ─────────────────────────────────────────
+
+    def count_active_backtest_signals_for_date(
+        self, run_id: str, date_str: str, priority: str
+    ) -> int:
+        """
+        Count signals in soma_intel_signal_backtest for a given run/date/priority.
+        Replaces count_active_signals_for_date() in historical replay (reads
+        from the backtest table, not the live signals table).
+        """
+        return self._c.execute(
+            """
+            SELECT COUNT(*)
+            FROM soma_intel_signal_backtest
+            WHERE backtest_run_id = ? AND sim_date = ? AND priority = ?
+            """,
+            (run_id, date_str, priority),
+        ).fetchone()[0]
+
+    def count_recent_backtest_signals(
+        self, run_id: str, ticker: str, notes_prefix: str, since_date: str
+    ) -> int:
+        """
+        Novelty counter reading from soma_intel_signal_backtest.
+        Replaces count_recent_signals() in historical replay so novelty uses
+        only already-written backtest signals (no look-ahead into live table).
+        """
+        return self._c.execute(
+            """
+            SELECT COUNT(*)
+            FROM soma_intel_signal_backtest
+            WHERE backtest_run_id = ?
+              AND ticker    = ?
+              AND sim_date >= ?
+              AND (notes LIKE ? OR notes IS NULL)
+            """,
+            (run_id, ticker, since_date, notes_prefix + "%"),
+        ).fetchone()[0]
+
+    def insert_backtest_signal(
+        self,
+        run_id:    str,
+        sim_date:  str,
+        ticker:    str,
+        priority:  str,
+        anomaly_score: float,
+        features_json: str,
+        corroboration_count: int,
+        half_life_days: int,
+        horizon:   str,
+        notes:     str,
+        regime_label: Optional[str],
+    ) -> None:
+        """
+        Write one generated signal into soma_intel_signal_backtest.
+        signal_id is NULL (not copied from live table — these are new signals).
+        lookahead_clean is set to 1 (verified by caller).
+        """
+        self._c.execute(
+            """
+            INSERT INTO soma_intel_signal_backtest (
+                backtest_run_id, sim_date,
+                signal_id, ticker, date, priority, anomaly_score, features,
+                corroboration_count, half_life_days, reconfirmation_count,
+                status, horizon, notes, regime_label, lookahead_clean
+            ) VALUES (?, ?, NULL, ?, ?, ?, ?, ?, ?, ?, 0, 'active', ?, ?, ?, 1)
+            """,
+            (
+                run_id, sim_date,
+                ticker, sim_date, priority,
+                round(anomaly_score, 4), features_json,
+                corroboration_count, half_life_days,
+                horizon, notes, regime_label,
+            ),
+        )
 
     def count_active_signals_for_date(self, date_str: str, priority: str) -> int:
         """
@@ -2228,3 +2381,69 @@ class IntelStore:
         if row[0] is None:
             return None
         return (row[0], row[1])
+
+    # ── Meta-learner threshold history (Migration 025) ─────────────────────────
+
+    def get_cell_threshold(
+        self,
+        cell_key:       str,
+        default_threshold: float,
+    ) -> float:
+        """
+        Return the most recent adjusted P1 threshold for a meta-learner cell,
+        or `default_threshold` if no history exists for this cell.
+
+        cell_key format: "<regime_composite_label>|<sector>|<dominant_feature>"
+        Example: "bull_low_easing|ai_compute|f3_rvol_z"
+
+        Args:
+            cell_key:          The 3-axis cell key.
+            default_threshold: Base threshold to return when no history.
+
+        Returns:
+            float: Effective threshold for this cell.
+        """
+        try:
+            row = self._c.execute(
+                """
+                SELECT new_threshold
+                FROM soma_intel_threshold_history
+                WHERE cell_key = ?
+                ORDER BY applied_ts DESC
+                LIMIT 1
+                """,
+                (cell_key,),
+            ).fetchone()
+            return float(row[0]) if row else default_threshold
+        except Exception:
+            return default_threshold
+
+    def append_threshold_adjustment(
+        self,
+        cell_key:        str,
+        prior_threshold: float,
+        new_threshold:   float,
+        adjustment:      float,
+        reason:          str,
+    ) -> None:
+        """
+        Append a threshold adjustment record (append-only — no UPDATE/DELETE allowed).
+
+        Args:
+            cell_key:        3-axis cell key.
+            prior_threshold: Threshold before adjustment.
+            new_threshold:   Threshold after adjustment.
+            adjustment:      Delta applied (±0.1 typically).
+            reason:          Human-readable reason (e.g. "false_negatives:5").
+        """
+        from datetime import datetime, timezone
+        applied_ts = datetime.now(timezone.utc).isoformat()
+        self._c.execute(
+            """
+            INSERT INTO soma_intel_threshold_history
+              (cell_key, prior_threshold, new_threshold, adjustment, reason, applied_ts)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (cell_key, prior_threshold, new_threshold, adjustment, reason, applied_ts),
+        )
+        self._conn.commit()
