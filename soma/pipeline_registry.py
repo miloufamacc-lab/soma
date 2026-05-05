@@ -361,6 +361,69 @@ PIPELINES = {
         ],
         "soma_tables": [],
     },
+
+    # ─── RAPTOR Pipelines ─────────────────────────────────────────────────────
+
+    "PREDATOR": {
+        "acronym": "Prospect Ranking Engine & Dynamic Asset-Tier Outreach Router",
+        "module": "RAPTOR",
+        "function": "Lead scoring, pipeline stage management, action queue generation",
+        "status": "BUILT",
+        "display_name": "Lead Scoring & Pipeline",
+        "aliases": ["predator", "lead-scoring", "prospect-scoring", "pipeline-engine",
+                    "RAPTOR: Lead Scoring", "raptor-lead"],
+        "categories": [],
+        "key_files": [
+            "shared/soma/raptor_engine.py",
+        ],
+        "soma_tables": ["raptor_prospects", "raptor_pipeline_log", "raptor_touchpoints"],
+    },
+
+    "ALLIANCE": {
+        "acronym": "Advisor Link & Liaison Intelligence for Acquisition Network & Client Engagement",
+        "module": "RAPTOR",
+        "function": "COI network management, referral tracking, reciprocity reporting",
+        "status": "BUILT",
+        "display_name": "COI Network & Referrals",
+        "aliases": ["alliance", "coi-network", "referral-engine", "coi-intelligence",
+                    "RAPTOR: COI", "raptor-coi", "referrals"],
+        "categories": [],
+        "key_files": [
+            "shared/soma/raptor_engine.py",
+        ],
+        "soma_tables": ["raptor_coi_network", "raptor_referrals"],
+    },
+
+    "CHARTER": {
+        "acronym": "Compliance Handling & Audit-Ready Tracking for Ethical Relationship-building",
+        "module": "RAPTOR",
+        "function": "AMF/CIRO compliance scanning, Law 25 privacy, CASL consent management",
+        "status": "BUILT",
+        "display_name": "Compliance & Privacy",
+        "aliases": ["charter", "compliance-engine", "raptor-compliance", "privacy-engine",
+                    "law25", "casl-compliance", "RAPTOR: Compliance"],
+        "categories": [],
+        "key_files": [
+            "shared/soma/raptor_compliance.py",
+            "shared/soma/raptor_privacy.py",
+        ],
+        "soma_tables": ["raptor_consent_ledger", "raptor_compliance_shadow"],
+    },
+
+    "HERALD": {
+        "acronym": "High-value Engagement & Revenue Analysis for Lead-driven Decisions",
+        "module": "RAPTOR",
+        "function": "CRM3 fee drag analysis, value proposition engine, prospect-facing reports",
+        "status": "BUILT",
+        "display_name": "CRM3 Value Proposition",
+        "aliases": ["herald", "crm3", "fee-analysis", "value-proposition", "fee-drag",
+                    "RAPTOR: CRM3", "raptor-crm3"],
+        "categories": [],
+        "key_files": [
+            "shared/soma/raptor_crm3_analyzer.py",
+        ],
+        "soma_tables": ["raptor_fund_mers"],
+    },
 }
 
 # ─── Alias Index (built at import time) ──────────────────────────────────────
