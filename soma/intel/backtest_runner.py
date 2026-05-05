@@ -46,10 +46,16 @@ for _p in [str(_DABEIBA_ROOT), str(_DABEIBA_ROOT / "shared")]:
 from soma.intel.store import IntelStore
 
 # ── Constants ─────────────────────────────────────────────────────────────────
-BACKTEST_START  = "2024-05-06"   # first day of full window (522 calendar days)
-BACKTEST_END    = "2026-05-05"   # last day of full window
-OOS_START       = "2026-03-06"   # first day of OOS holdout (last 60 calendar days)
-IN_SAMPLE_END   = "2026-03-05"   # last in-sample day (462 days)
+BACKTEST_START  = "2024-05-06"   # first day of full window
+BACKTEST_END    = "2026-05-05"   # last day with price data
+# Correct windows (brief F2, 2026-05-05):
+#   In-sample:  2024-05-06 → 2025-08-31  (~330 trading days)
+#   OOS:        2025-09-01 → 2026-02-10  (~110 trading days, last valid 60-td forward)
+#   No-forward: 2026-02-11 → 2026-05-05  (live signals only, no 60d forward available)
+IN_SAMPLE_START = "2024-05-06"
+IN_SAMPLE_END   = "2025-08-31"
+OOS_START       = "2025-09-01"
+OOS_END         = "2026-02-10"
 
 _SOMA_DB        = _DABEIBA_ROOT / "shared" / "soma" / "data" / "soma.db"
 _MIGRATIONS_DIR = _DABEIBA_ROOT / "shared" / "soma" / "migrations"
@@ -294,16 +300,36 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="SOMA-INTEL backtest replay engine (P5.3.b)"
     )
-    parser.add_argument("--run",      action="store_true", help="Run replay over in-sample window")
-    parser.add_argument("--oos",      action="store_true", help="Use OOS window instead of in-sample")
-    parser.add_argument("--migrate",  action="store_true", help="Apply migration 024 only")
-    parser.add_argument("--status",   action="store_true", help="Show run inventory")
-    parser.add_argument("--run-id",   default=None,        help="Override auto-generated run ID")
-    parser.add_argument("--no-strict",action="store_true", help="Skip no-look-ahead assertion")
-    parser.add_argument("--db",       default=str(_SOMA_DB), help="Path to soma.db")
+    parser.add_argument("--run",       action="store_true", help="Run replay (legacy flag, equivalent to --apply)")
+    parser.add_argument("--apply",     action="store_true", help="Run replay over the selected window")
+    parser.add_argument("--oos",       action="store_true", help="(Legacy) Use OOS window instead of in-sample")
+    parser.add_argument("--window",    choices=["in_sample", "oos", "both"], default=None,
+                        help="Window to run: in_sample | oos | both")
+    parser.add_argument("--start",     default=None, help="Override window start date (YYYY-MM-DD)")
+    parser.add_argument("--end",       default=None, help="Override window end date (YYYY-MM-DD)")
+    parser.add_argument("--migrate",   action="store_true", help="Apply migration 024 only")
+    parser.add_argument("--status",    action="store_true", help="Show run inventory")
+    parser.add_argument("--run-id",    default=None, help="Override auto-generated run ID")
+    parser.add_argument("--no-strict", action="store_true", help="Skip no-look-ahead assertion")
+    parser.add_argument("--purge-run", default=None, metavar="RUN_ID",
+                        help="Delete all rows for a given run_id from soma_intel_signal_backtest")
+    parser.add_argument("--db",        default=str(_SOMA_DB), help="Path to soma.db")
     args = parser.parse_args()
 
+    # Normalise: --run is an alias for --apply
+    if args.run:
+        args.apply = True
+
     with IntelStore(db_path=args.db) as store:
+
+        if args.purge_run:
+            deleted = store._c.execute(
+                "DELETE FROM soma_intel_signal_backtest WHERE backtest_run_id=?",
+                (args.purge_run,),
+            ).rowcount
+            store._c.commit()
+            print(f"Purged {deleted} rows for run_id={args.purge_run}")
+            return
 
         if args.migrate:
             _apply_migration_024(store)
@@ -313,13 +339,51 @@ def main() -> None:
             _show_status(store)
             return
 
+        if args.apply:
+            # Determine window(s) to run
+            windows_to_run = []
+            if args.window == "both":
+                windows_to_run = [
+                    ("in_sample", IN_SAMPLE_START, IN_SAMPLE_END),
+                    ("oos",       OOS_START,        OOS_END),
+                ]
+            elif args.window == "oos" or args.oos:
+                windows_to_run = [("oos", OOS_START, OOS_END)]
+            elif args.window == "in_sample" or (not args.window):
+                windows_to_run = [("in_sample", IN_SAMPLE_START, IN_SAMPLE_END)]
+
+            # Apply start/end overrides (only valid for single-window runs)
+            if (args.start or args.end) and len(windows_to_run) == 1:
+                w, s, e = windows_to_run[0]
+                windows_to_run = [(w, args.start or s, args.end or e)]
+            elif (args.start or args.end) and len(windows_to_run) > 1:
+                print("ERROR: --start/--end overrides cannot be used with --window both")
+                return
+
+            strict = not args.no_strict
+            all_stats = []
+            for window_name, start, end in windows_to_run:
+                run_id = args.run_id or _run_id_for(window_name, start, end)
+                log.info("Backtest run: %s", run_id)
+                log.info("Window: %s → %s (%s mode)", start, end, window_name)
+                stats = _replay_window(store=store, run_id=run_id,
+                                       start_date=start, end_date=end,
+                                       strict_mode=strict)
+                all_stats.append(stats)
+                print(f"\nRun {run_id}: signals={stats['signals_written']} "
+                      f"days={stats['days_covered']} "
+                      f"violations={stats['lookahead_violations']}")
+                print(f"  Next: python3 backtest_outcomes.py --score --run-id {run_id}")
+            return
+
         if args.run:
+            # Legacy path — should not reach here (args.run sets args.apply)
             if args.oos:
                 start = OOS_START
-                end   = BACKTEST_END
+                end   = OOS_END
                 window = "oos"
             else:
-                start = BACKTEST_START
+                start = IN_SAMPLE_START
                 end   = IN_SAMPLE_END
                 window = "in_sample"
 
