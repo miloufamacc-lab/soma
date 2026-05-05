@@ -2050,6 +2050,22 @@ class SomaBridge:
         self._maybe_commit()
         return cur.lastrowid
 
+    def execute_data_deletion(self, prospect_id: str, executed_date: str = None) -> int:
+        """Mark all consent records for a prospect as deletion executed (Law 25).
+
+        Sets deletion_requested=1 and deletion_executed_date on all records.
+        Returns count of rows updated.
+        """
+        today = executed_date or self._now()[:10]
+        cur = self.conn.execute(
+            "UPDATE raptor_consent_ledger "
+            "SET deletion_requested = 1, deletion_executed_date = ? "
+            "WHERE prospect_id = ?",
+            (today, prospect_id),
+        )
+        self._maybe_commit()
+        return cur.rowcount
+
     def get_fund_mer(self, ticker: str) -> dict | None:
         """Return fund MER record by ticker, or None."""
         row = self.conn.execute(
