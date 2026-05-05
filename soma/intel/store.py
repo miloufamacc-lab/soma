@@ -2107,3 +2107,124 @@ class IntelStore:
                 (ticker,),
             ).fetchall()
         return [dict(r) for r in rows]
+
+    # ── Price history (Migration 023 — backtest harness P5.3) ─────────────────
+
+    def upsert_price(
+        self,
+        ticker: str,
+        date:   str,
+        close:  float,
+        volume: Optional[float] = None,
+    ) -> None:
+        """
+        Insert or replace a daily closing price row.
+        Idempotent: if (ticker, date) already exists, it is replaced.
+        """
+        self._c.execute(
+            """
+            INSERT OR REPLACE INTO soma_intel_price_history (ticker, date, close, volume)
+            VALUES (?, ?, ?, ?)
+            """,
+            (ticker, date, close, volume),
+        )
+
+    def get_price_series(
+        self,
+        ticker:     str,
+        start_date: str,
+        end_date:   str,
+    ) -> list[dict]:
+        """
+        Return list of {date, close, volume} dicts for ticker between start_date
+        and end_date inclusive, ordered by date ascending.
+        Returns [] if no data.
+        """
+        rows = self._c.execute(
+            """
+            SELECT date, close, volume
+            FROM soma_intel_price_history
+            WHERE ticker=? AND date >= ? AND date <= ?
+            ORDER BY date ASC
+            """,
+            (ticker, start_date, end_date),
+        ).fetchall()
+        return [dict(r) for r in rows]
+
+    def get_forward_return(
+        self,
+        ticker:        str,
+        signal_date:   str,
+        horizon_days:  int,
+    ) -> Optional[float]:
+        """
+        Compute the forward return for ticker from signal_date over horizon_days
+        calendar days (not trading days — uses nearest available close on or
+        after the target date).
+
+        Returns (forward_close / signal_close - 1) as a decimal, or None if
+        either the signal_date close or the forward close is missing.
+
+        Note: horizon_days here is a calendar-day offset. For a 60-trading-day
+        backtest, pass ~84 calendar days (60 * 252/365 ≈ 84). The backtest
+        harness uses the spec's 60 trading-day convention: caller passes
+        horizon_days=84 or uses get_forward_return_trading() which counts
+        actual trading days from the price series.
+        """
+        from datetime import date as _date, timedelta
+
+        # Signal-date close
+        signal_row = self._c.execute(
+            """
+            SELECT close FROM soma_intel_price_history
+            WHERE ticker=? AND date=?
+            """,
+            (ticker, signal_date),
+        ).fetchone()
+        if signal_row is None:
+            return None
+        signal_close = signal_row["close"]
+
+        # Forward close: nearest available close on or after signal_date + horizon
+        target_dt  = _date.fromisoformat(signal_date) + timedelta(days=horizon_days)
+        target_str = target_dt.isoformat()
+
+        fwd_row = self._c.execute(
+            """
+            SELECT close FROM soma_intel_price_history
+            WHERE ticker=? AND date >= ?
+            ORDER BY date ASC LIMIT 1
+            """,
+            (ticker, target_str),
+        ).fetchone()
+        if fwd_row is None:
+            return None
+
+        return (fwd_row["close"] / signal_close) - 1.0
+
+    def count_price_history_rows(self, ticker: Optional[str] = None) -> int:
+        """Count price history rows, optionally filtered to a single ticker."""
+        if ticker:
+            return self._c.execute(
+                "SELECT COUNT(*) FROM soma_intel_price_history WHERE ticker=?",
+                (ticker,),
+            ).fetchone()[0]
+        return self._c.execute(
+            "SELECT COUNT(*) FROM soma_intel_price_history"
+        ).fetchone()[0]
+
+    def count_price_history_tickers(self) -> int:
+        """Count distinct tickers with at least one price row."""
+        return self._c.execute(
+            "SELECT COUNT(DISTINCT ticker) FROM soma_intel_price_history"
+        ).fetchone()[0]
+
+    def get_price_date_range(self, ticker: str) -> Optional[tuple[str, str]]:
+        """Return (min_date, max_date) for a ticker, or None if no data."""
+        row = self._c.execute(
+            "SELECT MIN(date), MAX(date) FROM soma_intel_price_history WHERE ticker=?",
+            (ticker,),
+        ).fetchone()
+        if row[0] is None:
+            return None
+        return (row[0], row[1])
