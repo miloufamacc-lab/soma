@@ -76,6 +76,10 @@ GRACE_MULTIPLIER   = 1.0    # reconfirmed signals get +1× half_life grace perio
 BELIEF_PRUNE_DAYS  = 90     # delete superseded beliefs older than this many days
 CONVERGENCE_TAG    = "convergence"   # substring in notes → skip reconfirm (Pass 3)
 
+# §C.3 half-life boost on reconfirmation (locked; do NOT change without OPUS_BRIEF)
+RECONFIRM_BOOST_FACTOR = 1.3      # multiply half_life by this on each reconfirmation
+RECONFIRM_BOOST_MAX    = 1.3 ** 3 # cap: max total factor = 1.3^3 ≈ 2.197 (3 boosts)
+
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Pass 1 — Expiry
@@ -194,11 +198,28 @@ def run_pass_3(
                     f"  prev_date={r['date']}"
                 )
             if not dry_run:
-                # _upsert_signal checks for today's propagator row and inserts if missing,
-                # or updates reconfirmation_count if already present.
-                # Since this signal's date != today, it will insert a fresh today row.
+                # _upsert_signal inserts a fresh today row (date != today → new row)
+                # and increments reconfirmation_count on the old signal via update_signal.
+                # After the count is incremented, we boost the half-life (§C.3).
                 _upsert_signal(store, ts)
-                # Also expire the old (stale-date) row
+
+                # §C.3: half-life × 1.3 per consecutive reconfirmation, cap at 3 boosts.
+                # The new signal row for today was just inserted; boost its half_life.
+                new_signal_row = store.get_signal(ticker=ticker, date=TODAY, notes_prefix=PROPAGATOR_TAG)
+                if new_signal_row is not None:
+                    new_hl = store.boost_signal_half_life(
+                        signal_id  = new_signal_row["signal_id"],
+                        factor     = RECONFIRM_BOOST_FACTOR,
+                        max_factor = RECONFIRM_BOOST_MAX,
+                    )
+                    if verbose:
+                        print(
+                            f"  [P3:hl-boost] {ticker:<8}"
+                            f"  reconfirm_count={new_signal_row.get('reconfirmation_count',0)}"
+                            f"  new_hl={new_hl}d"
+                        )
+
+                # Expire the old (stale-date) row
                 store.expire_signal(r["signal_id"])
             stats["reconfirmed"] += 1
 

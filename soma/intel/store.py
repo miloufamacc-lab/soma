@@ -1193,6 +1193,59 @@ class IntelStore:
             (signal_id,),
         )
 
+    def boost_signal_half_life(
+        self,
+        signal_id:  int,
+        factor:     float,
+        max_factor: float,
+    ) -> int:
+        """
+        Multiply the signal's half_life_days by `factor`, capped at max_factor
+        total boosts (derived from `max_factor` / `factor` exponent count).
+
+        Per §C.3: factor=1.3, max_factor=1.3**3 — cap is 3 reconfirmations.
+
+        MUST be called immediately after update_signal() increments
+        reconfirmation_count, so reconfirmation_count reflects the boost number.
+
+        Algorithm:
+          - max_boosts = round(log(max_factor) / log(factor))   [= 3]
+          - If reconfirmation_count > max_boosts → already capped, return unchanged.
+          - Else → new_hl = round(current_hl * factor), write back.
+
+        Avoids floating-point base-reconstruction (dividing rounded value by
+        factor would accumulate error over multiple boosts).
+
+        Returns the new half_life_days value (unchanged if capped).
+        """
+        import math as _math
+
+        row = self._c.execute(
+            "SELECT half_life_days, reconfirmation_count FROM soma_intel_signal "
+            "WHERE signal_id=?",
+            (signal_id,),
+        ).fetchone()
+        if row is None:
+            raise KeyError(f"signal_id {signal_id} not found")
+
+        current_hl: int   = row["half_life_days"]
+        reconfirm_count: int = row["reconfirmation_count"]
+
+        # Derive how many boosts are allowed from the max_factor parameter.
+        # For factor=1.3, max_factor=1.3^3: max_boosts = 3.
+        max_boosts = max(1, round(_math.log(max_factor) / _math.log(factor)))
+
+        if reconfirm_count > max_boosts:
+            # Already at or past the cap — no further increase.
+            return current_hl
+
+        new_hl = round(current_hl * factor)
+        self._c.execute(
+            "UPDATE soma_intel_signal SET half_life_days=? WHERE signal_id=?",
+            (new_hl, signal_id),
+        )
+        return new_hl
+
     def count_signals_by_status(self, status: str) -> int:
         """Count signals with a given status ('active'|'reconfirmed'|'expired')."""
         return self._c.execute(
