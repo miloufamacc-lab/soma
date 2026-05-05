@@ -811,6 +811,18 @@ def step_5b_raptor():
         from soma.raptor_onboarding import RaptorOnboarding
 
         with SomaBridge() as db:
+            from soma.raptor_health import RaptorHealth
+            health = RaptorHealth(db).check()
+            if health["status"] != "OK":
+                h_color = RED if health["status"] == "ERROR" else YELLOW
+                print(f"  {h_color}[HEALTH {health['status']}]{RESET}", end="")
+                issues = [
+                    n.replace("_", " ")
+                    for n, c in health["checks"].items()
+                    if c["status"] != "OK"
+                ]
+                print(f"  {', '.join(issues)}")
+
             engine     = RaptorEngine(db)
             onboarding = RaptorOnboarding(db)
             status     = engine.raptor_status()
