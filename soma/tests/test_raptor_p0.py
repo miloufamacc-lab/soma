@@ -2,23 +2,30 @@
 Unit tests — RAPTOR Phase 0: SomaBridge RAPTOR methods
 Tests: prospects, pipeline transitions, stage gates, touchpoints,
        consent ledger, COI network, referrals, dashboard summary.
+26 tests total.
 """
-import sys, os, uuid, tempfile, pytest
-sys.path.insert(0, "/sessions/cool-clever-gates/mnt/DABEIBA/shared/soma")
-
-from soma_bridge import SomaBridge
+import sys, os, uuid, pytest
 from pathlib import Path
 
-MIGRATION_12 = Path("/sessions/cool-clever-gates/mnt/DABEIBA/shared/soma/migrations/012_raptor_core.sql")
+_DABEIBA_ROOT = Path(__file__).resolve().parent.parent.parent.parent
+for _p in [str(_DABEIBA_ROOT), str(_DABEIBA_ROOT / "shared")]:
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+from soma.soma_bridge import SomaBridge
+
+_MIGRATIONS = _DABEIBA_ROOT / "shared" / "soma" / "migrations"
+MIGRATION_12 = _MIGRATIONS / "012_raptor_core.sql"
+MIGRATION_17 = _MIGRATIONS / "017_consent_idempotency.sql"       # UNIQUE index for write_consent UPSERT
+MIGRATION_18 = _MIGRATIONS / "018_pipeline_trigger_touchpoint.sql"  # trigger_touchpoint_id column
 
 
 @pytest.fixture
 def db(tmp_path):
-    """Isolated in-memory-style test DB with only RAPTOR migration applied."""
+    """Isolated test DB with RAPTOR schema (migrations 012 + 017 + 018)."""
     db_file = str(tmp_path / "test_raptor.db")
     os.environ["SOMA_DB_PATH"] = db_file
 
-    # Bootstrap schema_version table (normally done by migration 001)
     import sqlite3
     conn = sqlite3.connect(db_file)
     conn.execute("""
@@ -28,9 +35,11 @@ def db(tmp_path):
             applied_at TEXT
         )
     """)
-    conn.execute("INSERT INTO schema_version (version, applied_at) VALUES (7, datetime('now'))")
+    conn.execute("INSERT INTO schema_version (version, applied_at) VALUES (11, datetime('now'))")
     conn.commit()
     conn.executescript(MIGRATION_12.read_text())
+    conn.executescript(MIGRATION_17.read_text())
+    conn.executescript(MIGRATION_18.read_text())
     conn.close()
 
     bridge = SomaBridge(db_path=db_file)
@@ -153,11 +162,11 @@ def test_gate_onboarding_allowed_with_signed_agreement(db):
     db.write_coi(coi_id, "Bob Notaire", referral_agreement_signed=True)
     db.write_referral(coi_id, pid, "2026-01-15")
     db.write_consent(pid, "casl_express", "2026-01-01")
-    db.write_touchpoint(pid, "2026-02-01", "email", "outbound",
-                        compliance_approved=True, approval_principal="Compliance")
+    tp_id = db.write_touchpoint(pid, "2026-02-01", "email", "outbound",
+                                compliance_approved=True, approval_principal="Compliance")
     db.write_pipeline_transition(pid, "contacted")
     db.write_pipeline_transition(pid, "meeting_set")
-    db.write_pipeline_transition(pid, "proposal_sent")
+    db.write_pipeline_transition(pid, "proposal_sent", trigger_touchpoint_id=tp_id)
     log_id = db.write_pipeline_transition(pid, "onboarding")
     assert log_id > 0
     assert db.get_prospect(pid)["pipeline_stage"] == "onboarding"
@@ -180,11 +189,11 @@ def test_gate_proposal_allowed_with_approved_touchpoint(db):
     db.write_prospect(pid)
     db.write_consent(pid, "casl_express", "2026-01-01")
     db.write_pipeline_transition(pid, "contacted")
-    db.write_touchpoint(pid, "2026-02-01", "email", "outbound",
-                        subject="Initial deck", compliance_approved=True,
-                        approval_principal="Compliance Officer")
+    tp_id = db.write_touchpoint(pid, "2026-02-01", "email", "outbound",
+                                subject="Initial deck", compliance_approved=True,
+                                approval_principal="Compliance Officer")
     db.write_pipeline_transition(pid, "meeting_set")
-    log_id = db.write_pipeline_transition(pid, "proposal_sent")
+    log_id = db.write_pipeline_transition(pid, "proposal_sent", trigger_touchpoint_id=tp_id)
     assert log_id > 0
 
 
@@ -206,7 +215,7 @@ def test_write_and_get_touchpoints(db):
 def test_casl_implied_auto_expiry(db):
     pid = new_id()
     db.write_prospect(pid)
-    consent_id = db.write_consent(pid, "casl_implied", "2025-01-01")
+    db.write_consent(pid, "casl_implied", "2025-01-01")
     rows = db.get_consent_status(pid)
     assert rows["consents"][0]["expiry_date"] == "2027-01-01"
 
@@ -237,7 +246,6 @@ def test_get_consent_status_no_active(db):
 def test_get_expiring_consents(db):
     pid = new_id()
     db.write_prospect(pid)
-    # Expires in 10 days — should appear in 30-day window
     from datetime import date, timedelta
     expiry = (date.today() + timedelta(days=10)).isoformat()
     db.write_consent(pid, "casl_implied", "2024-01-01", expiry_date=expiry)
@@ -248,7 +256,6 @@ def test_get_expiring_consents(db):
 def test_get_expiring_consents_excludes_far_future(db):
     pid = new_id()
     db.write_prospect(pid)
-    # Expires in 90 days — should NOT appear in 30-day window
     from datetime import date, timedelta
     expiry = (date.today() + timedelta(days=90)).isoformat()
     db.write_consent(pid, "casl_implied", "2024-01-01", expiry_date=expiry)
