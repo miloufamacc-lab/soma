@@ -2017,6 +2017,53 @@ class SomaBridge:
             "referral_outcomes": referral_outcomes,
         }
 
+    # ── Fund MER reference (CRM3 — Phase 4) ──────────────────────
+
+    def write_fund_mer(
+        self, fund_name: str, mer: float, *,
+        ticker: str = None, ter: float = None, fund_family: str = None,
+        fund_type: str = "mutual_fund", currency: str = "CAD", notes: str = None,
+    ) -> int:
+        """Insert or replace a fund MER record. Returns fund_id.
+
+        When ticker is provided: upserts on ticker (ON CONFLICT DO UPDATE).
+        When ticker is None: plain insert (no dedup — each call adds a row).
+        """
+        now = self._now()
+        params = (ticker, fund_name, mer, ter, fund_family, fund_type, currency, notes, now)
+        if ticker is not None:
+            sql = """INSERT INTO raptor_fund_mers
+                       (ticker, fund_name, mer, ter, fund_family, fund_type,
+                        currency, notes, write_timestamp)
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                       ON CONFLICT(ticker) DO UPDATE SET
+                         fund_name=excluded.fund_name, mer=excluded.mer,
+                         ter=excluded.ter, fund_family=excluded.fund_family,
+                         fund_type=excluded.fund_type, currency=excluded.currency,
+                         notes=excluded.notes, write_timestamp=excluded.write_timestamp"""
+        else:
+            sql = """INSERT INTO raptor_fund_mers
+                       (ticker, fund_name, mer, ter, fund_family, fund_type,
+                        currency, notes, write_timestamp)
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        cur = self.conn.execute(sql, params)
+        self._maybe_commit()
+        return cur.lastrowid
+
+    def get_fund_mer(self, ticker: str) -> dict | None:
+        """Return fund MER record by ticker, or None."""
+        row = self.conn.execute(
+            "SELECT * FROM raptor_fund_mers WHERE ticker = ?", (ticker,)
+        ).fetchone()
+        return dict(row) if row else None
+
+    def get_all_fund_mers(self) -> list[dict]:
+        """Return all fund MER records ordered by fund_family, fund_name."""
+        rows = self.conn.execute(
+            "SELECT * FROM raptor_fund_mers ORDER BY fund_family ASC, fund_name ASC"
+        ).fetchall()
+        return [dict(r) for r in rows]
+
     # ── soma_events pub/sub (Phase 6.1) ───────────────────────────
 
     def publish_event(
