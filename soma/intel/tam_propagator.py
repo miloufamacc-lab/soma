@@ -9,8 +9,8 @@ Algorithm:
   For each ticker with ≥1 belongs_to_platform edge:
     1. Look up each platform's position from soma_intel_platform
     2. Find the platform with the highest position multiplier (best runway)
-    3. tam_score = signal_score × best_multiplier × (1 + 0.15 × extra_platforms)
-       extra_platforms = platform_count − 1 (convergence bonus)
+    3. tam_score = signal_score × best_multiplier × (1 + 0.10 × extra_platforms)
+       extra_platforms = platform_count − 1 (convergence bonus; 0.10 per P5.1 — was 0.15)
     4. Write soma_intel_belief: predicate='tam_score', supersedes prior
 
 Position multipliers (reflect TAM growth optionality) — Option B, approved 2026-05-05:
@@ -63,7 +63,7 @@ POSITION_MULTIPLIERS: dict[str, float] = {
     "saturation":   0.8,
 }
 DEFAULT_MULTIPLIER  = 1.0
-CONVERGENCE_BONUS   = 0.15   # +15% per additional platform beyond the first
+CONVERGENCE_BONUS   = 0.10   # +10% per additional platform beyond the first (narrowed from 0.15 per P5.1 / 2026-05-04 OPUS decision)
 MIN_SIGNAL_SCORE    = 0.01   # skip tickers with no meaningful signal belief
 
 
