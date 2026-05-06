@@ -444,12 +444,29 @@ def extract_grok_flags(
     # ── Build output payload ────────────────────────────────────────────────────
     # generated_at + source are required by grok_adapter.validate_grok.
     # Extra fields (run_date, extracted_ts, source_path) are metadata only.
+    #
+    # source_path is stored as a RELATIVE path from DABEIBA_ROOT so it is
+    # portable across sandbox sessions and users.  See feedback-cowork-sandbox-
+    # path-home.md — absolute paths using Path.home() or sandbox /sessions/…
+    # IDs break the moment a new session starts.
+    try:
+        source_path_value = str(html_path.relative_to(_DABEIBA_ROOT))
+    except ValueError:
+        # Input path is outside DABEIBA_ROOT (e.g. tmp_path in tests).
+        # Fall back to filename only and warn so it's visible in logs.
+        source_path_value = html_path.name
+        log.warning(
+            "grok_flag_extractor: source HTML is outside DABEIBA_ROOT (%s); "
+            "source_path stored as filename only: %r",
+            _DABEIBA_ROOT, source_path_value,
+        )
+
     payload = {
         "generated_at": run_ts,
         "source":        "grok_deepsearch",
         "run_date":      run_date,
         "extracted_ts":  extracted_ts,
-        "source_path":   str(html_path),
+        "source_path":   source_path_value,
         "flags":         all_flags,
     }
 

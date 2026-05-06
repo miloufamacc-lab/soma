@@ -1,7 +1,7 @@
 """
 Tests for SOMA-INTEL Phase 7.I1W-G — Grok Flag Extractor
 
-Covers all 9 required test cases:
+Covers all 10 required test cases:
   1. test_extracts_known_tickers_from_fixture_html
   2. test_direction_classification
   3. test_confidence_calibration
@@ -11,6 +11,7 @@ Covers all 9 required test cases:
   7. test_overwrite_flag_works
   8. test_missing_input_html_clean_exit
   9. test_output_schema_matches_grok_adapter_expectation
+ 10. test_source_path_is_relative_not_sandbox_absolute
 """
 
 from __future__ import annotations
@@ -218,3 +219,49 @@ def test_output_schema_matches_grok_adapter_expectation(tmp_path):
     )
     assert result["flags_valid"] >= 1
     assert result["errors"] == []
+
+
+# ────────────────────────────────────────────────────────────────────────────────
+# 10. source_path is portable — never a sandbox absolute or user-specific path
+# ────────────────────────────────────────────────────────────────────────────────
+def test_source_path_is_relative_not_sandbox_absolute(tmp_path):
+    """Regression test: source_path must be portable across sandbox sessions.
+
+    When the input HTML is inside DABEIBA_ROOT the path must be relative
+    (e.g. 'oracle/output/muskonomy_sitrep_2026-05-05.html').
+
+    When the input HTML is outside DABEIBA_ROOT (e.g. tmp_path in tests)
+    the path must fall back to just the filename — still no sandbox prefix.
+
+    See feedback-cowork-sandbox-path-home.md / tasks/lessons.md for the lesson
+    behind this rule.
+    """
+    out = _run_extractor(str(_EXCERPT_HTML), "2026-05-05", tmp_path)
+    d = json.loads(out.read_text())
+    source_path = d["source_path"]
+
+    # Must never be a raw sandbox session path
+    assert not source_path.startswith("/sessions/"), (
+        f"source_path must not be a sandbox-specific absolute path: {source_path!r}"
+    )
+    # Must never be a user-specific home directory path
+    assert not source_path.startswith("/Users/"), (
+        f"source_path must not be a user-specific absolute path: {source_path!r}"
+    )
+    assert not source_path.startswith("/tmp/"), (
+        f"source_path must not be /tmp absolute path: {source_path!r}"
+    )
+
+    # For inputs outside DABEIBA_ROOT (tmp_path), fallback is filename only —
+    # must not contain any directory separators beyond a single filename.
+    # For inputs inside DABEIBA_ROOT, must start with oracle/output/ or similar.
+    is_relative_under_dabeiba = source_path.startswith("oracle/") or \
+                                source_path.startswith("shared/") or \
+                                source_path.startswith("cipher/") or \
+                                source_path.startswith("mantis/") or \
+                                source_path.startswith("raptor/")
+    is_filename_fallback = Path(source_path).name == source_path  # no dir separators
+
+    assert is_relative_under_dabeiba or is_filename_fallback, (
+        f"source_path must be relative-to-DABEIBA_ROOT or a bare filename, got: {source_path!r}"
+    )
