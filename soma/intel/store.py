@@ -299,6 +299,8 @@ class IntelStore:
             _DDL_CAPABILITY,
         ):
             self._c.executescript(ddl)
+        # Phase 7.I1.2 — cross_ai_flag table (instance attribute DDL, not class-level)
+        self._c.executescript(self._DDL_CROSS_AI_FLAG)
         self._c.commit()
         log.debug("soma_intel tables initialized (dev/test mode).")
 
@@ -1152,6 +1154,7 @@ class IntelStore:
             "soma_intel_audit_log",
             "soma_intel_capability",
             "soma_intel_capability_history",
+            "soma_intel_cross_ai_flag",      # Phase 7.I1.2
         }
         if table_name not in _ALLOWED:
             raise ValueError(
@@ -1363,7 +1366,19 @@ class IntelStore:
         Return edges (src→ticker or ticker→dst) with ts between since_ts and
         as_of_date.  Used by confirm.py for corroboration and exclusion checks.
         Returns dicts with keys: edge_id, source_type, edge_type, confidence, ts.
+
+        Note: as_of_date may be YYYY-MM-DD or a full ISO timestamp. When it is
+        date-only, we pad to "T23:59:59" so that edges stored with full ISO
+        timestamps (e.g. "2026-05-05T07:00:00Z") are correctly included.
+        Without padding, SQLite string comparison "2026-05-05T07:00:00Z" <= "2026-05-05"
+        evaluates to FALSE, silently dropping same-day edges.
         """
+        # Pad date-only as_of_date to include all edges on that day.
+        as_of_upper = (
+            as_of_date
+            if "T" in as_of_date
+            else as_of_date + "T23:59:59"
+        )
         rows = self._c.execute(
             """
             SELECT e.edge_id, e.source_type, e.edge_type,
@@ -1374,7 +1389,7 @@ class IntelStore:
               AND e.ts <= ?
             ORDER BY e.ts DESC
             """,
-            (f"co_{ticker}", f"co_{ticker}", since_ts, as_of_date),
+            (f"co_{ticker}", f"co_{ticker}", since_ts, as_of_upper),
         ).fetchall()
         return [dict(r) for r in rows]
 
@@ -2686,3 +2701,285 @@ class IntelStore:
             d["depends_on"] = json.loads(d["depends_on"] or "[]")
             result.append(d)
         return result
+
+    # ── Cross-AI corroboration flags (Phase 7.I1) ─────────────────────────────
+
+    # DDL used by initialize_tables() for test/dev bootstrap only.
+    # Production uses migrations/030_cross_ai_flag.sql.
+    _DDL_CROSS_AI_FLAG = """
+    CREATE TABLE IF NOT EXISTS soma_intel_cross_ai_flag (
+      flag_id        INTEGER PRIMARY KEY AUTOINCREMENT,
+      ai_source      TEXT    NOT NULL CHECK(ai_source IN ('grok','gemini','phi4')),
+      ticker         TEXT    NOT NULL,
+      signal_type    TEXT    NOT NULL,
+      direction      TEXT    NOT NULL CHECK(direction IN ('bullish','bearish','neutral')),
+      confidence     REAL    NOT NULL CHECK(confidence BETWEEN 0 AND 1),
+      ts             TEXT    NOT NULL,
+      evidence_text  TEXT,
+      source_path    TEXT    NOT NULL,
+      ingested_ts    TEXT    NOT NULL DEFAULT (datetime('now')),
+      half_life_days INTEGER NOT NULL DEFAULT 14,
+      superseded_by  INTEGER,
+      FOREIGN KEY (superseded_by) REFERENCES soma_intel_cross_ai_flag(flag_id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_caf_ticker_ts
+      ON soma_intel_cross_ai_flag(ticker, ts DESC);
+    CREATE INDEX IF NOT EXISTS idx_caf_source_ts
+      ON soma_intel_cross_ai_flag(ai_source, ts DESC);
+    CREATE INDEX IF NOT EXISTS idx_caf_active
+      ON soma_intel_cross_ai_flag(ticker, signal_type, superseded_by)
+      WHERE superseded_by IS NULL;
+    """
+
+    _VALID_AI_SOURCES: frozenset[str] = frozenset({"grok", "gemini", "phi4"})
+    _VALID_DIRECTIONS: frozenset[str] = frozenset({"bullish", "bearish", "neutral"})
+
+    def insert_cross_ai_flag(
+        self,
+        ai_source:      str,
+        ticker:         str,
+        signal_type:    str,
+        direction:      str,
+        confidence:     float,
+        ts:             str,
+        evidence_text:  Optional[str],
+        source_path:    str,
+        half_life_days: int = 14,
+    ) -> int:
+        """
+        Insert a cross-AI corroboration flag and project it into soma_intel_edge.
+
+        Dual-write strategy (per OPUS_BRIEF_PHASE7_I1_corroboration_count_hook.md):
+          1. Writes to soma_intel_cross_ai_flag as the canonical flag record.
+          2. Projects a sentinel edge into soma_intel_edge with
+             source_type = ai_source + '_insight' (e.g. 'grok_insight') so the
+             existing count_corroborations() gate in confirm.py counts it via the
+             _CORROBORATION_SOURCES whitelist — zero changes to gate logic.
+
+        Idempotency: if a flag with the same (ai_source, ticker, signal_type, ts)
+        already exists (superseded_by IS NULL), skips insertion and returns the
+        existing flag_id.
+
+        Args:
+            ai_source:      'grok' | 'gemini' | 'phi4'
+            ticker:         Ticker symbol (e.g. 'TSLA')
+            signal_type:    Anomaly/horizon type, free-form string in v1
+            direction:      'bullish' | 'bearish' | 'neutral'
+            confidence:     [0, 1]
+            ts:             ISO 8601 when AI produced the flag
+            evidence_text:  <= 500 chars supporting quote / summary
+            source_path:    File path or URI of source AI output
+            half_life_days: Decay half-life (default 14 — AI flags age fast)
+
+        Returns:
+            Tuple (flag_id: int, is_new: bool).
+            is_new=True  → flag was newly inserted.
+            is_new=False → duplicate found; existing flag_id returned, no write.
+
+        Raises:
+            ValueError: if ai_source, direction, or confidence is invalid.
+        """
+        if ai_source not in self._VALID_AI_SOURCES:
+            raise ValueError(
+                f"ai_source must be one of {sorted(self._VALID_AI_SOURCES)}, "
+                f"got {ai_source!r}"
+            )
+        if direction not in self._VALID_DIRECTIONS:
+            raise ValueError(
+                f"direction must be one of {sorted(self._VALID_DIRECTIONS)}, "
+                f"got {direction!r}"
+            )
+        if not (0.0 <= confidence <= 1.0):
+            raise ValueError(
+                f"confidence must be in [0.0, 1.0], got {confidence!r}"
+            )
+        if evidence_text and len(evidence_text) > 500:
+            evidence_text = evidence_text[:497] + "..."
+
+        # ── Idempotency check ─────────────────────────────────────────────────
+        existing = self._c.execute(
+            """
+            SELECT flag_id FROM soma_intel_cross_ai_flag
+            WHERE ai_source=? AND ticker=? AND signal_type=? AND ts=?
+              AND superseded_by IS NULL
+            """,
+            (ai_source, ticker, signal_type, ts),
+        ).fetchone()
+        if existing:
+            log.debug(
+                "insert_cross_ai_flag: duplicate skipped "
+                "(ai_source=%s ticker=%s signal_type=%s ts=%s)",
+                ai_source, ticker, signal_type, ts,
+            )
+            return existing["flag_id"], False   # (flag_id, is_new)
+
+        # ── 1. Write canonical flag record ────────────────────────────────────
+        now = self._now_iso()
+        cur = self._c.execute(
+            """
+            INSERT INTO soma_intel_cross_ai_flag
+              (ai_source, ticker, signal_type, direction, confidence, ts,
+               evidence_text, source_path, ingested_ts, half_life_days)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (ai_source, ticker, signal_type, direction, confidence, ts,
+             evidence_text, source_path, now, half_life_days),
+        )
+        flag_id: int = cur.lastrowid  # type: ignore[assignment]
+
+        # ── 2. Project sentinel edge into soma_intel_edge ────────────────────
+        # edge_type: expresses_sentiment (semantically correct — AI flag expresses
+        #             a sentiment direction on a company node)
+        # source_type: ai_source + '_insight' (e.g. 'grok_insight')
+        #              — already in _CORROBORATION_SOURCES whitelist in confirm.py
+        # source_id:  'cross_ai_flag:<flag_id>' for traceability
+        # weight:     confidence of the flag
+        # half_life:  same as flag (14d default)
+        source_type = f"{ai_source}_insight"
+        source_id   = f"cross_ai_flag:{flag_id}"
+        company_node = f"co_{ticker}"
+
+        # Use a sentinel theme node as dst to satisfy the FK on soma_intel_node.
+        # The node is upserted here (idempotent) so we don't break FK constraints.
+        sentinel_node_id = f"th_cross_ai_{signal_type.lower().replace(' ', '_')}"
+        self._c.execute(
+            """
+            INSERT OR IGNORE INTO soma_intel_node
+              (node_id, node_type, name, aliases, metadata, created_ts, last_seen_ts)
+            VALUES (?, 'theme', ?, '[]', '{}', ?, ?)
+            """,
+            (sentinel_node_id,
+             f"Cross-AI signal: {signal_type}",
+             now, now),
+        )
+
+        # Upsert company node (idempotent) in case ticker is not yet in graph.
+        self._c.execute(
+            """
+            INSERT OR IGNORE INTO soma_intel_node
+              (node_id, node_type, name, aliases, metadata, created_ts, last_seen_ts)
+            VALUES (?, 'company', ?, '[]', '{}', ?, ?)
+            """,
+            (company_node, ticker, now, now),
+        )
+
+        self._c.execute(
+            """
+            INSERT INTO soma_intel_edge
+              (src_node_id, dst_node_id, edge_type, weight, confidence, ts,
+               half_life_days, source_id, source_type, evidence_text,
+               audit_status, superseded_by)
+            VALUES (?, ?, 'expresses_sentiment', ?, ?, ?, ?, ?, ?, ?, 'unaudited', NULL)
+            """,
+            (
+                company_node, sentinel_node_id,
+                confidence,          # weight = confidence
+                confidence,
+                ts,
+                half_life_days,
+                source_id,
+                source_type,
+                evidence_text,
+            ),
+        )
+
+        self._c.commit()
+        log.debug(
+            "insert_cross_ai_flag: flag_id=%d ai=%s ticker=%s signal=%s ts=%s",
+            flag_id, ai_source, ticker, signal_type, ts,
+        )
+        return flag_id, True   # (flag_id, is_new)
+
+    def get_active_cross_ai_flags(
+        self,
+        ticker:      str,
+        signal_type: str,
+        as_of_date:  str,
+    ) -> list[dict]:
+        """
+        Return active cross-AI flags for (ticker, signal_type) whose decay factor
+        is >= 0.05 relative to as_of_date.
+
+        decay_factor = 0.5 ^ (days_since_ts / half_life_days)
+        Threshold 0.05 matches the soma_intel_edge prune policy (§A.2).
+
+        Args:
+            ticker:      Ticker symbol.
+            signal_type: Signal/anomaly type string.
+            as_of_date:  ISO YYYY-MM-DD cut-off date.
+
+        Returns:
+            List of dicts: flag_id, ai_source, ticker, signal_type, direction,
+            confidence, ts, evidence_text, source_path, half_life_days,
+            decay_factor (computed).
+        """
+        import math as _math
+        from datetime import date as _date
+
+        # Pad date-only as_of_date so ISO timestamp comparison works:
+        # "2026-05-05T07:00:00Z" <= "2026-05-05" is FALSE in SQLite string order.
+        # "2026-05-05T07:00:00Z" <= "2026-05-05T23:59:59" is TRUE.
+        as_of_upper = (
+            as_of_date
+            if "T" in as_of_date
+            else as_of_date + "T23:59:59"
+        )
+
+        rows = self._c.execute(
+            """
+            SELECT flag_id, ai_source, ticker, signal_type, direction, confidence,
+                   ts, evidence_text, source_path, half_life_days
+            FROM soma_intel_cross_ai_flag
+            WHERE ticker=? AND signal_type=? AND superseded_by IS NULL
+              AND ts <= ?
+            ORDER BY ts DESC
+            """,
+            (ticker, signal_type, as_of_upper),
+        ).fetchall()
+
+        try:
+            as_of = _date.fromisoformat(as_of_date)
+        except ValueError:
+            as_of = _date.today()
+
+        result = []
+        for r in rows:
+            try:
+                flag_ts_date = _date.fromisoformat(r["ts"][:10])
+                days_since = (as_of - flag_ts_date).days
+            except (ValueError, TypeError):
+                days_since = 0
+            hl = r["half_life_days"] or 14
+            decay = 0.5 ** (days_since / hl)
+            if decay >= 0.05:
+                d = dict(r)
+                d["decay_factor"] = round(decay, 6)
+                result.append(d)
+
+        return result
+
+    def supersede_cross_ai_flag(
+        self,
+        flag_id:           int,
+        superseding_flag_id: int,
+    ) -> None:
+        """
+        Mark a cross-AI flag as superseded by a newer one.
+
+        Sets superseded_by = superseding_flag_id on the old flag row.
+        The corresponding soma_intel_edge row is NOT automatically superseded —
+        it will decay naturally and be pruned by soma_vacuum_intel.py.
+
+        Args:
+            flag_id:             ID of the flag being superseded.
+            superseding_flag_id: ID of the newer flag that supersedes it.
+        """
+        self._c.execute(
+            "UPDATE soma_intel_cross_ai_flag SET superseded_by=? WHERE flag_id=?",
+            (superseding_flag_id, flag_id),
+        )
+        self._c.commit()
+        log.debug(
+            "supersede_cross_ai_flag: flag_id=%d superseded_by=%d",
+            flag_id, superseding_flag_id,
+        )
