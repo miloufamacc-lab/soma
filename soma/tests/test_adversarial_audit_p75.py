@@ -578,3 +578,92 @@ def test_build_refutation_prompt_fields():
     assert "Tesla FSD is an AI platform" in prompt
     assert "0.9" in prompt
     assert "adversarial auditor" in prompt.lower()
+
+
+# ── K5T.2 retune tests: provenance edge type filter ────────────────────────────
+
+def test_sample_excludes_mentioned_in(tmp_path):
+    """
+    sample_high_confidence_edges (default exclude_edge_types) must NOT return
+    mentioned_in edges, even when they have confidence >= 0.85.
+
+    Rationale: mentioned_in edges are provenance records (§A.2, ∞ half-life).
+    Their evidence IS the claim — adversarial auditing them wastes API spend
+    without surfacing any falsifiable content.
+    """
+    store = _make_store(tmp_path)
+    _seed_nodes(store)
+
+    # Insert a mentioned_in edge with high confidence
+    store.upsert_node("wiki_tsla_val", "article", "TSLA Valuation Article")
+    store.upsert_edge(
+        src="co_TSLA",
+        dst="wiki_tsla_val",
+        edge_type="mentioned_in",
+        confidence=0.95,           # well above the 0.85 threshold
+        source_id="wiki/tsla-valuation.md",
+        evidence="co_TSLA is mentioned in wiki:compiled/finance/companies/tsla-valuation.md",
+        source_type="wiki",
+        audit_status="unaudited",
+    )
+    # Also insert a non-provenance edge so the pool is non-empty after filtering
+    _seed_high_conf_edge(store, src="co_TSLA", dst="pl_ai",
+                         edge_type="belongs_to_platform", confidence=0.90)
+    store._c.commit()
+
+    # Default call — exclude_edge_types defaults to ('mentioned_in','regime_was','succeeded_by')
+    sample = store.sample_high_confidence_edges(
+        min_confidence=0.85,
+        exclude_audit_status=("disputed",),
+        seed=20260506,
+    )
+
+    edge_types = [e["edge_type"] for e in sample]
+    assert "mentioned_in" not in edge_types, (
+        f"mentioned_in edge should be excluded by default. Got edge_types: {edge_types}"
+    )
+    # The belongs_to_platform edge should still be present
+    assert "belongs_to_platform" in edge_types
+
+    store.__exit__(None, None, None)
+
+
+def test_sample_explicit_include_via_empty_exclude(tmp_path):
+    """
+    Passing exclude_edge_types=() should include mentioned_in edges in the pool.
+
+    This confirms the filter is additive and can be overridden — e.g. for tests
+    that need to exercise all edge types without the default provenance exclusion.
+    """
+    store = _make_store(tmp_path)
+    _seed_nodes(store)
+
+    # Insert a mentioned_in edge with high confidence
+    store.upsert_node("wiki_nvda_val", "article", "NVDA Valuation Article")
+    store.upsert_edge(
+        src="co_NVDA",
+        dst="wiki_nvda_val",
+        edge_type="mentioned_in",
+        confidence=0.92,
+        source_id="wiki/nvda-valuation.md",
+        evidence="co_NVDA is mentioned in wiki:compiled/finance/companies/nvda-valuation.md",
+        source_type="wiki",
+        audit_status="unaudited",
+    )
+    store._c.commit()
+
+    # Explicit empty exclude — ALL edge types should appear
+    sample = store.sample_high_confidence_edges(
+        min_confidence=0.85,
+        exclude_audit_status=("disputed",),
+        exclude_edge_types=(),        # override: include provenance types
+        seed=20260506,
+    )
+
+    edge_types = [e["edge_type"] for e in sample]
+    assert "mentioned_in" in edge_types, (
+        "With exclude_edge_types=(), mentioned_in edges must appear in the sample. "
+        f"Got edge_types: {edge_types}"
+    )
+
+    store.__exit__(None, None, None)

@@ -2129,6 +2129,11 @@ class IntelStore:
         self,
         min_confidence:        float = 0.85,
         exclude_audit_status:  tuple[str, ...] = ("disputed",),
+        exclude_edge_types:    tuple[str, ...] = (
+            "mentioned_in",   # provenance/citation — unfalsifiable by design (§A.2, ∞ half-life)
+            "regime_was",     # historical regime labels — immutable once set (§A.2)
+            "succeeded_by",   # regime succession chain — historical, immutable (§A.2)
+        ),
         limit:                 int = 50,
         seed:                  Optional[int] = None,
         stratify_by:           str = "edge_type",
@@ -2145,6 +2150,13 @@ class IntelStore:
             min_confidence:       minimum confidence threshold (default 0.85).
             exclude_audit_status: edges with these audit_status values are excluded
                                   (default: skip already-disputed edges).
+            exclude_edge_types:   edge types excluded from the audit pool.
+                                  Default is the three provenance/immutable types
+                                  defined in §A.2 (mentioned_in, regime_was,
+                                  succeeded_by) — these are unfalsifiable by design
+                                  because the evidence IS the claim.
+                                  Pass an empty tuple to include all edge types
+                                  (useful for tests that need full coverage).
             limit:                maximum sample size (default 50).
             seed:                 optional RNG seed for reproducibility.
             stratify_by:          column to stratify on; only 'edge_type' and
@@ -2158,15 +2170,24 @@ class IntelStore:
         if stratify_by not in ("edge_type", "source_type"):
             stratify_by = "edge_type"
 
-        # Build exclusion clause
+        # Build audit_status exclusion clause
         placeholders = ",".join("?" * len(exclude_audit_status))
         params: list[Any] = [min_confidence, *list(exclude_audit_status)]
+
+        # Build optional edge_type exclusion clause
+        if exclude_edge_types:
+            type_placeholders = ",".join("?" * len(exclude_edge_types))
+            edge_type_clause = f"AND edge_type NOT IN ({type_placeholders})"
+            params.extend(list(exclude_edge_types))
+        else:
+            edge_type_clause = ""
 
         rows = self._c.execute(
             f"""
             SELECT * FROM soma_intel_edge
             WHERE confidence >= ?
               AND audit_status NOT IN ({placeholders})
+              {edge_type_clause}
             ORDER BY ts DESC
             """,
             params,
