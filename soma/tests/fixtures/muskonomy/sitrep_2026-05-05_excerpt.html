@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Musk Ecosystem SITREP | May 05, 2026</title>
+<style>
+  .badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+  .badge-bullish { background: #D1FAE5; color: #065F46; }
+  .badge-bearish { background: #FEE2E2; color: #991B1B; }
+  .badge-neutral { background: #FEF3C7; color: #92400E; }
+  .badge-bull    { background: #D1FAE5; color: #065F46; }
+  .badge-bear    { background: #FEE2E2; color: #991B1B; }
+  .badge-neu     { background: #FEF3C7; color: #92400E; }
+  .signal-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .sig-bull { background: #10B981; }
+  .sig-bear { background: #EF4444; }
+  .sig-neu  { background: #F59E0B; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- 2 segment cards: current format (seg-card / seg-title / seg-note / badge-bull/neu) -->
+  <div class="segment-grid">
+
+    <div class="seg-card">
+      <div class="seg-header">
+        <div class="seg-title">03 &nbsp; ROBOTAXI</div>
+        <span class="badge badge-bull">BULLISH</span>
+      </div>
+      <div class="seg-note">Austin fleet at 22 unsupervised vehicles. Evening operations confirmed live for the first time. $5.20 average fares across 84 registered riders. Fleet expansion to Dallas and Houston in preparation.</div>
+    </div>
+
+    <div class="seg-card">
+      <div class="seg-header">
+        <div class="seg-title">04 &nbsp; FSD</div>
+        <span class="badge badge-neu">NEUTRAL</span>
+      </div>
+      <div class="seg-note">FSD v14.3.1 rolling out broadly. EU regulatory review ongoing in Brussels. Netherlands approval pending broader EU-wide recognition in 4-8 weeks. HW3 unsupervised pathway uncertain.</div>
+    </div>
+
+    <!-- Older format segment card: badge-bullish variant, seg-body for evidence -->
+    <div class="seg-card">
+      <div class="seg-header">
+        <div class="seg-title">08 &nbsp; TERAFAB</div>
+        <span class="badge badge-bullish">BULLISH</span>
+      </div>
+      <div class="seg-body">TERAFAB groundbreaking confirmed at Giga Texas North Campus. Intel 18A process partnership announced. $20-25B chip fab JV targeting 100K wafer starts per month. AI5 chip production on track for 2027.</div>
+    </div>
+
+    <!-- Older segment format: segment-card / segment-name / segment-delta -->
+    <div class="segment-card">
+      <div class="segment-header">
+        <div class="segment-name">01 - Auto</div>
+        <span class="badge badge-bear">BEARISH</span>
+      </div>
+      <div class="segment-delta">Q1 deliveries missed consensus by 2%. Inventory days rising to 27. Production outpacing demand in near term. Cybercab ramp may offset but timeline speculative.</div>
+    </div>
+
+    <!-- Segment with direction in card class (2026-04-27 style) + seg-metric evidence -->
+    <div class="seg-card bullish">
+      <div class="seg-header">
+        <div class="seg-name">02 — Energy</div>
+        <span class="badge badge-bull">BULLISH</span>
+      </div>
+      <div class="seg-metric">Q4 2025 record: 14.2 GWh deployed</div>
+      <div class="seg-metric">2025 energy revenue: $12.8B (+27% YoY)</div>
+      <div class="seg-metric">xAI Colossus Megapack order confirmed</div>
+    </div>
+
+  </div>
+
+  <!-- Signal rows: current format with signal-dot -->
+  <div class="signals-section">
+
+    <div class="signal-row">
+      <div class="signal-dot sig-bull"></div>
+      <div class="signal-text"><strong>Tesla Semi mass production live:</strong> Nevada facility confirmed at 50K units per year capacity. First 370-unit order booked at $100M total value.</div>
+      <div class="signal-meta">Semi / Commercial</div>
+    </div>
+
+    <div class="signal-row">
+      <div class="signal-dot sig-bear"></div>
+      <div class="signal-text"><strong>EU FSD delay risk:</strong> Leaked regulator emails cite speeding behavior in edge cases. Brussels consensus fragile — summer approval timeline may slip to Q4.</div>
+      <div class="signal-meta">Regulatory Risk</div>
+    </div>
+
+    <div class="signal-row">
+      <div class="signal-dot sig-neu"></div>
+      <div class="signal-text"><strong>Q1 Energy miss:</strong> 8.8 GWh vs 14.2 GWh in Q4. Revenue $2.41B, down 12% YoY. Management attributes to deployment timing.</div>
+      <div class="signal-meta">Energy</div>
+    </div>
+
+  </div>
+
+</div>
+</body>
+</html>
