@@ -1,0 +1,24 @@
+{
+  "generated_at": "2026-05-03T08:00:00Z",
+  "source": "gemini_deep_research",
+  "_fixture": true,
+  "_note": "SYNTHETIC FIXTURE — plausible Gemini Deep Research cross-AI cycle output. source_path includes 'fixture' to distinguish from real data.",
+  "flags": [
+    {
+      "ticker": "PLTR",
+      "signal_type": "thematic",
+      "direction": "bullish",
+      "confidence": 0.82,
+      "evidence": "AI government contract pipeline expansion confirmed Q1 2026. AIP platform now embedded in 6 of 10 largest US defense contractors. Commercial ARR accelerating at 55% YoY — Rule of 40 score at 68, well above SaaS median of 40.",
+      "ts": "2026-05-03T08:00:00Z"
+    },
+    {
+      "ticker": "NVDA",
+      "signal_type": "structural",
+      "direction": "bearish",
+      "confidence": 0.48,
+      "evidence": "H200 export restriction tightening to Middle East and Southeast Asia markets signals regulatory overhang. AMD MI300X gaining enterprise traction in inference workloads where latency tolerance is higher. Competitive moat narrowing at inference tier over 18-month horizon.",
+      "ts": "2026-05-03T08:00:00Z"
+    }
+  ]
+}

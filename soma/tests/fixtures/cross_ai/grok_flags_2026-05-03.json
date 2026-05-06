@@ -1,0 +1,32 @@
+{
+  "generated_at": "2026-05-03T07:15:00Z",
+  "source": "grok_deepsearch",
+  "_fixture": true,
+  "_note": "SYNTHETIC FIXTURE — extracted from MUSKONOMY SITREP 2026-05-06 content, reformatted for adapter validation. source_path includes 'fixture' to distinguish from real data.",
+  "flags": [
+    {
+      "ticker": "TSLA",
+      "signal_type": "tactical",
+      "direction": "bullish",
+      "confidence": 0.78,
+      "evidence": "Austin robotaxi service extended to evening hours for first time. Fleet at 25 unsupervised vehicles, 38 Cybercabs in test pool, $5.35 avg fares across 91 registered riders. Evening operation removes last structural cap on unit economics per analyst framework.",
+      "ts": "2026-05-03T07:00:00Z"
+    },
+    {
+      "ticker": "TSLA",
+      "signal_type": "thematic",
+      "direction": "bullish",
+      "confidence": 0.72,
+      "evidence": "FSD v14.3.2 rolling broadly. $546M ARR from ~500K FSD subscribers. HW3 confirmed never getting unsupervised — decisive upgrade cycle catalyst. Autopilot renamed Self-Driving in 2026.8 as regulatory signaling ahead of EU ruling.",
+      "ts": "2026-05-03T07:00:00Z"
+    },
+    {
+      "ticker": "TSLA",
+      "signal_type": "structural",
+      "direction": "bearish",
+      "confidence": 0.55,
+      "evidence": "EU regulators in Brussels showing skepticism on FSD Supervised: leaked emails flag speeding behavior and icy-road edge cases. Netherlands RDW pushing EU-wide approval but consensus fragile. Summer approval timeline at risk.",
+      "ts": "2026-05-03T07:00:00Z"
+    }
+  ]
+}

@@ -177,3 +177,93 @@ def ingest_gemini(
         result["flags_inserted"], result["flags_skipped"], result["errors"],
     )
     return result
+
+
+def validate_gemini(filepath: str) -> dict:
+    """
+    Read-only schema validation for a Gemini flag file.
+
+    Same structure as validate_grok — JSON file with top-level flags array.
+    Writes nothing to the DB.
+
+    Args:
+        filepath: Absolute path to a gemini_flags_YYYY-MM-DD.json file.
+
+    Returns:
+        dict with keys: valid, flags_found, flags_valid, flags_skipped, errors, flags.
+    """
+    result: dict = {
+        "valid": False,
+        "flags_found": 0,
+        "flags_valid": 0,
+        "flags_skipped": 0,
+        "errors": [],
+        "flags": [],
+    }
+
+    try:
+        with open(filepath, "r", encoding="utf-8") as fh:
+            payload = json.load(fh)
+    except Exception as exc:
+        result["errors"].append(f"Parse error: {exc}")
+        return result
+
+    for field in ("generated_at", "source", "flags"):
+        if field not in payload:
+            result["errors"].append(f"Missing top-level field: {field!r}")
+    if result["errors"]:
+        return result
+
+    flags = payload.get("flags", [])
+    result["flags_found"] = len(flags)
+
+    _valid_directions = {"bullish", "bearish", "neutral"}
+    _valid_signal_types = {"tactical", "thematic", "structural"}
+
+    for i, flag in enumerate(flags):
+        ticker      = (flag.get("ticker") or "").strip().upper()
+        signal_type = (flag.get("signal_type") or "").strip().lower()
+        direction   = (flag.get("direction") or "").strip().lower()
+        confidence  = flag.get("confidence")
+        ts          = flag.get("ts") or payload.get("generated_at") or ""
+
+        flag_errors = []
+        if not ticker:
+            flag_errors.append(f"flag[{i}]: missing ticker")
+        if not ts:
+            flag_errors.append(f"flag[{i}]: missing ts")
+        if direction not in _valid_directions:
+            flag_errors.append(f"flag[{i}]: invalid direction {direction!r}")
+        if signal_type not in _valid_signal_types:
+            flag_errors.append(f"flag[{i}]: invalid signal_type {signal_type!r}")
+        if confidence is None:
+            flag_errors.append(f"flag[{i}]: missing confidence")
+        elif not (0.0 <= float(confidence) <= 1.0):
+            flag_errors.append(f"flag[{i}]: confidence {confidence} out of [0,1]")
+
+        if flag_errors:
+            result["errors"].extend(flag_errors)
+            result["flags_skipped"] += 1
+            continue
+
+        if float(confidence) < 0.30:
+            result["flags_skipped"] += 1
+            continue
+
+        result["flags_valid"] += 1
+        result["flags"].append({
+            "ticker": ticker,
+            "signal_type": signal_type,
+            "direction": direction,
+            "confidence": float(confidence),
+            "ts": ts,
+            "evidence": (flag.get("evidence") or "")[:500],
+        })
+
+    result["valid"] = len(result["errors"]) == 0
+    log.info(
+        "validate_gemini: %s found=%d valid=%d skipped=%d errors=%d",
+        filepath, result["flags_found"], result["flags_valid"],
+        result["flags_skipped"], len(result["errors"]),
+    )
+    return result

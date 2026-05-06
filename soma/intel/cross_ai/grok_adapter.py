@@ -83,6 +83,18 @@ def ingest_grok(
             flags_skipped  (int)   -- duplicates or low-confidence
             errors         (int)
     """
+    # ── Capability gate ────────────────────────────────────────────────────────
+    try:
+        cap_enabled = store.is_capability_enabled("cross_ai_corroboration")
+    except Exception:
+        cap_enabled = False
+    if not cap_enabled:
+        log.info(
+            "grok_adapter: cross_ai_corroboration capability not enabled — skipping ingest.",
+        )
+        return {"files_scanned": 0, "flags_found": 0,
+                "flags_inserted": 0, "flags_skipped": 0, "errors": 0}
+
     cutoff = (date.today() - timedelta(days=_LOOKBACK_DAYS)).isoformat()
     pattern = str(GROK_OUTPUT_DIR / GROK_OUTPUT_GLOB)
     files = sorted(glob.glob(pattern))
@@ -183,5 +195,102 @@ def ingest_grok(
         "grok_adapter: files=%d found=%d inserted=%d skipped=%d errors=%d",
         result["files_scanned"], result["flags_found"],
         result["flags_inserted"], result["flags_skipped"], result["errors"],
+    )
+    return result
+
+
+def validate_grok(filepath: str) -> dict:
+    """
+    Read-only schema validation for a Grok flag file.
+
+    Parses the JSON, checks required fields on each flag, applies the same
+    confidence and field filters as ingest_grok, and returns a structured
+    report. Writes nothing to the DB.
+
+    Args:
+        filepath: Absolute path to a grok_flags_YYYY-MM-DD.json file.
+
+    Returns:
+        dict with keys:
+            valid          (bool)  — True if file parsed and all flags passed schema
+            flags_found    (int)
+            flags_valid    (int)   — passed all field + confidence checks
+            flags_skipped  (int)   — low-confidence or missing required fields
+            errors         (list[str])
+            flags          (list[dict])  — parsed flag dicts (valid ones only)
+    """
+    result: dict = {
+        "valid": False,
+        "flags_found": 0,
+        "flags_valid": 0,
+        "flags_skipped": 0,
+        "errors": [],
+        "flags": [],
+    }
+
+    try:
+        with open(filepath, "r", encoding="utf-8") as fh:
+            payload = json.load(fh)
+    except Exception as exc:
+        result["errors"].append(f"Parse error: {exc}")
+        return result
+
+    for field in ("generated_at", "source", "flags"):
+        if field not in payload:
+            result["errors"].append(f"Missing top-level field: {field!r}")
+    if result["errors"]:
+        return result
+
+    flags = payload.get("flags", [])
+    result["flags_found"] = len(flags)
+
+    _valid_directions = {"bullish", "bearish", "neutral"}
+    _valid_signal_types = {"tactical", "thematic", "structural"}
+
+    for i, flag in enumerate(flags):
+        ticker      = (flag.get("ticker") or "").strip().upper()
+        signal_type = (flag.get("signal_type") or "").strip().lower()
+        direction   = (flag.get("direction") or "").strip().lower()
+        confidence  = flag.get("confidence")
+        ts          = flag.get("ts") or payload.get("generated_at") or ""
+
+        flag_errors = []
+        if not ticker:
+            flag_errors.append(f"flag[{i}]: missing ticker")
+        if not ts:
+            flag_errors.append(f"flag[{i}]: missing ts")
+        if direction not in _valid_directions:
+            flag_errors.append(f"flag[{i}]: invalid direction {direction!r}")
+        if signal_type not in _valid_signal_types:
+            flag_errors.append(f"flag[{i}]: invalid signal_type {signal_type!r}")
+        if confidence is None:
+            flag_errors.append(f"flag[{i}]: missing confidence")
+        elif not (0.0 <= float(confidence) <= 1.0):
+            flag_errors.append(f"flag[{i}]: confidence {confidence} out of [0,1]")
+
+        if flag_errors:
+            result["errors"].extend(flag_errors)
+            result["flags_skipped"] += 1
+            continue
+
+        if float(confidence) < 0.30:
+            result["flags_skipped"] += 1
+            continue
+
+        result["flags_valid"] += 1
+        result["flags"].append({
+            "ticker": ticker,
+            "signal_type": signal_type,
+            "direction": direction,
+            "confidence": float(confidence),
+            "ts": ts,
+            "evidence": (flag.get("evidence") or "")[:500],
+        })
+
+    result["valid"] = len(result["errors"]) == 0
+    log.info(
+        "validate_grok: %s found=%d valid=%d skipped=%d errors=%d",
+        filepath, result["flags_found"], result["flags_valid"],
+        result["flags_skipped"], len(result["errors"]),
     )
     return result
