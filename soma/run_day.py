@@ -329,6 +329,34 @@ def step_soma_intel():
     db_path  = Path(os.environ.get("SOMA_DB_PATH",
                     str(_dabeiba / "shared" / "soma" / "data" / "soma.db")))
 
+    # ── 0. Cross-AI corroboration ingestion (Phase 7.I1 — step 1g) ──────
+    # Must run BEFORE convergence_engine and signal_propagator so flags exist
+    # when the gate evaluates corroboration count. Gated by capability registry.
+    try:
+        from soma.intel.cross_ai import ingest_grok, ingest_gemini, ingest_phi4
+        with IntelStore(db_path=db_path) as store:
+            if store.is_capability_enabled("cross_ai_corroboration"):
+                gr = ingest_grok(store)
+                ge = ingest_gemini(store)
+                ph = ingest_phi4(store)
+                total_inserted = (
+                    gr["flags_inserted"] + ge["flags_inserted"] + ph["flags_inserted"]
+                )
+                print(
+                    f"  {GREEN}[cross_ai]{RESET}     "
+                    f"grok={gr['flags_inserted']}  "
+                    f"gemini={ge['flags_inserted']}  "
+                    f"phi4={ph['flags_inserted']}  "
+                    f"total={total_inserted}"
+                )
+            else:
+                print(
+                    f"  {DIM}[cross_ai]{RESET}     "
+                    "cross_ai_corroboration capability disabled, skipping AI flag ingestion"
+                )
+    except Exception as e:
+        print(f"  {YELLOW}[WARN]{RESET} cross_ai ingestion failed (non-fatal): {e}")
+
     # ── 1. Convergence engine ──────────────────────────────────────────
     try:
         from soma.intel.convergence_engine import run_pass_a, run_pass_b, run_pass_c
