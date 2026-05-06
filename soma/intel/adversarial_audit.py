@@ -249,6 +249,7 @@ def run_adversarial_audit(
     store:    IntelStore,
     run_date: date,
     dry_run:  bool = False,
+    force:    bool = False,
 ) -> dict:
     """
     Run the weekly adversarial audit pass.
@@ -267,6 +268,8 @@ def run_adversarial_audit(
         store:    open IntelStore context-manager instance.
         run_date: the calendar date for this run (used for idempotency key).
         dry_run:  if True, call Claude and parse responses but do NOT write to DB.
+        force:    if True, bypass the capability gate (use for dry-run review only).
+                  Capability stays at its registered status; no history row added.
 
     Returns:
         dict with keys:
@@ -290,9 +293,15 @@ def run_adversarial_audit(
 
     # ── Capability gate ────────────────────────────────────────────────────────
     if not store.is_capability_enabled("adversarial_audit"):
-        log.info("adversarial_audit capability disabled — skipping")
-        result["skipped_capability_disabled"] = True
-        return result
+        if force:
+            log.info(
+                "adversarial_audit capability disabled but --force set "
+                "— proceeding with dry-run review (capability stays disabled)"
+            )
+        else:
+            log.info("adversarial_audit capability disabled — skipping")
+            result["skipped_capability_disabled"] = True
+            return result
 
     # ── Idempotency check ──────────────────────────────────────────────────────
     prior = store.get_audits_by_date_and_auditor(run_date, _AUDITOR_ID)
@@ -454,6 +463,15 @@ def main() -> None:
         ),
     )
     parser.add_argument(
+        "--force",
+        action="store_true",
+        help=(
+            "Bypass capability gate for dry-run review. "
+            "Capability stays at its registered status (disabled). "
+            "Intended for one-time review sessions only — not for production use."
+        ),
+    )
+    parser.add_argument(
         "--verbose", "-v",
         action="store_true",
         help="Show per-edge detail.",
@@ -488,7 +506,9 @@ def main() -> None:
 
     try:
         with IntelStore(db_path=db_path) as store:
-            result = run_adversarial_audit(store, run_date, dry_run=args.dry_run)
+            result = run_adversarial_audit(
+                store, run_date, dry_run=args.dry_run, force=args.force
+            )
     except RuntimeError as e:
         if "ANTHROPIC_API_KEY" in str(e):
             print(
