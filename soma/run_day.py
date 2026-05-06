@@ -492,6 +492,60 @@ def step_meta_learner_weekly():
         print(f"  {YELLOW}[WARN]{RESET} meta_learner failed (non-fatal): {e}")
 
 
+# ── Step 1g: Adversarial Audit (Sunday only) ─────────────────────────
+
+def step_adversarial_audit_weekly():
+    """
+    Adversarial audit pass — runs once per week on Sunday.
+    Samples 50 high-confidence edges and sends each to Claude for refutation.
+    Flags disputed edges and logs everything. No-op on other days.
+    Gated by 'adversarial_audit' capability (default: disabled).
+    """
+    from datetime import date as _date
+    today = _date.today()
+    if today.weekday() != 6:   # 6 = Sunday
+        return   # silent no-op — not Sunday
+
+    _header("1g", "Adversarial Audit — Weekly Claude Refutation Pass (Sunday)")
+
+    from pathlib import Path as _Path
+    import os as _os
+    _dabeiba = _Path(__file__).resolve().parent.parent.parent
+    db_path  = _Path(_os.environ.get("SOMA_DB_PATH",
+                    str(_dabeiba / "shared" / "soma" / "data" / "soma.db")))
+
+    try:
+        from soma.intel.store import IntelStore
+        from soma.intel.adversarial_audit import run_adversarial_audit
+        with IntelStore(db_path=db_path) as store:
+            if not store.is_capability_enabled("adversarial_audit"):
+                print(
+                    f"  {DIM}[adversarial_audit]{RESET}  "
+                    "adversarial_audit capability disabled, skipping"
+                )
+                return
+            result = run_adversarial_audit(store, today)
+        if result.get("skipped_idempotent"):
+            print(
+                f"  {DIM}[adversarial_audit]{RESET}  "
+                f"already ran today — skipped (idempotent)"
+            )
+        else:
+            disputed_pct = (
+                f" ({result['disputed'] / result['audited']:.0%})"
+                if result["audited"] else ""
+            )
+            print(
+                f"  {GREEN}[adversarial_audit]{RESET}  "
+                f"pool={result['sample_pool_size']}  "
+                f"audited={result['audited']}  "
+                f"disputed={result['disputed']}{disputed_pct}  "
+                f"errors={result['errors']}"
+            )
+    except Exception as e:
+        print(f"  {YELLOW}[WARN]{RESET} adversarial_audit failed (non-fatal): {e}")
+
+
 # ── Step 1f: Weekly Brief (Friday only) ──────────────────────────────
 
 def step_weekly_brief_friday():
@@ -1066,12 +1120,45 @@ def step_7_actions(wc_result, start_time):
 
 # ── Main ──────────────────────────────────────────────────────────────
 
+def _verify_capability_registry_seeded(store) -> None:
+    """
+    Fail fast if seed_capabilities.py was never run against this DB.
+
+    Compares the set of capability_ids registered in the live DB against the
+    canonical manifest in seed_capabilities.py. Raises RuntimeError listing
+    any missing entries so the operator knows exactly what to run.
+
+    Called once at startup, before any pipeline steps execute.
+    """
+    from shared.soma.intel.seed_capabilities import _CAPABILITIES
+    expected = {c[0] for c in _CAPABILITIES}
+    actual = {row["capability_id"] for row in store.list_capabilities()}
+    missing = expected - actual
+    if missing:
+        raise RuntimeError(
+            f"soma_intel_capability is missing {len(missing)} entries: "
+            f"{sorted(missing)}. "
+            f"Run: python3 -m shared.soma.intel.seed_capabilities"
+        )
+
+
 def main():
     start = time.time()
 
     print(f"\n{BOLD}{'#' * W}{RESET}")
     print(f"{BOLD}  SOMA DAILY RUN{RESET}")
     print(f"{BOLD}{'#' * W}{RESET}")
+
+    # Startup integrity check: fail fast if capability registry was not seeded.
+    try:
+        from shared.soma.intel.store import IntelStore
+        with IntelStore() as _reg_store:
+            _verify_capability_registry_seeded(_reg_store)
+    except RuntimeError as _reg_err:
+        print(f"  {RED}STARTUP INTEGRITY FAILURE{RESET} {_reg_err}")
+        sys.exit(1)
+    except Exception as _reg_err:
+        print(f"  {YELLOW}WARN{RESET} Capability registry check skipped: {_reg_err}")
 
     # Step KB: Knowledge Base Index
     try:
@@ -1127,6 +1214,12 @@ def main():
         step_meta_learner_weekly()
     except Exception as e:
         print(f"  {RED}ERROR{RESET} in Meta-learner step: {e}")
+
+    # Step 1g: Adversarial audit (Sunday only — no-op other days, capability-gated)
+    try:
+        step_adversarial_audit_weekly()
+    except Exception as e:
+        print(f"  {RED}ERROR{RESET} in Adversarial Audit step: {e}")
 
     # Step 1f: Weekly Brief (Friday only — no-op other days)
     try:

@@ -182,6 +182,26 @@ _CAPABILITIES: list[tuple[str, str, str, str | None, list[str]]] = [
         "2026-05-05",  # meta_learner.py -- Phase 6 complete
         ["anomaly_engine", "backtest_runner"],
     ),
+
+    # -- Phase 7 §I.1: Cross-AI corroboration channel --
+    # Ships DISABLED by design. Enable manually after reviewing test results.
+    (
+        "cross_ai_corroboration",
+        "1.0",
+        "disabled",
+        None,   # no enabled_ts — starts disabled
+        ["confirm_gate", "signal_engine"],
+    ),
+
+    # -- Phase 7 §K.5: Adversarial audit --
+    # Ships DISABLED by design. Enable manually after reviewing first dry-run.
+    (
+        "adversarial_audit",
+        "1.0",
+        "disabled",
+        None,   # no enabled_ts — starts disabled
+        ["graph_layer", "audit_append_only"],
+    ),
 ]
 
 
@@ -226,7 +246,7 @@ def seed(db_path: str | None = None, verbose: bool = True) -> int:
         assert store.is_capability_enabled("signal_engine") is False or \
                store.is_capability_enabled("anomaly_engine") is True, \
                "anomaly_engine should be enabled"
-        assert total >= 14, f"Expected >= 14 capabilities, got {total}"
+        assert total >= 20, f"Expected >= 20 capabilities, got {total}"
 
         if verbose:
             print(f"\nSeed complete: {total} capabilities registered, "
@@ -240,6 +260,23 @@ def seed(db_path: str | None = None, verbose: bool = True) -> int:
 
 
 if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="Seed soma_intel_capability registry. Idempotent."
+    )
+    parser.add_argument(
+        "--db-path",
+        default=None,
+        help=(
+            "Override the soma.db path. Defaults to the IntelStore default "
+            "(SOMA_DB_PATH env var or ~/Desktop/DABEIBA/shared/soma/data/soma.db). "
+            "Use this flag when running from an environment where Path.home() "
+            "resolves differently from the actual DB location."
+        ),
+    )
+    args = parser.parse_args()
+
     logging.basicConfig(level=logging.WARNING)
-    n = seed()
+    n = seed(db_path=args.db_path)
     print(f"\nDone. {n} capabilities in registry.")
