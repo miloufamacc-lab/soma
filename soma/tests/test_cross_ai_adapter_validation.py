@@ -42,6 +42,9 @@ from soma.intel.cross_ai.grok_adapter   import validate_grok,   ingest_grok
 from soma.intel.cross_ai.gemini_adapter import validate_gemini, ingest_gemini
 from soma.intel.cross_ai.phi4_adapter   import validate_phi4,   ingest_phi4
 
+import soma.intel.cross_ai.gemini_adapter as _gem_mod
+import soma.intel.cross_ai.phi4_adapter   as _phi4_mod
+
 # ── Fixture paths ──────────────────────────────────────────────────────────────
 _FIXTURES = _HERE / "fixtures" / "cross_ai"
 _GROK_FIXTURE    = _FIXTURES / "grok_flags_2026-05-03.json"
@@ -354,3 +357,45 @@ def test_validate_phi4_bad_json_line(tmp_path):
     assert len(r["errors"]) >= 1
     assert r["flags_found"] == 1         # only the good line counted
     assert r["flags_valid"] == 1
+
+
+# ── 12. ingest_gemini — capability gate ───────────────────────────────────────
+
+def test_gemini_ingest_skips_when_disabled(tmp_path, monkeypatch):
+    """cross_ai_corroboration disabled → ingest_gemini returns immediately, 0 DB rows."""
+    store = _make_store(tmp_path)
+    _disable_cap(store)
+
+    monkeypatch.setattr(_gem_mod, "GEMINI_OUTPUT_DIR",  _FIXTURES)
+    monkeypatch.setattr(_gem_mod, "GEMINI_OUTPUT_GLOB", "gemini_flags_2026-05-03.json")
+    monkeypatch.setattr(_gem_mod, "_LOOKBACK_DAYS", 9999)
+
+    result = ingest_gemini(store, dry_run=False)
+
+    assert result["files_scanned"] == 0
+    assert result["flags_inserted"] == 0
+    count = store._c.execute(
+        "SELECT COUNT(*) FROM soma_intel_cross_ai_flag"
+    ).fetchone()[0]
+    assert count == 0
+
+
+# ── 13. ingest_phi4 — capability gate ─────────────────────────────────────────
+
+def test_phi4_ingest_skips_when_disabled(tmp_path, monkeypatch):
+    """cross_ai_corroboration disabled → ingest_phi4 returns immediately, 0 DB rows."""
+    store = _make_store(tmp_path)
+    _disable_cap(store)
+
+    monkeypatch.setattr(_phi4_mod, "PHI4_OUTPUT_DIR",  _FIXTURES)
+    monkeypatch.setattr(_phi4_mod, "PHI4_OUTPUT_GLOB", "phi4_flags_2026-05-03.jsonl")
+    monkeypatch.setattr(_phi4_mod, "_LOOKBACK_DAYS", 9999)
+
+    result = ingest_phi4(store, dry_run=False)
+
+    assert result["files_scanned"] == 0
+    assert result["flags_inserted"] == 0
+    count = store._c.execute(
+        "SELECT COUNT(*) FROM soma_intel_cross_ai_flag"
+    ).fetchone()[0]
+    assert count == 0

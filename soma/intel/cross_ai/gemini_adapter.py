@@ -75,6 +75,16 @@ def ingest_gemini(
     Returns:
         dict: files_scanned, flags_found, flags_inserted, flags_skipped, errors.
     """
+    # ── Capability gate ────────────────────────────────────────────────────────
+    try:
+        cap_enabled = store.is_capability_enabled("cross_ai_corroboration")
+    except Exception:
+        cap_enabled = False
+    if not cap_enabled:
+        log.info("gemini_adapter: cross_ai_corroboration capability not enabled — skipping ingest.")
+        return {"files_scanned": 0, "flags_found": 0,
+                "flags_inserted": 0, "flags_skipped": 0, "errors": 0}
+
     cutoff = (date.today() - timedelta(days=_LOOKBACK_DAYS)).isoformat()
     pattern = str(GEMINI_OUTPUT_DIR / GEMINI_OUTPUT_GLOB)
     files = sorted(glob.glob(pattern))
