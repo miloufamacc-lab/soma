@@ -110,6 +110,7 @@ _CORROBORATION_SOURCES = {
     "wiki_article",
     "grok_insight",
     "gemini_insight",
+    "phi4_insight",        # Phase 7.I1.1 — local Phi-4 Mini flags (§I.1 spec)
 }
 
 
