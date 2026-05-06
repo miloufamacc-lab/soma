@@ -52,6 +52,18 @@ for _p in [str(_DABEIBA_ROOT), str(_DABEIBA_ROOT / "shared")]:
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
+# ── Design system helpers (single source of truth) ───────────────────────────
+from design.dabeiba_html import (  # noqa: E402
+    _scrub,
+    _html_escape as _esc_shared,
+    _inline_css,
+    _css_link_tags,
+    _strip_css_comments,
+    _expand_acronyms_once,
+    _codename_scan,
+    _emoji_scan,
+)
+
 from soma.intel.store import IntelStore
 
 DB_PATH = (
@@ -70,32 +82,11 @@ MAX_CONVERGENCE      = 8
 MAX_STRUCTURAL       = 3
 
 # ── Internal codename scrub ───────────────────────────────────────────────────
-# These must never appear in client-facing output.
-_FORBIDDEN_CODENAMES = {
-    "DABEIBA", "SOMA", "ORACLE", "MANTIS", "CIPHER", "RAPTOR",
-    "TITAN", "COBALT", "SPECTRE", "PRISM", "DOCTRINE", "HORIZON",
-    "BEACON", "VECTOR", "FORGE", "DELTA", "SENTINEL", "MUSKONOMY",
-    "DOSSIER", "INTEL", "soma_intel", "soma-intel",
-}
-
-
-def _scrub(text: str) -> str:
-    """
-    Replace forbidden codenames with neutral placeholders.
-    Uses word-boundary matching so 'INTEL' doesn't corrupt 'intelligence',
-    'FORGE' doesn't corrupt 'forget', etc.
-    """
-    import re as _re
-    for name in _FORBIDDEN_CODENAMES:
-        # Word-boundary replace for the uppercase form
-        text = _re.sub(r'\b' + _re.escape(name) + r'\b', "[internal]", text)
-        # Word-boundary replace for the lowercase form
-        text = _re.sub(r'\b' + _re.escape(name.lower()) + r'\b', "[internal]", text)
-    return text
-
+# _scrub and _esc now delegate to design.dabeiba_html (single source of truth).
+# Local aliases kept so existing callers in this file require no changes.
 
 def _esc(text: str) -> str:
-    return escape(_scrub(str(text)))
+    return _esc_shared(text)
 
 
 # ── Schema helpers ────────────────────────────────────────────────────────────
@@ -113,95 +104,10 @@ def _column_exists(cursor, table_name: str, col: str) -> bool:
     return any(c[1] == col for c in cols)
 
 
-# ── CSS helpers ───────────────────────────────────────────────────────────────
-
-def _strip_css_comments(css: str) -> str:
-    """
-    Strip all /* ... */ block comments from CSS.
-    Applied when inlining CSS for client-facing HTML — keeps file small
-    and ensures no internal development notes reach the deliverable.
-    """
-    import re as _re
-    return _re.sub(r"/\*.*?\*/", "", css, flags=_re.DOTALL)
-
-
-def _inline_css(dabeiba_root: Path, include_fonts: bool = True) -> str:
-    """
-    Read dabeiba.fonts.css + dabeiba.css, strip block comments, and
-    return combined content for embedding inside a <style> tag.
-
-    CSS comments are stripped before inlining so:
-      (a) file size is smaller
-      (b) no internal development notes appear in client-facing HTML
-      (c) codename scrub passes cleanly
-
-    Falls back to empty string if files are not found.
-    """
-    css_dir   = dabeiba_root / "design"
-    fonts_css = ""
-    base_css  = ""
-
-    if include_fonts:
-        fonts_path = css_dir / "dabeiba.fonts.css"
-        if fonts_path.exists():
-            fonts_css = _strip_css_comments(fonts_path.read_text(encoding="utf-8"))
-
-    base_path = css_dir / "dabeiba.css"
-    if base_path.exists():
-        base_css = _strip_css_comments(base_path.read_text(encoding="utf-8"))
-
-    return fonts_css + "\n" + base_css
-
-
-def _css_link_tags(dabeiba_root: Path, output_path: Path) -> str:
-    """Return <link> tags for dev/external-CSS mode (relative to output_path)."""
-    design_dir = dabeiba_root / "design"
-    try:
-        rel = design_dir.relative_to(output_path.parent)
-    except ValueError:
-        # Fallback: compute relative path manually
-        rel = Path(os.path.relpath(design_dir, output_path.parent))
-    return (
-        f'<link rel="stylesheet" href="{rel}/dabeiba.fonts.css">\n'
-        f'  <link rel="stylesheet" href="{rel}/dabeiba.css">'
-    )
-
-
-# ── Acronym expansion (QA item a) ─────────────────────────────────────────────
-
-_ACRONYM_EXPANSIONS: dict[str, str] = {
-    "FOMC": "Federal Open Market Committee (FOMC)",
-    "CPI":  "Consumer Price Index (CPI)",
-    "OAS":  "option-adjusted spread (OAS)",
-    "IG":   "investment grade (IG)",
-    "YoY":  "year-over-year (YoY)",
-    "HY":   "high yield (HY)",
-    "DXY":  "U.S. Dollar Index (DXY)",
-    "VIX":  "Cboe Volatility Index (VIX)",
-    "GDP":  "gross domestic product (GDP)",
-    "PCE":  "Personal Consumption Expenditures (PCE)",
-}
-
-
-def _expand_acronyms_once(html: str) -> str:
-    """
-    Expand each acronym on its first occurrence in the HTML string, then
-    leave subsequent occurrences as the short form.
-    Applied to the full HTML string before write — single pass per brief.
-
-    Uses word-boundary regex so 'IG' doesn't match inside 'HIGH',
-    'CPI' doesn't match inside 'DCPI', etc.
-    """
-    import re as _re
-    seen: set[str] = set()
-    for short, expanded in _ACRONYM_EXPANSIONS.items():
-        if short in seen:
-            continue
-        pattern = r'\b' + _re.escape(short) + r'\b'
-        if _re.search(pattern, html):
-            html = _re.sub(pattern, expanded, html, count=1)
-            seen.add(short)
-    return html
+# ── CSS helpers + Acronym expansion ──────────────────────────────────────────
+# Delegated to design.dabeiba_html — single source of truth.
+# _strip_css_comments, _inline_css, _css_link_tags, _expand_acronyms_once
+# are imported at the top of this file.
 
 
 # ── Regime label formatting ───────────────────────────────────────────────────
