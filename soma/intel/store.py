@@ -2091,6 +2091,164 @@ class IntelStore:
             (audit_status, audit_ts, audit_notes, edge_id),
         )
 
+    # ── Adversarial audit helpers (Phase 7.K5) ───────────────────────────────
+
+    def insert_audit_log(
+        self,
+        edge_id:        int,
+        auditor:        str,
+        decision:       str,
+        rationale:      Optional[str] = None,
+        prior_audit_id: Optional[int] = None,
+    ) -> int:
+        """
+        Append an immutable audit row to soma_intel_audit_log (§K.2).
+
+        Thin wrapper over record_audit() — provided so adversarial_audit.py
+        has a stable, spec-named entry point without duplicating SQL.
+
+        Args:
+            edge_id:        edge being audited.
+            auditor:        'user' | 'claude_adversarial' | 'meta_learner'.
+            decision:       'approved' | 'rejected' | 'corrected' | 're_audited'.
+            rationale:      optional free text (stored in audit_log.rationale).
+            prior_audit_id: for chained re-audits, the previous audit_id.
+
+        Returns:
+            New audit_id (int).
+        """
+        return self.record_audit(
+            edge_id=edge_id,
+            auditor=auditor,
+            decision=decision,
+            rationale=rationale,
+            prior_audit_id=prior_audit_id,
+        )
+
+    def sample_high_confidence_edges(
+        self,
+        min_confidence:        float = 0.85,
+        exclude_audit_status:  tuple[str, ...] = ("disputed",),
+        limit:                 int = 50,
+        seed:                  Optional[int] = None,
+        stratify_by:           str = "edge_type",
+    ) -> list[dict]:
+        """
+        Return a stratified random sample of edges with confidence >= min_confidence.
+
+        Stratification axis: edge_type (primary, per §K.1).
+        Reproducibility: if seed is provided, the per-edge_type shuffle uses
+        random.Random(seed) so the same seed on the same pool yields the same
+        sample.
+
+        Args:
+            min_confidence:       minimum confidence threshold (default 0.85).
+            exclude_audit_status: edges with these audit_status values are excluded
+                                  (default: skip already-disputed edges).
+            limit:                maximum sample size (default 50).
+            seed:                 optional RNG seed for reproducibility.
+            stratify_by:          column to stratify on; only 'edge_type' and
+                                  'source_type' are supported (default 'edge_type').
+
+        Returns:
+            List of edge dicts (all soma_intel_edge columns).
+        """
+        import random as _random
+
+        if stratify_by not in ("edge_type", "source_type"):
+            stratify_by = "edge_type"
+
+        # Build exclusion clause
+        placeholders = ",".join("?" * len(exclude_audit_status))
+        params: list[Any] = [min_confidence, *list(exclude_audit_status)]
+
+        rows = self._c.execute(
+            f"""
+            SELECT * FROM soma_intel_edge
+            WHERE confidence >= ?
+              AND audit_status NOT IN ({placeholders})
+            ORDER BY ts DESC
+            """,
+            params,
+        ).fetchall()
+
+        if not rows:
+            return []
+
+        all_edges = [dict(r) for r in rows]
+
+        # Group by stratify_by column
+        from collections import defaultdict as _dd
+        buckets: dict[str, list[dict]] = _dd(list)
+        for e in all_edges:
+            key = e.get(stratify_by, "unknown") or "unknown"
+            buckets[key].append(e)
+
+        rng = _random.Random(seed)
+
+        # Stratified sampling: allocate slots proportionally, round-robin the
+        # remainder, then shuffle each bucket and take the quota.
+        n_buckets = len(buckets)
+        if n_buckets == 0:
+            return []
+
+        quota_base = limit // n_buckets
+        remainder  = limit - quota_base * n_buckets
+
+        sample: list[dict] = []
+        keys = sorted(buckets.keys())  # deterministic order for reproducibility
+
+        for i, key in enumerate(keys):
+            bucket = buckets[key]
+            quota  = quota_base + (1 if i < remainder else 0)
+            if quota <= 0:
+                continue
+            rng.shuffle(bucket)
+            sample.extend(bucket[:quota])
+
+        # If we still have capacity (some buckets were smaller than quota), backfill
+        # from leftover edges not yet included.
+        if len(sample) < min(limit, len(all_edges)):
+            included_ids = {e["edge_id"] for e in sample}
+            leftovers = [e for e in all_edges if e["edge_id"] not in included_ids]
+            rng.shuffle(leftovers)
+            sample.extend(leftovers[: limit - len(sample)])
+
+        return sample[:limit]
+
+    def get_audits_by_date_and_auditor(
+        self,
+        date:    "date_type",
+        auditor: str,
+    ) -> list[dict]:
+        """
+        Return audit_log rows whose ts falls on `date` for the given auditor.
+
+        Used by adversarial_audit.py for idempotency check: if any rows exist
+        for (run_date, 'claude_adversarial'), the run already completed and
+        should be skipped.
+
+        Args:
+            date:    datetime.date (or any object with isoformat() that gives
+                     'YYYY-MM-DD') — the calendar day to filter on.
+            auditor: auditor string to match (e.g. 'claude_adversarial').
+
+        Returns:
+            List of audit_log row dicts.  Empty list = no prior run on that date.
+        """
+        date_str = date.isoformat() if hasattr(date, "isoformat") else str(date)
+        rows = self._c.execute(
+            """
+            SELECT * FROM soma_intel_audit_log
+            WHERE auditor = ?
+              AND ts >= ?
+              AND ts <  ?
+            ORDER BY ts ASC
+            """,
+            (auditor, f"{date_str}T00:00:00", f"{date_str}T23:59:59.999999"),
+        ).fetchall()
+        return [dict(r) for r in rows]
+
     def audit_coverage_stats(self) -> list[dict]:
         """
         Return [{audit_status, n}] for all edges grouped by audit_status.
