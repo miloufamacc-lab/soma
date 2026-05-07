@@ -25,6 +25,7 @@ from design.dabeiba_html import (
     _render_data_table,
     _render_inline_tag,
     _render_callout,
+    _render_stage_funnel,
     _codename_scan,
     _emoji_scan,
     _opaque_id,
@@ -303,3 +304,66 @@ def test_opaque_id_does_not_expose_raw():
     raw = "a3f7b2c1-4d5e-6f78-9a0b-cdef01234567"
     result = _opaque_id(raw)
     assert raw.replace("-", "").upper()[:8] != result  # not a direct slice
+
+
+# ── _render_stage_funnel ──────────────────────────────────────────────────────
+
+_SAMPLE_STAGES = [
+    ("Identified", 12),
+    ("Researched", 8),
+    ("Contacted", 5),
+    ("Meeting Scheduled", 3),
+    ("Proposal Sent", 1),
+]
+
+
+def test_render_stage_funnel_returns_html():
+    html = _render_stage_funnel(_SAMPLE_STAGES)
+    assert "<div" in html
+    assert "funnel" in html
+
+
+def test_render_stage_funnel_all_labels_present():
+    html = _render_stage_funnel(_SAMPLE_STAGES)
+    for label, _ in _SAMPLE_STAGES:
+        assert label in html
+
+
+def test_render_stage_funnel_max_bar_is_100_percent():
+    """The stage with the highest count must render a 100.0% width bar."""
+    html = _render_stage_funnel(_SAMPLE_STAGES)
+    assert "width:100.0%" in html
+
+
+def test_render_stage_funnel_proportional_widths():
+    """Stage with half the max count should render near 50% width."""
+    stages = [("A", 10), ("B", 5)]
+    html = _render_stage_funnel(stages)
+    assert "50.0%" in html or "width:50" in html
+
+
+def test_render_stage_funnel_empty_returns_callout():
+    html = _render_stage_funnel([])
+    assert "callout" in html
+    assert "No pipeline data" in html
+
+
+def test_render_stage_funnel_all_zero_returns_callout():
+    html = _render_stage_funnel([("A", 0), ("B", 0)])
+    assert "callout" in html
+
+
+def test_render_stage_funnel_escapes_label():
+    html = _render_stage_funnel([('<script>', 1)])
+    assert "<script>" not in html
+    assert "&lt;script&gt;" in html
+
+
+def test_render_stage_funnel_no_codenames():
+    html = _render_stage_funnel(_SAMPLE_STAGES)
+    assert _codename_scan(html) == []
+
+
+def test_render_stage_funnel_no_emoji():
+    html = _render_stage_funnel(_SAMPLE_STAGES)
+    assert not _emoji_scan(html)

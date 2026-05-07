@@ -202,6 +202,17 @@ _CAPABILITIES: list[tuple[str, str, str, str | None, list[str]]] = [
         None,   # no enabled_ts — starts disabled
         ["graph_layer", "audit_append_only"],
     ),
+
+    # -- Phase 7 §D.3: Regime-Shift Bayesian Detector --
+    # Ships DISABLED by design.
+    # Enable ONLY after D.3.B backtest validates precision > 50% at 0.40 threshold.
+    (
+        "regime_shift_bayesian",
+        "1.0",
+        "disabled",
+        None,   # no enabled_ts — starts disabled; set after D.3.B passes
+        ["regime_classifier"],
+    ),
 ]
 
 
@@ -246,7 +257,7 @@ def seed(db_path: str | None = None, verbose: bool = True) -> int:
         assert store.is_capability_enabled("signal_engine") is False or \
                store.is_capability_enabled("anomaly_engine") is True, \
                "anomaly_engine should be enabled"
-        assert total >= 20, f"Expected >= 20 capabilities, got {total}"
+        assert total >= 21, f"Expected >= 21 capabilities, got {total}"
 
         if verbose:
             print(f"\nSeed complete: {total} capabilities registered, "

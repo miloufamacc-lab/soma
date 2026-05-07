@@ -2427,6 +2427,144 @@ class IntelStore:
             result.append(d)
         return result
 
+    # ── Regime-Shift Bayesian (Migration 031 — Phase 7.D3A) ───────────────────
+
+    def insert_regime_shift_likelihood(
+        self,
+        ts: str,
+        macro_z: Optional[float],
+        sentiment_z: Optional[float],
+        cross_asset_z: Optional[float],
+        transcript_drift_z: Optional[float],
+        source_notes: Optional[str] = None,
+    ) -> None:
+        """
+        Upsert a regime-shift likelihood row for ts (ISO date).
+        Idempotent: ON CONFLICT replaces all values.
+        """
+        self._c.execute(
+            """
+            INSERT INTO soma_intel_regime_shift_likelihood
+              (ts, macro_z, sentiment_z, cross_asset_z, transcript_drift_z, source_notes)
+            VALUES (?, ?, ?, ?, ?, ?)
+            ON CONFLICT(ts) DO UPDATE SET
+              macro_z            = excluded.macro_z,
+              sentiment_z        = excluded.sentiment_z,
+              cross_asset_z      = excluded.cross_asset_z,
+              transcript_drift_z = excluded.transcript_drift_z,
+              source_notes       = excluded.source_notes,
+              computed_ts        = datetime('now')
+            """,
+            (ts, macro_z, sentiment_z, cross_asset_z, transcript_drift_z, source_notes),
+        )
+        self._c.commit()
+        log.debug("insert_regime_shift_likelihood: %s", ts)
+
+    def insert_regime_shift_posterior(
+        self,
+        ts: str,
+        prior: float,
+        log_posterior: float,
+        posterior: float,
+        llr_macro: float,
+        llr_sentiment: float,
+        llr_cross_asset: float,
+        llr_transcript: float,
+        trigger_state: str,
+        missing_inputs: list,
+    ) -> None:
+        """
+        Upsert a regime-shift posterior row for ts (ISO date).
+        Idempotent: ON CONFLICT replaces all values.
+        """
+        self._c.execute(
+            """
+            INSERT INTO soma_intel_regime_shift_posterior
+              (ts, prior, log_posterior, posterior,
+               llr_macro, llr_sentiment, llr_cross_asset, llr_transcript,
+               trigger_state, missing_inputs)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(ts) DO UPDATE SET
+              prior           = excluded.prior,
+              log_posterior   = excluded.log_posterior,
+              posterior       = excluded.posterior,
+              llr_macro       = excluded.llr_macro,
+              llr_sentiment   = excluded.llr_sentiment,
+              llr_cross_asset = excluded.llr_cross_asset,
+              llr_transcript  = excluded.llr_transcript,
+              trigger_state   = excluded.trigger_state,
+              missing_inputs  = excluded.missing_inputs,
+              computed_ts     = datetime('now')
+            """,
+            (
+                ts, prior, log_posterior, posterior,
+                llr_macro, llr_sentiment, llr_cross_asset, llr_transcript,
+                trigger_state, json.dumps(missing_inputs),
+            ),
+        )
+        self._c.commit()
+        log.debug("insert_regime_shift_posterior: %s  posterior=%.4f  trigger=%s", ts, posterior, trigger_state)
+
+    def get_regime_shift_posterior(self, ts: str) -> Optional[dict]:
+        """Return the posterior row for ts, or None if not found."""
+        row = self._c.execute(
+            "SELECT * FROM soma_intel_regime_shift_posterior WHERE ts=?",
+            (ts,),
+        ).fetchone()
+        if row is None:
+            return None
+        d = dict(row)
+        d["missing_inputs"] = json.loads(d.get("missing_inputs") or "[]")
+        return d
+
+    def has_regime_shift_posterior(self, ts: str) -> bool:
+        """Return True if a posterior row exists for ts (idempotency check)."""
+        row = self._c.execute(
+            "SELECT 1 FROM soma_intel_regime_shift_posterior WHERE ts=?",
+            (ts,),
+        ).fetchone()
+        return row is not None
+
+    def list_regime_shift_posteriors(
+        self,
+        start_ts: Optional[str] = None,
+        end_ts: Optional[str] = None,
+        trigger_state: Optional[str] = None,
+    ) -> list[dict]:
+        """
+        List posterior rows in chronological order, optionally filtered.
+
+        Args:
+            start_ts:      ISO date lower bound (inclusive).
+            end_ts:        ISO date upper bound (inclusive).
+            trigger_state: Filter by 'none', 'watch', or 'imminent'.
+
+        Returns:
+            List of dicts with missing_inputs parsed from JSON.
+        """
+        clauses: list[str] = []
+        params: list[Any] = []
+        if start_ts:
+            clauses.append("ts >= ?")
+            params.append(start_ts)
+        if end_ts:
+            clauses.append("ts <= ?")
+            params.append(end_ts)
+        if trigger_state:
+            clauses.append("trigger_state = ?")
+            params.append(trigger_state)
+        sql = "SELECT * FROM soma_intel_regime_shift_posterior"
+        if clauses:
+            sql += " WHERE " + " AND ".join(clauses)
+        sql += " ORDER BY ts ASC"
+        rows = self._c.execute(sql, params).fetchall()
+        result = []
+        for r in rows:
+            d = dict(r)
+            d["missing_inputs"] = json.loads(d.get("missing_inputs") or "[]")
+            result.append(d)
+        return result
+
     def upsert_baseline(
         self,
         ticker: str,

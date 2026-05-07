@@ -454,6 +454,37 @@ def step_soma_intel():
     except Exception as e:
         print(f"  {YELLOW}[WARN]{RESET} multi_horizon_boost failed (non-fatal): {e}")
 
+    # ── 7. Regime-Shift Bayesian Posterior (§D.3 — gated, disabled until D.3.C) ──
+    try:
+        from soma.intel.store import IntelStore as _IS
+        with _IS(db_path=db_path) as store:
+            if store.is_capability_enabled("regime_shift_bayesian"):
+                from soma.intel.regime_shift.orchestrator import run_daily as _run_rs
+                rs_result = _run_rs(_today, store)
+                if rs_result.get("skipped"):
+                    print(
+                        f"  {DIM}[regime_shift]{RESET}  "
+                        f"posterior already exists for {_today} — skipped (idempotent)"
+                    )
+                else:
+                    trigger = rs_result.get("trigger_state", "none")
+                    posterior = rs_result.get("posterior", 0.0)
+                    missing = rs_result.get("missing_inputs", [])
+                    t_color = RED if trigger == "imminent" else YELLOW if trigger == "watch" else GREEN
+                    print(
+                        f"  {GREEN}[regime_shift]{RESET}  "
+                        f"posterior={posterior:.4f}  "
+                        f"trigger={t_color}{trigger}{RESET}  "
+                        f"missing={missing}"
+                    )
+            else:
+                print(
+                    f"  {DIM}[regime_shift]{RESET}  "
+                    "regime_shift_bayesian capability disabled, skipping"
+                )
+    except Exception as e:
+        print(f"  {YELLOW}[WARN]{RESET} regime_shift_bayesian failed (non-fatal): {e}")
+
 
 # ── Step 1e: Meta-learner (Sunday only) ──────────────────────────────
 
