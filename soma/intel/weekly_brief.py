@@ -73,7 +73,7 @@ DB_PATH = (
 )
 
 OUTPUT_DIR  = _DABEIBA_ROOT / "cipher" / "outputs"
-DESIGN_DIR  = _DABEIBA_ROOT / "design"
+DESIGN_DIR  = _DABEIBA_ROOT / "shared" / "design"
 
 BRIEF_LOOKBACK_DAYS  = 7
 MAX_SIGNALS          = 5
