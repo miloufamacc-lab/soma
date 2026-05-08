@@ -112,7 +112,7 @@ def run_daily(
     source_notes = json.dumps({
         "macro":       "soma_intel_regime.features (y2y10_spread, vix_delta_5d)",
         "sentiment":   "D.3.A.2 follow-on — AAII not yet wired",
-        "cross_asset": "Yahoo Finance live fetch (SPY, TLT, GLD, DX-Y.NYB)",
+        "cross_asset": "cache-first (oracle/cache/cross_asset_prices.csv), Yahoo Finance fallback on miss (SPY, TLT, GLD, DX-Y.NYB)",
         "transcript":  "D.3.A.2 follow-on — PRISM drift not yet wired",
     })
 

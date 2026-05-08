@@ -15,11 +15,11 @@ Capability bypass (authorized):
 Look-ahead discipline:
     - Macro ingestor: bounded to regime rows with date <= sim_date (no
       look-ahead). Implemented via in-memory slice of pre-loaded rows.
-    - Cross-asset: stubbed (Option A) — live Yahoo Finance fetcher cannot
-      be used for historical dates; no price cache exists. LLR=0 for all
-      backtest dates. Documented as a known gap in Section 1 of the report.
-    - Sentiment: already stubbed in live ingestor (D.3.A.2 follow-on).
-    - Transcript: already stubbed in live ingestor (D.3.A.2 follow-on).
+    - Cross-asset (D.3.A.2.a): cache-aware. Reads oracle/cache/cross_asset_prices.csv
+      filtered to dates <= sim_date. In bt_strict_mode=True, cache miss → None
+      (never falls back to live Yahoo Finance). LLR=0 when None.
+    - Sentiment: stubbed (D.3.A.2 follow-on).
+    - Transcript: stubbed (D.3.A.2 follow-on).
     - bt_strict_mode=True: raises AssertionError if a future regime row
       is detected in the bounded slice (should never happen; safety net).
 
@@ -71,6 +71,7 @@ from .bayesian import (
     compute_posterior,
     classify_trigger,
 )
+from .ingestors import ingest_cross_asset_z
 
 log = logging.getLogger(__name__)
 
@@ -251,10 +252,11 @@ def replay_historical(
         start_date, end_date, total_days, len(all_regime_rows), bt_strict_mode,
     )
     log.info(
-        "Inputs: live=[macro]  stubbed=[cross_asset, sentiment, transcript]"
+        "Inputs: live=[macro, cross_asset]  stubbed=[sentiment, transcript]  "
+        "(cross_asset: cache-aware, bt_strict_mode=True, D.3.A.2.a)"
     )
     log.info(
-        "Math ceiling with macro-only: max_posterior≈0.129 (below 0.40 watch threshold). "
+        "Math ceiling with macro+cross_asset: max_posterior≈0.34 (below 0.40 watch threshold). "
         "Zero watch alerts expected. See module docstring."
     )
 
@@ -283,9 +285,15 @@ def replay_historical(
             violations.append({"date": sim_date, "error": str(exc), "type": "look_ahead"})
             macro_z = None
 
+        # ── Cross-asset ingestor (D.3.A.2.a: cache-aware) ─────────────────
+        cross_asset_z = ingest_cross_asset_z(
+            target_date=sim_date,
+            store=store,
+            bt_strict_mode=bt_strict_mode,
+        )
+
         # ── Stubbed inputs (documented) ────────────────────────────────────
         sentiment_z: Optional[float] = None    # D.3.A.2 follow-on
-        cross_asset_z: Optional[float] = None  # Option A: no price cache
         transcript_z: Optional[float] = None   # D.3.A.2 follow-on
 
         # ── Bayesian update (pure functions — no DB, no I/O) ─────────────────
@@ -302,7 +310,11 @@ def replay_historical(
             evidence_parts.append(f"macro_z={macro_z:.4f} → llr_macro={llrs['llr_macro']:.4f}")
         else:
             evidence_parts.append("macro_z=None (llr=0)")
-        evidence_parts.append("sentiment=stubbed, cross_asset=stubbed, transcript=stubbed")
+        if cross_asset_z is not None:
+            evidence_parts.append(f"cross_asset_z={cross_asset_z:.4f} → llr_cross_asset={llrs['llr_cross_asset']:.4f}")
+        else:
+            evidence_parts.append("cross_asset_z=None (llr=0, cache miss or insufficient history)")
+        evidence_parts.append("sentiment=stubbed; transcript=stubbed")
         evidence_summary = "; ".join(evidence_parts)
 
         alert_record = {
@@ -373,8 +385,8 @@ def replay_historical(
             "end":   end_date,
             "days":  total_days,
         },
-        "inputs_live":    ["macro"],
-        "inputs_stubbed": ["cross_asset", "sentiment", "transcript"],
+        "inputs_live":    ["macro", "cross_asset"],
+        "inputs_stubbed": ["sentiment", "transcript"],
         "dates_processed":      len(sim_dates),
         "posteriors_computed":  len(all_posteriors),
         "posteriors_summary":   posterior_summary,

@@ -8,17 +8,21 @@ and side-effect-free (no DB writes — orchestrator handles persistence).
 Input statuses (see tasks/PHASE7_D3A_DATA_INVENTORY_2026-05-06.md):
   macro        — COMPUTABLE from soma_intel_regime.features in DB
   sentiment    — MISSING (stub, D.3.A.2 follow-on)
-  cross_asset  — COMPUTABLE via live Yahoo Finance fetch
+  cross_asset  — COMPUTABLE: cache-first (oracle/cache/cross_asset_prices.csv),
+                 live Yahoo fallback in non-strict mode (D.3.A.2.a)
   transcript   — MISSING (stub, D.3.A.2 follow-on)
 """
 
 from __future__ import annotations
 
+import csv
 import json
 import logging
 import math
+import os
 import urllib.request
 from datetime import date, timedelta
+from pathlib import Path
 from typing import Optional
 
 log = logging.getLogger(__name__)
@@ -30,6 +34,26 @@ _MIN_ZSCORE_POINTS: int = 30
 # Yahoo Finance fetch headers (mirrors regime.py)
 _YF_BASE    = "https://query1.finance.yahoo.com/v8/finance/chart/{}?interval=1d&range=5y"
 _YF_HEADERS = {"User-Agent": "Mozilla/5.0 (compatible)"}
+
+# ── Cross-asset cache path (D.3.A.2.a) ───────────────────────────────────────
+
+def _resolve_dabeiba_root() -> Path:
+    """3-tier fallback: $DABEIBA_ROOT env → __file__ walk-up → error."""
+    env = os.environ.get("DABEIBA_ROOT")
+    if env:
+        return Path(env)
+    here = Path(__file__).resolve()
+    # parents: [0]=regime_shift, [1]=intel, [2]=soma, [3]=shared, [4]=DABEIBA
+    root = here.parents[4]
+    if (root / "oracle").exists():
+        return root
+    raise RuntimeError(
+        "Cannot locate DABEIBA root. Set $DABEIBA_ROOT env var."
+    )
+
+_CROSS_ASSET_CACHE_PATH: Path = (
+    _resolve_dabeiba_root() / "oracle" / "cache" / "cross_asset_prices.csv"
+)
 
 # ── Internal helpers ───────────────────────────────────────────────────────────
 
@@ -84,6 +108,55 @@ def _get_close_near(prices: dict[date, float], target: date, window: int = 5) ->
         if d in prices:
             return prices[d]
     return None
+
+
+# ── Cross-asset cache reader (D.3.A.2.a) ─────────────────────────────────────
+
+def _read_cross_asset_cache(
+    cutoff_date: date,
+    cache_path: Optional[Path] = None,
+) -> Optional[dict[str, dict[date, float]]]:
+    """
+    Read oracle/cache/cross_asset_prices.csv and return prices up to cutoff_date.
+
+    Look-ahead discipline: only dates <= cutoff_date are returned. This mirrors
+    the macro ingestor's in-memory bounded filtering.
+
+    Returns:
+        {ticker: {date: close}} for all tickers in the CSV, filtered to
+        dates <= cutoff_date. Returns None if cache file is missing or unreadable.
+    """
+    path = cache_path or _CROSS_ASSET_CACHE_PATH
+    if not path.exists():
+        log.debug("_read_cross_asset_cache: cache not found at %s", path)
+        return None
+
+    try:
+        prices: dict[str, dict[date, float]] = {}
+        with open(path, newline="") as f:
+            reader = csv.DictReader(f)
+            if reader.fieldnames is None:
+                return None
+            tickers = [col for col in reader.fieldnames if col != "date"]
+            for t in tickers:
+                prices[t] = {}
+            for row in reader:
+                try:
+                    row_date = date.fromisoformat(row["date"])
+                except (KeyError, ValueError):
+                    continue
+                # Look-ahead guard: exclude future rows
+                if row_date > cutoff_date:
+                    continue
+                for t in tickers:
+                    try:
+                        prices[t][row_date] = float(row[t])
+                    except (KeyError, ValueError):
+                        pass
+        return prices if prices else None
+    except Exception as exc:
+        log.warning("_read_cross_asset_cache: failed to read %s: %s", path, exc)
+        return None
 
 
 # ── Ingestor 1: Macro divergence (AVAILABLE) ─────────────────────────────────
@@ -188,9 +261,20 @@ def ingest_sentiment_z(target_date: str, store) -> Optional[float]:
 
 # ── Ingestor 3: Cross-asset stress (AVAILABLE via live fetch) ─────────────────
 
-def ingest_cross_asset_z(target_date: str, store) -> Optional[float]:
+def ingest_cross_asset_z(
+    target_date: str,
+    store,
+    bt_strict_mode: bool = False,
+    _cache_path: Optional[Path] = None,  # override for testing
+) -> Optional[float]:
     """
     Compute cross-asset correlation breakdown z-score for target_date.
+
+    Data sourcing (D.3.A.2.a):
+      bt_strict_mode=True  (backtest): read from cache only. Cache miss → None
+                                        (input silenced). NEVER falls back to live.
+      bt_strict_mode=False (live runs): try cache first; on cache miss → live Yahoo
+                                        fetch (backwards-compatible with pre-D.3.A.2.a).
 
     Methodology:
       1. Fetch 5y daily closes for SPY, TLT, GLD, DX-Y.NYB (4 series).
@@ -201,10 +285,8 @@ def ingest_cross_asset_z(target_date: str, store) -> Optional[float]:
       4. Z-score today's avg_corr relative to its trailing 252-day mean/std.
 
     High z-score = correlations breaking down or spiking unusually = stress signal.
-    Returns None if live fetch fails or insufficient history for target_date.
+    Returns None if data is unavailable or insufficient history for target_date.
     """
-    import datetime
-
     TICKERS = ["SPY", "TLT", "GLD", "DX-Y.NYB"]
     ROLLING_CORR_WINDOW = 20    # trading days for pairwise correlation
     ROLLING_Z_WINDOW    = 252   # trading days for z-score baseline
@@ -215,14 +297,38 @@ def ingest_cross_asset_z(target_date: str, store) -> Optional[float]:
         log.warning("ingest_cross_asset_z: invalid date %s", target_date)
         return None
 
-    # Fetch all series
-    all_prices: dict[str, dict[date, float]] = {}
-    for ticker in TICKERS:
-        prices = _fetch_yahoo_closes(ticker)
-        if not prices:
-            log.warning("ingest_cross_asset_z: failed to fetch %s — returning None", ticker)
-            return None
-        all_prices[ticker] = prices
+    # ── Data acquisition: cache-first ────────────────────────────────────────
+    all_prices: Optional[dict[str, dict[date, float]]] = None
+
+    cache_prices = _read_cross_asset_cache(
+        cutoff_date=target,
+        cache_path=_cache_path,
+    )
+
+    if cache_prices is not None and all(
+        len(cache_prices.get(t, {})) > 0 for t in TICKERS
+    ):
+        all_prices = cache_prices
+        log.debug("ingest_cross_asset_z(%s): using cache (%d dates for SPY)",
+                  target_date, len(cache_prices.get("SPY", {})))
+    elif bt_strict_mode:
+        # Hard rule: never fall back to live in strict mode
+        log.warning(
+            "ingest_cross_asset_z(%s): cache miss in bt_strict_mode — returning None "
+            "(look-ahead discipline: no live fetch allowed in backtest)",
+            target_date,
+        )
+        return None
+    else:
+        # Live fallback for non-backtest runs
+        log.info("ingest_cross_asset_z(%s): cache miss — falling back to Yahoo Finance", target_date)
+        all_prices = {}
+        for ticker in TICKERS:
+            prices = _fetch_yahoo_closes(ticker)
+            if not prices:
+                log.warning("ingest_cross_asset_z: failed to fetch %s — returning None", ticker)
+                return None
+            all_prices[ticker] = prices
 
     # Build aligned date list: dates where all 4 tickers have data
     all_dates = sorted(
